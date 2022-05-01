@@ -37,9 +37,10 @@ public class LoginController {
     public String signup(
             @RequestParam("username") String username,
             @RequestParam("password") String password,
+            @RequestParam("invitecode") String inviteCode,
             HttpSession session,
             Model model) {
-        if (databaseController.signup(username, password,"")) {
+        if (databaseController.signup(username, password,inviteCode)) {
             session.setAttribute("loginUser", username);
             return "redirect:/main.html";
         } else {

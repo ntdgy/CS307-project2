@@ -158,17 +158,17 @@ public class DatabaseController {
         temp[0] = rechapter;
         List<Map<String, Object>> re = jdbc.queryForList(sql, temp);
         if(re.isEmpty()) return false;
-        if ((int)re.get(0).get("isUsed") >= 1) {
+        if (re.get(0).get("isUsed") != null && (int)re.get(0).get("isUsed") >= 1) {
+            sql = "update rechapter set isUsed = case when isUsed is null then 1 else isUsed + 1 end where chapter = ?;";
             return false;
         }else{
-            sql = "update rechapter set isUsed = 2,user_name = ?, used_date = ? where chapter = ?;";
+            sql = "update rechapter set isUsed = 1,user_name = ?, used_date = ? where chapter = ?;";
             Object[] tmp = new Object[3];
             tmp[0] = name;
             tmp[1] = new Date();
             tmp[2] = rechapter;
             jdbc.update(sql,tmp);
-            sql = "insert into users(user_name, passwd_md5)\n" +
-                    "values (?,?);" ;
+            sql = "insert into users(user_name, passwd_md5) values (?,?);" ;
             Object[] m1 = new Object[2];
             m1[0] = name;
             m1[1] = encodeStr;
