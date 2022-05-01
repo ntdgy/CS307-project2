@@ -30,12 +30,15 @@ public class DatabaseController {
     public String addCenter(
             @RequestParam("id") int id,
             @RequestParam("name") String name,
+            @RequestParam("table") String table,
+            @RequestParam("type") String type,
             Model model
     ) throws Exception {
         String sql = "insert into center(id, name) values(?, ?)";
         Object[] obj = new Object[2];
         obj[0] = id;
         obj[1] = name;
+        System.out.println(table);
         model.addAttribute("centermsg", "Failed");
         jdbc.update(sql, obj);
         model.addAttribute("centermsg", "Success");
