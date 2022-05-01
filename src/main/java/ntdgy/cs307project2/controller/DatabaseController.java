@@ -1,6 +1,9 @@
 package ntdgy.cs307project2.controller;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
@@ -12,8 +15,55 @@ public class DatabaseController {
 
     final DataSource dataSource;
 
-    public DatabaseController(DataSource dataSource){
+    final JdbcTemplate jdbc;
+
+    public DatabaseController(DataSource dataSource, JdbcTemplate jdbc){
         this.dataSource = dataSource;
+        this.jdbc = jdbc;
+    }
+
+    @PostMapping("/center/add")
+    public String addCenter(
+            @RequestParam("id") int id,
+            @RequestParam("name") String name,
+            Model model
+    ) throws SQLException {
+        String sql = "insert into center(id, name) values(?, ?)";
+        Object[] obj = new Object[2];
+        obj[0] = id;
+        obj[1] = name;
+        jdbc.update(sql, obj);
+        model.addAttribute("centermsg", "success");
+        return "childPages/management";
+    }
+
+    @PostMapping("/center/select")
+    public String selectCenter(
+            @RequestParam("id") String id,
+            @RequestParam("name") String name
+    ){
+        return "";
+    }
+
+    @PostMapping("/center/delete")
+    public String deleteCenter(
+            @RequestParam("id") String id,
+            @RequestParam("name") String name
+    ){
+        return "";
+    }
+
+    @PostMapping("/center/update")
+    public String updateCenter(
+            @RequestParam("id") String id,
+            @RequestParam("name") String name
+    ){
+        String sql = "update into center(id, name) values(?, ?)";
+        Object[] obj = new Object[2];
+        obj[0] = id;
+        obj[1] = name;
+        jdbc.update(sql, obj);
+        return "";
     }
 
     @PostMapping("/enterprise/add")
@@ -21,14 +71,13 @@ public class DatabaseController {
             @RequestParam("id") int id,
             @RequestParam("name") String name,
             @RequestParam("country") String country,
-            @RequestParam("city") String city,
+            @RequestParam("city") @Nullable String city,
             @RequestParam("supply_center") String supplyCenter,
             @RequestParam("industry") String industry
     ) throws SQLException {
-        var con = dataSource.getConnection();
-        var stmt = con.prepareStatement("insert into enterprise(id, name, supply_center_id, country, city, industry)"
-                + " values(?, ?, ?, ?, ?, ?)");
-        //stmt.setInt();
+        String sql = "insert into enterprise(id, name, supply_center_id, country, city, industry) values(?, ?, ?, ?, ?, ?)";
+        Object[] obj = new Object[6];
+
         return "";
     }
 
