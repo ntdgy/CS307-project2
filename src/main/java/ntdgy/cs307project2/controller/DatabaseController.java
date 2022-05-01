@@ -5,9 +5,12 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.util.DigestUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/database")
@@ -17,7 +20,7 @@ public class DatabaseController {
 
     final JdbcTemplate jdbc;
 
-    public DatabaseController(DataSource dataSource, JdbcTemplate jdbc){
+    public DatabaseController(DataSource dataSource, JdbcTemplate jdbc) {
         this.dataSource = dataSource;
         this.jdbc = jdbc;
     }
@@ -27,13 +30,14 @@ public class DatabaseController {
             @RequestParam("id") int id,
             @RequestParam("name") String name,
             Model model
-    ) throws SQLException {
+    ) throws Exception {
         String sql = "insert into center(id, name) values(?, ?)";
         Object[] obj = new Object[2];
         obj[0] = id;
         obj[1] = name;
+        model.addAttribute("centermsg", "Failed");
         jdbc.update(sql, obj);
-        model.addAttribute("centermsg", "success");
+        model.addAttribute("centermsg", "Success");
         return "childPages/management";
     }
 
@@ -41,7 +45,7 @@ public class DatabaseController {
     public String selectCenter(
             @RequestParam("id") String id,
             @RequestParam("name") String name
-    ){
+    ) {
         return "";
     }
 
@@ -49,7 +53,7 @@ public class DatabaseController {
     public String deleteCenter(
             @RequestParam("id") String id,
             @RequestParam("name") String name
-    ){
+    ) {
         return "";
     }
 
@@ -57,8 +61,8 @@ public class DatabaseController {
     public String updateCenter(
             @RequestParam("id") String id,
             @RequestParam("name") String name
-    ){
-        String sql = "update into center(id, name) values(?, ?)";
+    ) {
+        String sql = "";
         Object[] obj = new Object[2];
         obj[0] = id;
         obj[1] = name;
@@ -89,7 +93,7 @@ public class DatabaseController {
             @RequestParam("city") String city,
             @RequestParam("supply_center") String supplyCenter,
             @RequestParam("industry") String industry
-    ){
+    ) {
         return "";
     }
 
@@ -101,7 +105,7 @@ public class DatabaseController {
             @RequestParam("city") String city,
             @RequestParam("supply_center") String supplyCenter,
             @RequestParam("industry") String industry
-    ){
+    ) {
         return "";
     }
 
@@ -113,7 +117,7 @@ public class DatabaseController {
             @RequestParam("city") String city,
             @RequestParam("supply_center") String supplyCenter,
             @RequestParam("industry") String industry
-    ){
+    ) {
         return "";
     }
 
@@ -125,8 +129,20 @@ public class DatabaseController {
             @RequestParam("date") String date,
             @RequestParam("purchase_price") String price,
             @RequestParam("quantity") String quantity
-    ){
+    ) {
         return "";
+    }
+
+    public boolean login(String name, String pwd) {
+        String salt = "djj is super smart and beautiful mei shao nv";
+        pwd = pwd + salt;
+        String encodeStr = DigestUtils.md5DigestAsHex(pwd.getBytes());
+        String sql = "select * from users where passwd_md5 = ? and user_name = ?";
+        Object[] temp = new Object[2];
+        temp[0] = encodeStr;
+        temp[1] = name;
+        List<Map<String, Object>> re = jdbc.queryForList(sql, temp);
+        return !re.isEmpty();
     }
 
 }

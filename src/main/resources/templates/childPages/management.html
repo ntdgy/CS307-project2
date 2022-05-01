@@ -51,6 +51,10 @@
 					<h2>Center Add</h2>
 					<form class="form-signin" th:action="@{/api/database/center/add/}" th:method="post"><!--dashboard.html-->
 						<p th:text="${centermsg}" th:if="${! #strings.isEmpty(centermsg)}"></p>
+						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							<strong th:text="${centermsg}"> </strong>
+						</div>
 						<label class="sr-only">Center Id</label>
 						<input type="number" name="id" class="form-control" placeholder="Center Id" required="" autofocus="">
 						<label class="sr-only">Center Name</label>

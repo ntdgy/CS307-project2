@@ -5,11 +5,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
 import javax.servlet.http.HttpSession;
-import java.util.UUID;
 
 @Controller
 public class LoginController {
+
+    final DatabaseController databaseController;
+
+    public LoginController(DatabaseController databaseController) {
+        this.databaseController = databaseController;
+    }
+
 
     @PostMapping("api/user/login")
     public String login(
@@ -17,10 +24,10 @@ public class LoginController {
             @RequestParam("password") String password,
             HttpSession session,
             Model model) {
-        if("user".equals(username) && "123456".equals(password)){
+        if (databaseController.login(username, password)) {
             session.setAttribute("loginUser", username);
             return "redirect:/main.html";
-        }else {
+        } else {
             model.addAttribute("msg", "用户名错误");
             return "index";
         }
