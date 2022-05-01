@@ -17,11 +17,12 @@ public class ProjectConfig implements WebMvcConfigurer {
         registry.addViewController("/main.html").setViewName("dashboard");
         registry.addViewController("/dashboard.html").setViewName("dashboard");
         registry.addViewController("/customer.html").setViewName("childPages/customer");
-        registry.addViewController("/management.html").setViewName("childPages/management");;
+        registry.addViewController("/management.html").setViewName("childPages/management");
+        registry.addViewController("/register.html").setViewName("signup");
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginChecker()).addPathPatterns("/**").excludePathPatterns("/", "/index.html", "/css/**", "/js/**", "/api/**", "/img/**");
+        registry.addInterceptor(new LoginChecker()).addPathPatterns("/**").excludePathPatterns("/", "/register.html", "/index.html", "/css/**", "/js/**", "/api/**", "/img/**");
     }
 }

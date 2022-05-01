@@ -32,4 +32,21 @@ public class LoginController {
             return "index";
         }
     }
+
+    @PostMapping("api/user/signup")
+    public String signup(
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
+            HttpSession session,
+            Model model) {
+        if (databaseController.signup(username, password,"")) {
+            session.setAttribute("loginUser", username);
+            return "redirect:/main.html";
+        } else {
+            model.addAttribute("msg", "用户名错误");
+            return "index";
+        }
+    }
+
+
 }

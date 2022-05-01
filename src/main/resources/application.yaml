@@ -4,11 +4,11 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/final
-    username: checker
-    password: 123456
+    url: jdbc:postgresql://42.194.178.20:5432/final
+    username: final
+    password: CS307final
   thymeleaf:
     cache: false
 #  mvc:
 #    static-path-pattern: /res/**
-
+debug: true

@@ -14,21 +14,17 @@
 
 	<body class="text-center">
 
-		<form class="form-signin" th:action="@{/api/user/login/}" th:method="post"><!--dashboard.html-->
+		<form class="form-signin" th:action="@{/api/user/signup/}" th:method="post"><!--dashboard.html-->
 			<img class="mb-4" th:src="@{/img/bootstrap-solid.svg}" alt="" width="72" height="72">
-			<h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+			<h1 class="h3 mb-3 font-weight-normal">Please sign up</h1>
 			<p style="color: red" th:text="${msg}" th:if="${! #strings.isEmpty(msg)}"></p>
 			<label class="sr-only">Username</label>
 			<input type="text" name="username" class="form-control" th:placeholder="Username" required="" autofocus="">
 			<label class="sr-only">Password</label>
 			<input type="password" name="password" class="form-control" th:placeholder="Password" required="">
-			<div class="checkbox mb-3">
-				<label>
-          			<input type="checkbox" value="remember-me"> Remember me
-        		</label>
-			</div>
+			<label class="sr-only">Password</label>
+			<input type="text" name="invitecode" class="form-control" placeholder="invite code" required="">
 			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-			<a th:href="@{/register.html}">Sign up</a>
 			<p class="mt-5 mb-3 text-muted">© 2023-2022</p>
 <!--			<a class="btn btn-sm">中文</a>-->
 <!--			<a class="btn btn-sm">English</a>-->

@@ -9,6 +9,7 @@ import org.springframework.util.DigestUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -143,6 +144,34 @@ public class DatabaseController {
         temp[1] = name;
         List<Map<String, Object>> re = jdbc.queryForList(sql, temp);
         return !re.isEmpty();
+    }
+
+    public boolean signup(String name, String pwd, String rechapter) {
+        String salt = "djj is super smart and beautiful mei shao nv";
+        pwd = pwd + salt;
+        String encodeStr = DigestUtils.md5DigestAsHex(pwd.getBytes());
+        String sql = "select * from rechapter where chapter = ? ";
+        Object[] temp = new Object[1];
+        temp[0] = rechapter;
+        List<Map<String, Object>> re = jdbc.queryForList(sql, temp);
+        if(re.isEmpty()) return false;
+        if ((int)re.get(0).get("isUsed") >= 1) {
+            return false;
+        }else{
+            sql = "update rechapter set isUsed = 2,user_name = ?, used_date = ? where chapter = ?;";
+            Object[] tmp = new Object[3];
+            tmp[0] = name;
+            tmp[1] = new Date();
+            tmp[2] = rechapter;
+            jdbc.update(sql,tmp);
+            sql = "insert into users(user_name, passwd_md5)\n" +
+                    "values (?,?);" ;
+            Object[] m1 = new Object[2];
+            m1[0] = name;
+            m1[1] = encodeStr;
+            jdbc.update(sql,m1);
+            return true;
+        }
     }
 
 }
