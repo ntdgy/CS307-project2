@@ -26,52 +26,54 @@ public class DatabaseController {
         this.jdbc = jdbc;
     }
 
-    @PostMapping("/center/add")
+    @PostMapping("/center")
     public String addCenter(
-            @RequestParam("id") int id,
+            @RequestParam("id") String id,
             @RequestParam("name") String name,
-            @RequestParam("table") String table,
             @RequestParam("type") String type,
+            @RequestParam(value = "updateid", required = false) String updateId,
+            @RequestParam(value = "updatename", required = false) String updateName,
             Model model
-    ) throws Exception {
-        String sql = "insert into center(id, name) values(?, ?)";
-        Object[] obj = new Object[2];
-        obj[0] = id;
-        obj[1] = name;
-        System.out.println(table);
+    ) {
+        String sql;
+        Object[] obj;
+        if(type.equals("Insert")){
+            if (id.equals("")) {
+                sql = "insert into center(name) values(?)";
+                obj = new Object[1];
+                obj[0] = name;
+            } else {
+                sql = "insert into center(id, name) values(?, ?)";
+                obj = new Object[2];
+                obj[0] = Integer.parseInt(id);
+                obj[1] = name;
+            }
+        } else if(type.equals("Update")){ //TODO
+            sql = "update center set id=?, name=? where id=? and name=?";
+            obj = new Object[4];
+            obj[0] = Integer.parseInt(id);
+            obj[1] = name;
+            obj[2] = Integer.parseInt(updateId);
+            obj[3] = updateName;
+        } else if(type.equals("Delete")){
+            sql= "delete from center where name = ?";
+            obj = new Object[1];
+            obj[0] = name;
+        } else if(type.equals("Select")){ //TODO
+            sql = "";
+            obj = new Object[1];
+        } else {
+            model.addAttribute("centermsg", "Failed");
+            return "childPages/management";
+        }
         model.addAttribute("centermsg", "Failed");
-        jdbc.update(sql, obj);
-        model.addAttribute("centermsg", "Success");
+        try {
+            jdbc.update(sql, obj);
+            model.addAttribute("centermsg", "Success");
+        } catch (Exception e){
+            throw e;
+        }
         return "childPages/management";
-    }
-
-    @PostMapping("/center/select")
-    public String selectCenter(
-            @RequestParam("id") String id,
-            @RequestParam("name") String name
-    ) {
-        return "";
-    }
-
-    @PostMapping("/center/delete")
-    public String deleteCenter(
-            @RequestParam("id") String id,
-            @RequestParam("name") String name
-    ) {
-        return "";
-    }
-
-    @PostMapping("/center/update")
-    public String updateCenter(
-            @RequestParam("id") String id,
-            @RequestParam("name") String name
-    ) {
-        String sql = "";
-        Object[] obj = new Object[2];
-        obj[0] = id;
-        obj[1] = name;
-        jdbc.update(sql, obj);
-        return "";
     }
 
     @PostMapping("/enterprise/add")

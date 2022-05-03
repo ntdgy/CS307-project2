@@ -49,32 +49,36 @@
 				<div th:replace="~{childPages/common::sidebar(active='manage')}"></div>
 				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
 					<h2>Center Add</h2>
-					<form class="form-signin" th:action="@{/api/database/center/add/}" th:method="post">
-						<select name="table" onchange="inputSwitch()">
-							<option>Center</option>
-							<option>Enterprise</option>
-							<option>Model</option>
-							<option>Order</option>
-							<option>Staff</option>
-						</select>
-						<select name="type">
-							<option>Insert</option>
-							<option>Select</option>
-							<option>Update</option>
-							<option>Delete</option>
-						</select>
-						<p th:text="${centermsg}" th:if="${! #strings.isEmpty(centermsg)}"></p>
+					<select name="table" onchange="inputSwitch()">
+						<option>Center</option>
+						<option>Enterprise</option>
+						<option>Model</option>
+						<option>Order</option>
+						<option>Staff</option>
+					</select>
+					<form class="form-center" id="form-center" th:action="@{/api/database/center/}" th:method="post" style="display: block;">
+						<div th:replace="~{childPages/common::typeselect}"></div>
 						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
 							<button type="button" class="close" data-dismiss="alert">&times;</button>
 							<strong th:text="${centermsg}"> </strong>
 						</div>
-						<div class="center" style="display: block;">
+						<div class="center">
 							<label class="sr-only">Center Id</label>
-							<input type="number" name="id" class="form-control" placeholder="Center Id" required="" autofocus="">
+							<input type="number" name="id" class="form-control" placeholder="Center Id" autofocus="">
 							<label class="sr-only">Center Name</label>
 							<input type="text" name="name" class="form-control" placeholder="Center Name" required="">
+							<input type="text" name="updateid" class="form-control" placeholder="Original Id" style="display: none">
+							<input type="text" name="updatename" class="form-control" placeholder="Original Center Name" style="display: none">
 						</div>
-						<div class="enterprise" style="display: none;">
+						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+					</form>
+					<form class="form-enterprise" id="form-enterprise" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
+						<div th:replace="~{childPages/common::typeselect}"></div>
+						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							<strong th:text="${centermsg}"> </strong>
+						</div>
+						<div class="enterprise">
 							<label class="sr-only">Enterprise Id</label>
 							<input type="number" name="id" class="form-control" placeholder="Enterprise Id" required="" autofocus="">
 							<label class="sr-only">Center Name</label>
@@ -88,7 +92,15 @@
 							<label class="sr-only">Industry</label>
 							<input type="text" name="industry" class="form-control" placeholder="Industry" required="">
 						</div>
-						<div class="model" style="display: none;">
+						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+					</form>
+					<form class="form-model" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
+						<div th:replace="~{childPages/common::typeselect}"></div>
+						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							<strong th:text="${centermsg}"> </strong>
+						</div>
+						<div class="model">
 							<label class="sr-only">Model Id</label>
 							<input type="number" name="id" class="form-control" placeholder="Model Id" required="" autofocus="">
 							<label class="sr-only">Center Name</label>
@@ -99,8 +111,16 @@
 							<input type="text" name="model" class="form-control" placeholder="Model" required="">
 							<label class="sr-only">Unit price</label>
 							<input type="number" name="unitprice" class="form-control" placeholder="Unit price" required="">
-							</div>
-						<div class="order" style="display: none;">
+						</div>
+						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+					</form>
+					<form class="form-order" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
+						<div th:replace="~{childPages/common::typeselect}"></div>
+						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							<strong th:text="${centermsg}"> </strong>
+						</div>
+						<div class="order">
 							<label class="sr-only">Order Id</label>
 							<input type="number" name="id" class="form-control" placeholder="Order Id" required="" autofocus="">
 							<label class="sr-only">Product Model</label>
@@ -116,7 +136,15 @@
 							<label class="sr-only">Quantity</label>
 							<input type="text" name="quantity" class="form-control" placeholder="Quantity" required="">
 						</div>
-						<div class="staff" style="display: none;">
+						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+					</form>
+					<form class="form-staff" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
+						<div th:replace="~{childPages/common::typeselect}"></div>
+						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							<strong th:text="${centermsg}"> </strong>
+						</div>
+						<div class="staff">
 							<label class="sr-only">Staff Id</label>
 							<input type="number" name="id" class="form-control" placeholder="Staff Id" required="" autofocus="">
 							<label class="sr-only">Name</label>
@@ -197,39 +225,49 @@
 				console.log(value);
 				switch (value){
 					case 'Center':
-						document.getElementsByClassName('center')[0].style.display="block";
-						document.getElementsByClassName('enterprise')[0].style.display="none";
-						document.getElementsByClassName('staff')[0].style.display="none";
-						document.getElementsByClassName('order')[0].style.display="none";
-						document.getElementsByClassName('model')[0].style.display="none";
+						document.getElementsByClassName('form-center')[0].style.display="block";
+						document.getElementsByClassName('form-enterprise')[0].style.display="none";
+						document.getElementsByClassName('form-staff')[0].style.display="none";
+						document.getElementsByClassName('form-order')[0].style.display="none";
+						document.getElementsByClassName('form-model')[0].style.display="none";
+						var select = document.getElementsByClassName('form-center')[0].children[0];
+						index = select.selectedIndex;
+						value = select.options[index].value;
+						if(value === 'Update'){
+							document.getElementsByClassName('form-center')[0].children[1].children[4].style.display="block";
+							document.getElementsByClassName('form-center')[0].children[1].children[5].style.display="block";
+						} else {
+							document.getElementsByClassName('form-center')[0].children[1].children[4].style.display="none";
+							document.getElementsByClassName('form-center')[0].children[1].children[5].style.display="none";
+						}
 						break;
 					case 'Enterprise':
-						document.getElementsByClassName('center')[0].style.display="none";
-						document.getElementsByClassName('enterprise')[0].style.display="block";
-						document.getElementsByClassName('staff')[0].style.display="none";
-						document.getElementsByClassName('order')[0].style.display="none";
-						document.getElementsByClassName('model')[0].style.display="none";
+						document.getElementsByClassName('form-center')[0].style.display="none";
+						document.getElementsByClassName('form-enterprise')[0].style.display="block";
+						document.getElementsByClassName('form-staff')[0].style.display="none";
+						document.getElementsByClassName('form-order')[0].style.display="none";
+						document.getElementsByClassName('form-model')[0].style.display="none";
 						break;
 					case 'Staff':
-						document.getElementsByClassName('center')[0].style.display="none";
-						document.getElementsByClassName('enterprise')[0].style.display="none";
-						document.getElementsByClassName('staff')[0].style.display="block";
-						document.getElementsByClassName('order')[0].style.display="none";
-						document.getElementsByClassName('model')[0].style.display="none";
+						document.getElementsByClassName('form-center')[0].style.display="none";
+						document.getElementsByClassName('form-enterprise')[0].style.display="none";
+						document.getElementsByClassName('form-staff')[0].style.display="block";
+						document.getElementsByClassName('form-order')[0].style.display="none";
+						document.getElementsByClassName('form-model')[0].style.display="none";
 						break;
 					case 'Model':
-						document.getElementsByClassName('center')[0].style.display="none";
-						document.getElementsByClassName('enterprise')[0].style.display="none";
-						document.getElementsByClassName('staff')[0].style.display="none";
-						document.getElementsByClassName('order')[0].style.display="none";
-						document.getElementsByClassName('model')[0].style.display="block";
+						document.getElementsByClassName('form-center')[0].style.display="none";
+						document.getElementsByClassName('form-enterprise')[0].style.display="none";
+						document.getElementsByClassName('form-staff')[0].style.display="none";
+						document.getElementsByClassName('form-order')[0].style.display="none";
+						document.getElementsByClassName('form-model')[0].style.display="block";
 						break;
 					case 'Order':
-						document.getElementsByClassName('center')[0].style.display="none";
-						document.getElementsByClassName('enterprise')[0].style.display="none";
-						document.getElementsByClassName('staff')[0].style.display="none";
-						document.getElementsByClassName('order')[0].style.display="block";
-						document.getElementsByClassName('model')[0].style.display="none";
+						document.getElementsByClassName('form-center')[0].style.display="none";
+						document.getElementsByClassName('form-enterprise')[0].style.display="none";
+						document.getElementsByClassName('form-staff')[0].style.display="none";
+						document.getElementsByClassName('form-order')[0].style.display="block";
+						document.getElementsByClassName('form-model')[0].style.display="none";
 						break;
 				}
 			}
