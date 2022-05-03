@@ -86,20 +86,19 @@ public class DatabaseController {
             @RequestParam("type") String type,
             @RequestParam("industry") String industry,
             Model model
-    )  {
+    ) {
         String sql;
         Object[] obj;
         if (type.equals("Insert")) {
-                sql = "insert into enterprise(id, name, country, city, supply_center, industry) values(?, ?, ?, ?, ?, ?)";
-                obj = new Object[6];
-                obj[0] = id;
-                obj[1] = name;
-                obj[2] = country;
-                obj[3] = city;
-                obj[4] = supplyCenter;
-                obj[5] = industry;
-        }
-        else if (type.equals("Update")) {
+            sql = "insert into enterprise(id, name, country, city, supply_center, industry) values(?, ?, ?, ?, ?, ?)";
+            obj = new Object[6];
+            obj[0] = id;
+            obj[1] = name;
+            obj[2] = country;
+            obj[3] = city;
+            obj[4] = supplyCenter;
+            obj[5] = industry;
+        } else if (type.equals("Update")) {
             sql = "update enterprise set id=?, name=?, country=?, city=?, supply_center=?, industry=? where id=?";
             obj = new Object[7];
             obj[0] = id;
@@ -109,17 +108,15 @@ public class DatabaseController {
             obj[4] = supplyCenter;
             obj[5] = industry;
             obj[6] = id;
-        }
-        else if (type.equals("Delete")) {
+        } else if (type.equals("Delete")) {
             sql = "delete from enterprise where id = ?";
             obj = new Object[1];
             obj[0] = id;
-        }
-        else if (type.equals("Select")) {
+        } else if (type.equals("Select")) {
             sql = "";
             obj = new Object[1];
 
-        }else {
+        } else {
             model.addAttribute("centermsg", "操作异常");
             return "childPages/management";
         }
@@ -134,27 +131,113 @@ public class DatabaseController {
 
 
     @PostMapping("/staff")
-//    (
-//    id            serial primary key,
-//    name          varchar(30), -- not null ,
-//    number        varchar(8),  -- unique not null ,
-//    gender        varchar(6),
-//    age           int,
-//    mobile_number varchar(11), -- unique not null
-//    supply_center_id int, -- references supply_center(id),-- not null ,
-//    type          int          -- 0 is director, 1 is supply staff, 2 is contracts manager, 3 is salesman
-//);
     public String addEnterprise(
             @RequestParam("id") int id,
             @RequestParam("name") String name,
             @RequestParam("number") String number,
-            @RequestParam("city") @Nullable String city,
-            @RequestParam("supply_center") String supplyCenter,
+            @RequestParam("gender") String q,
+            @RequestParam("age") String age,
+            @RequestParam("mobile_number") String mobileNumber,
+            @RequestParam("supply_center_id") String supplyCenterId,
             @RequestParam("type") String type,
-            @RequestParam("industry") String industry,
             Model model
-    )
+    ) {
+        String sql;
+        Object[] obj;
+        if (type.equals("Insert")) {
+            sql = "insert into staff(id, name, number, q, age, mobile_number, supply_center_id) values(?, ?, ?, ?, ?, ?, ?)";
+            obj = new Object[7];
+            obj[0] = id;
+            obj[1] = name;
+            obj[2] = number;
+            obj[3] = q;
+            obj[4] = age;
+            obj[5] = mobileNumber;
+            obj[6] = supplyCenterId;
+        } else if (type.equals("Update")) {
+            sql = "update staff set id=?, name=?, number=?, q=?, age=?, mobile_number=?, supply_center_id=? where id=?";
+            obj = new Object[8];
+            obj[0] = id;
+            obj[1] = name;
+            obj[2] = number;
+            obj[3] = q;
+            obj[4] = age;
+            obj[5] = mobileNumber;
+            obj[6] = supplyCenterId;
+            obj[7] = id;
+        } else if (type.equals("Delete")) {
+            sql = "delete from staff where id = ?";
+            obj = new Object[1];
+            obj[0] = id;
 
+        } else if (type.equals("Select")) {
+            sql = "";
+            obj = new Object[1];
+        } else {
+            model.addAttribute("centermsg", "操作异常");
+            return "childPages/management";
+        }
+        try {
+            jdbc.update(sql, obj);
+            model.addAttribute("centermsg", "Success");
+        } catch (Exception e) {
+            throw e;
+        }
+        return "childPages/management";
+    }
+
+
+    @PostMapping("/model")
+//    id         serial primary key,
+//    number     varchar(20),
+//    model      varchar(60), -- unique not null ,
+//    name       varchar(60), -- not null
+//    unit_price int          --not null
+    public String stockIn(
+            @RequestParam("id") int id,
+            @RequestParam("number") String number,
+            @RequestParam("model") String model1,
+            @RequestParam("name") String name,
+            @RequestParam("unit_price") String unitPrice,
+            @RequestParam("type") String type,
+            Model model
+    ) {
+        String sql;
+        Object[] obj;
+        if (type.equals("Insert")) {
+            sql = "insert into model(id, number, model, name, unit_price) values(?, ?, ?, ?, ?)";
+            obj = new Object[5];
+            obj[0] = id;
+            obj[1] = number;
+            obj[2] = model1;
+            obj[3] = name;
+            obj[4] = unitPrice;
+        } else if (type.equals("Update")) {
+            sql = "update model set number=?, model=?, name=?, unit_price=? where id=?";
+            obj = new Object[5];
+            obj[0] = number;
+            obj[1] = model1;
+            obj[2] = name;
+            obj[3] = unitPrice;
+            obj[4] = id;
+        } else if (type.equals("Delete")) {
+            sql = "delete from model where id = ?";
+            obj = new Object[1];
+        } else if (type.equals("Select")) {
+            sql = "";
+            obj = new Object[1];
+        } else {
+            model.addAttribute("centermsg", "操作异常");
+            return "childPages/management";
+        }
+        try {
+            jdbc.update(sql, obj);
+            model.addAttribute("centermsg", "Success");
+        } catch (Exception e) {
+            throw e;
+        }
+        return "childPages/management";
+    }
 
     @PostMapping("/stockIn")
     public String stockIn(
