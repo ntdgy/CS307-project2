@@ -133,10 +133,60 @@ public class DatabaseController {
             @RequestParam("product_model") String productModel,
             @RequestParam("supply_staff") String supplyStaff,
             @RequestParam("date") String date,
+            @RequestParam("type") String type,
             @RequestParam("purchase_price") String price,
-            @RequestParam("quantity") String quantity
+            @RequestParam("quantity") String quantity,
+            Model model
     ) {
-        return "";
+        String sql;
+        Object[] obj;
+        if(type.equals("Insert")){
+            String check1 = "select * from staff where staff.number = ?";
+            List<Map<String, Object>> check2 = jdbc.queryForList(check1, supplyStaff);
+            if(check2.size() == 0){
+                    model.addAttribute("centermsg", "⼈员不存在");
+                    return "childPages/management";
+            }
+            if (!check2.get(0).get("type").equals("1")){
+                model.addAttribute("centermsg", "⼈员的类型不是supply_staff");
+                return "childPages/management";
+            }
+            String check3 = "select * from center where center.name = ?";
+            List<Map<String, Object>> check4 = jdbc.queryForList(check3, supplyCenter);
+            if(check4.size() == 0){
+                model.addAttribute("centermsg", "供应中⼼不存在");
+                return "childPages/management";
+            }
+            String check5 = "select * from model where model.model = ?";
+            List<Map<String, Object>> check6 = jdbc.queryForList(check5, productModel);
+            if(check6.size() == 0){
+                model.addAttribute("centermsg", "产品型号不存在");
+            }
+            String check7 = "select c.name from staff join center c on staff.supply_center_id = c.id;";
+            List<Map<String, Object>> check8 = jdbc.queryForList(check7, supplyStaff);
+            if(!check8.get(0).get("name").equals(supplyCenter)){
+                model.addAttribute("centermsg", "供应中⼼与⼈员所在的供应中⼼对应不上");
+            }
+            sql = "insert into orders(supply_center_id, product_model, supply_staff, date, purchase_price, quantity) values(?, ?, ?, ?, ?, ?)";
+            obj = new Object[6];
+            obj[0] = supplyCenter;
+            obj[1] = productModel;
+            obj[2] = supplyStaff;
+            obj[3] = date;
+            obj[4] = price;
+            obj[5] = quantity;
+        } else {
+            sql = "update orders set supply_center_id = ?, product_model = ?, supply_staff = ?, date = ?, purchase_price = ?, quantity = ? where id = ?";
+            obj = new Object[7];
+        }
+        model.addAttribute("centermsg", "Failed");
+        try {
+            jdbc.update(sql, obj);
+            model.addAttribute("centermsg", "Success");
+        } catch (Exception e){
+            throw e;
+        }
+        return "childPages/management";
     }
 
     public boolean login(String name, String pwd) {
