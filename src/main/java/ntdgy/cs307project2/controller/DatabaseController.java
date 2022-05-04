@@ -188,11 +188,6 @@ public class DatabaseController {
 
 
     @PostMapping("/model")
-//    id         serial primary key,
-//    number     varchar(20),
-//    model      varchar(60), -- unique not null ,
-//    name       varchar(60), -- not null
-//    unit_price int          --not null
     public String stockIn(
             @RequestParam("id") int id,
             @RequestParam("number") String number,
@@ -252,46 +247,78 @@ public class DatabaseController {
     ) {
         String sql;
         Object[] obj;
-        if (type.equals("Insert")) {
-            String check1 = "select * from staff where staff.number = ?";
-            List<Map<String, Object>> check2 = jdbc.queryForList(check1, supplyStaff);
-            if (check2.size() == 0) {
-                model.addAttribute("centermsg", "⼈员不存在");
-                return "childPages/management";
-            }
-            if (!check2.get(0).get("type").equals("1")) {
-                model.addAttribute("centermsg", "⼈员的类型不是supply_staff");
-                return "childPages/management";
-            }
-            String check3 = "select * from center where center.name = ?";
-            List<Map<String, Object>> check4 = jdbc.queryForList(check3, supplyCenter);
-            if (check4.size() == 0) {
-                model.addAttribute("centermsg", "供应中⼼不存在");
-                return "childPages/management";
-            }
-            String check5 = "select * from model where model.model = ?";
-            List<Map<String, Object>> check6 = jdbc.queryForList(check5, productModel);
-            if (check6.size() == 0) {
-                model.addAttribute("centermsg", "产品型号不存在");
-            }
-            String check7 = "select c.name from staff join center c on staff.supply_center_id = c.id;";
-            List<Map<String, Object>> check8 = jdbc.queryForList(check7, supplyStaff);
-            if (!check8.get(0).get("name").equals(supplyCenter)) {
-                model.addAttribute("centermsg", "供应中⼼与⼈员所在的供应中⼼对应不上");
-            }
-            sql = "insert into orders(supply_center_id, product_model, supply_staff, date, purchase_price, quantity) values(?, ?, ?, ?, ?, ?)";
-            obj = new Object[6];
-            obj[0] = supplyCenter;
-            obj[1] = productModel;
-            obj[2] = supplyStaff;
-            obj[3] = date;
-            obj[4] = price;
-            obj[5] = quantity;
-        } else {
-            sql = "update orders set supply_center_id = ?, product_model = ?, supply_staff = ?, date = ?, purchase_price = ?, quantity = ? where id = ?";
-            obj = new Object[7];
+        String check1 = "select * from staff where staff.number = ?";
+        List<Map<String, Object>> check2 = jdbc.queryForList(check1, supplyStaff);
+        if (check2.size() == 0) {
+            model.addAttribute("centermsg", "⼈员不存在");
+            return "childPages/management";
         }
+        if (!check2.get(0).get("type").equals("1")) {
+            model.addAttribute("centermsg", "⼈员的类型不是supply_staff");
+            return "childPages/management";
+        }
+        String check3 = "select * from center where center.name = ?";
+        List<Map<String, Object>> check4 = jdbc.queryForList(check3, supplyCenter);
+        if (check4.size() == 0) {
+            model.addAttribute("centermsg", "供应中⼼不存在");
+            return "childPages/management";
+        }
+        String check5 = "select * from model where model.model = ?";
+        List<Map<String, Object>> check6 = jdbc.queryForList(check5, productModel);
+        if (check6.size() == 0) {
+            model.addAttribute("centermsg", "产品型号不存在");
+        }
+        String check7 = "select c.name from staff join center c on staff.supply_center_id = c.id;";
+        List<Map<String, Object>> check8 = jdbc.queryForList(check7, supplyStaff);
+        if (!check8.get(0).get("name").equals(supplyCenter)) {
+            model.addAttribute("centermsg", "供应中⼼与⼈员所在的供应中⼼对应不上");
+        }
+        String getid = "select id from model where model = ?";
+        List<Map<String, Object>> getid1 = jdbc.queryForList(getid, productModel);
+        int id = (int) getid1.get(0).get("id");
+        sql = "update warehousing set quantity = quantity + ? where model_id = ?";
+        obj = new Object[2];
+        obj[0] = quantity;
+        obj[1] = id;
         model.addAttribute("centermsg", "Failed");
+        try {
+            jdbc.update(sql, obj);
+            model.addAttribute("centermsg", "Success");
+        } catch (Exception e) {
+            throw e;
+        }
+        return "childPages/management";
+    }
+
+    @PostMapping("/placeorder")
+    public String placeorder(
+            @RequestParam("contract_num") String contractNum,
+            @RequestParam("enterprise") String enterprise,
+            @RequestParam("product_model") String productModel,
+            @RequestParam("quantity") String quantity,
+            @RequestParam("contract_manager") String contractManager,
+            @RequestParam("contract_date") String contractDate,
+            @RequestParam("estimated_delivery_date") String estimatedDeliveryDate,
+            @RequestParam("lodgement_date") String lodgementDate,
+            @RequestParam("salesman_num") String salesmanNum,
+            @RequestParam("contract_type") String contractType,
+            Model model
+    ) {
+
+        String[] sql = new String[2];
+        Object[] obj;
+        String check1 = "select * from staff where staff.number = ?";
+        List<Map<String, Object>> check2 = jdbc.queryForList(check1, contractManager);
+        if (!check2.get(0).get("type").equals("3")) {
+            model.addAttribute("centermsg", "该员工不是salesman");
+            return "childPages/management";
+        }
+        String check3 = "select * from stock where supply_center = ? and product_model = ? and quantity <= ?;";
+        List<Map<String, Object>> check4 = jdbc.queryForList(check3, productModel, quantity);
+        if (check4.size() == 0) {
+            model.addAttribute("centermsg", "库存不足");
+            return "childPages/management";
+        }
         try {
             jdbc.update(sql, obj);
             model.addAttribute("centermsg", "Success");
