@@ -58,10 +58,6 @@
 					</select>
 					<form class="form-center" id="form-center" th:action="@{/api/database/center/}" th:method="post" style="display: block;">
 						<div th:replace="~{childPages/common::typeselect}"></div>
-						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
-							<button type="button" class="close" data-dismiss="alert">&times;</button>
-							<strong th:text="${centermsg}"> </strong>
-						</div>
 						<div class="center">
 							<label class="sr-only">Center Id</label>
 							<input type="number" name="id" class="form-control" placeholder="Center Id" autofocus="">
@@ -70,14 +66,14 @@
 							<input type="text" name="updateid" class="form-control" placeholder="Original Id" style="display: none">
 							<input type="text" name="updatename" class="form-control" placeholder="Original Center Name" style="display: none">
 						</div>
-						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
-					</form>
-					<form class="form-enterprise" id="form-enterprise" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
-						<div th:replace="~{childPages/common::typeselect}"></div>
 						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
 							<button type="button" class="close" data-dismiss="alert">&times;</button>
 							<strong th:text="${centermsg}"> </strong>
 						</div>
+						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+					</form>
+					<form class="form-enterprise" id="form-enterprise" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
+						<div th:replace="~{childPages/common::typeselect}"></div>
 						<div class="enterprise">
 							<label class="sr-only">Enterprise Id</label>
 							<input type="number" name="id" class="form-control" placeholder="Enterprise Id" required="" autofocus="">
@@ -92,14 +88,15 @@
 							<label class="sr-only">Industry</label>
 							<input type="text" name="industry" class="form-control" placeholder="Industry" required="">
 						</div>
+						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
+						<button type="button" class="close" data-dismiss="alert">&times;</button>
+						<strong th:text="${centermsg}"> </strong>
+					</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
 					<form class="form-model" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
 						<div th:replace="~{childPages/common::typeselect}"></div>
-						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
-							<button type="button" class="close" data-dismiss="alert">&times;</button>
-							<strong th:text="${centermsg}"> </strong>
-						</div>
+
 						<div class="model">
 							<label class="sr-only">Model Id</label>
 							<input type="number" name="id" class="form-control" placeholder="Model Id" required="" autofocus="">
@@ -112,14 +109,14 @@
 							<label class="sr-only">Unit price</label>
 							<input type="number" name="unitprice" class="form-control" placeholder="Unit price" required="">
 						</div>
-						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
-					</form>
-					<form class="form-order" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
-						<div th:replace="~{childPages/common::typeselect}"></div>
 						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
 							<button type="button" class="close" data-dismiss="alert">&times;</button>
 							<strong th:text="${centermsg}"> </strong>
 						</div>
+						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+					</form>
+					<form class="form-order" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
+						<div th:replace="~{childPages/common::typeselect}"></div>
 						<div class="order">
 							<label class="sr-only">Order Id</label>
 							<input type="number" name="id" class="form-control" placeholder="Order Id" required="" autofocus="">
@@ -136,14 +133,14 @@
 							<label class="sr-only">Quantity</label>
 							<input type="text" name="quantity" class="form-control" placeholder="Quantity" required="">
 						</div>
-						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
-					</form>
-					<form class="form-staff" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
-						<div th:replace="~{childPages/common::typeselect}"></div>
 						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
 							<button type="button" class="close" data-dismiss="alert">&times;</button>
 							<strong th:text="${centermsg}"> </strong>
 						</div>
+						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+					</form>
+					<form class="form-staff" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
+						<div th:replace="~{childPages/common::typeselect}"></div>
 						<div class="staff">
 							<label class="sr-only">Staff Id</label>
 							<input type="number" name="id" class="form-control" placeholder="Staff Id" required="" autofocus="">
@@ -165,6 +162,10 @@
 							<input type="radio" name="type" id="contracts" class="form-control" placeholder="Contracts Manager" required="">
 							<label for="salesman">Salesman</label>
 							<input type="radio" name="type" id="salesman" class="form-control" placeholder="Salesman" required="">
+						</div>
+						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							<strong th:text="${centermsg}"> </strong>
 						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
