@@ -291,7 +291,7 @@ public class DatabaseController {
     }
 
     @PostMapping("/placeorder")
-    public String placeorder(
+    public String placeOrder(
             @RequestParam("contract_num") String contractNum,
             @RequestParam("enterprise") String enterprise,
             @RequestParam("product_model") String productModel,
@@ -304,16 +304,15 @@ public class DatabaseController {
             @RequestParam("contract_type") String contractType,
             Model model
     ) {
-
-        String[] sql = new String[2];
-        Object[] obj;
+        String sql;
+        Object obj;
         String check1 = "select * from staff where staff.number = ?";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, contractManager);
         if (!check2.get(0).get("type").equals("3")) {
             model.addAttribute("centermsg", "该员工不是salesman");
             return "childPages/management";
         }
-        String check3 = "select * from stock where supply_center = ? and product_model = ? and quantity <= ?;";
+        String check3 = "select * from warehousing where supply_center = ? and product_model = ? and quantity >= ?;";
         List<Map<String, Object>> check4 = jdbc.queryForList(check3, productModel, quantity);
         if (check4.size() == 0) {
             model.addAttribute("centermsg", "库存不足");
