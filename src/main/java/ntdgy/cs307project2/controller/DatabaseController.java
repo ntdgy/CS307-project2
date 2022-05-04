@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.util.DigestUtils;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/api/database")
@@ -24,6 +21,37 @@ public class DatabaseController {
     public DatabaseController(DataSource dataSource, JdbcTemplate jdbc) {
         this.dataSource = dataSource;
         this.jdbc = jdbc;
+    }
+
+    @PostMapping("/select/center")
+    @ResponseBody
+    public List<Map<String, Object>> selectCenter(
+            @RequestBody Map<String, Object> map
+    ){
+        String sql = "select * from center where";
+        List<String> s = new LinkedList<>();
+        for(var entry: map.entrySet()){
+            if(entry.getValue() == null || entry.getValue().equals("")) {
+                s.add(entry.getKey());
+            }
+        }
+        for(String i: s){
+            map.remove(i);
+        }
+        if(map.isEmpty())
+            //todo: error code
+            return null;
+        Object[] obj = new Object[map.size()];
+        int i = 0;
+        for(var entry: map.entrySet()){
+            if(i == 0){
+                sql = sql + " " +  entry.getKey() + " = ?";
+            } else {
+                sql = sql + " and " +  entry.getKey() + " = ?";
+            }
+            obj[i++] = entry.getValue();
+        }
+        return jdbc.queryForList(sql, obj);
     }
 
     @PostMapping("/center")
@@ -319,7 +347,7 @@ public class DatabaseController {
             return "childPages/management";
         }
         try {
-            jdbc.update(sql, obj);
+            //jdbc.update(sql, obj);
             model.addAttribute("centermsg", "Success");
         } catch (Exception e) {
             throw e;

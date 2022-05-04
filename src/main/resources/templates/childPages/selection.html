@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Custom styles for this templates -->
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet">
+    <style type="text/css">
+        /* Chart.js */
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+</head>
+
+<body ng-app="app" ng-controller="test">
+<div th:replace="~{childPages/common::topbar}"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="~{childPages/common::sidebar(active='selection')}"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <form>
+                <select ng-model="tables.table" ng-init="tables.table='center'">
+                    <option ng-show="false" value=""></option>
+                    <option value="center">Center</option>
+                    <option value="enterprise">Enterprise</option>
+                    <option value="model">Model</option>
+                    <option value="order">Order</option>
+                    <option value="staff">Staff</option>
+                    <option value="contract">Contract</option>
+                </select>
+            </form>
+            <div ng-switch="tables.table">
+                <form ng-switch-when="center" ng-submit="mysubmit()">
+                    <input type="number" name="id" class="form-control" placeholder="Center Id" autofocus="" ng-model="center.id">
+                    <input type="text" name="name" class="form-control" placeholder="Center Name" ng-model="center.name">
+                    <button type="submit" class="btn btn-lg btn-primary btn-block" >Submit</button>
+                    <table class="table table-striped table-sm">
+                        <thead>
+                        <tr>
+                            <td>id</td>
+                            <td>name</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="x in centerData">
+                            <td>{{x.id}}</td>
+                            <td>{{x.name}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+                <form ng-switch-when="enterprise">
+                    <input type="number" name="id" class="form-control" placeholder="Enterprise Id" autofocus="" ng-model="enterprise.id">
+                    <input type="text" name="name" class="form-control" placeholder="Center Name" ng-model="enterprise.name">
+                    <input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" ng-model="enterprise.supplycenter">
+                    <input type="text" name="country" class="form-control" placeholder="Country" ng-model="enterprise.country">
+                    <input type="text" name="city" class="form-control" placeholder="City" ng-model="enterprise.city">
+                    <input type="text" name="industry" class="form-control" placeholder="Industry" ng-model="enterprise.industry">
+                </form>
+                <form ng-switch-when="model">
+                    <input type="number" name="id" class="form-control" placeholder="Model Id" autofocus="" ng-model="model.id">
+                    <input type="text" name="name" class="form-control" placeholder="Center Name" ng-model="model.name">
+                    <input type="text" name="number" class="form-control" placeholder="Number" ng-model="model.number">
+                    <input type="text" name="model" class="form-control" placeholder="Model" ng-model="model.model">
+                    <input type="number" name="unitprice" class="form-control" placeholder="Unit price" ng-model="model.unitprice">
+                </form>
+                <form ng-switch-when="order">
+                    <input type="number" name="id" class="form-control" placeholder="Order Id" autofocus="" ng-model="order.id">
+                    <input type="text" name="productmodel" class="form-control" placeholder="Product Model" ng-model="order.productmodel">
+                    <input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" ng-model="order.supplycenter">
+                    <input type="text" name="supplystaff" class="form-control" placeholder="Supply Staff" ng-model="order.supplystaff">
+                    <input type="text" name="date" class="form-control" placeholder="Date" ng-model="order.date">
+                    <input type="text" name="purchaseprice" class="form-control" placeholder="Purchase Price" ng-model="order.purchaseprice">
+                    <input type="text" name="quantity" class="form-control" placeholder="Quantity" ng-model="order.quantity">
+                </form>
+                <form ng-switch-when="staff">
+                    <input type="number" name="id" class="form-control" placeholder="Staff Id" autofocus="">
+                    <input type="text" name="name" class="form-control" placeholder="Name">
+                    <input type="text" name="number" class="form-control" placeholder="Number">
+                    <input type="text" name="gender" class="form-control" placeholder="gender">
+                    <input type="number" name="age" class="form-control" placeholder="Age">
+                    <input type="text" name="mobilenumber" class="form-control" placeholder="Mobile Number">
+                    <label for="Director">Director</label>
+                    <input type="radio" name="type" id="Director" class="form-control" placeholder="Director">
+                    <label for="supply">Supply Staff</label>
+                    <input type="radio" name="type" id="supply" class="form-control" placeholder="Supply Staff">
+                    <label for="contracts">Contracts Manager</label>
+                    <input type="radio" name="type" id="contracts" class="form-control" placeholder="Contracts Manager">
+                    <label for="salesman">Salesman</label>
+                    <input type="radio" name="type" id="salesman" class="form-control" placeholder="Salesman">
+                </form>
+                <form ng-switch-when="contract">
+                    <input type="number" name="id" class="form-control" placeholder="Contract Id" autofocus="">
+                    <input type="text" name="number" class="form-control" placeholder="Contract number" autofocus="">
+                    <input type="text" name="enterprise" class="form-control" placeholder="Enterprise" autofocus="">
+                    <input type="date" name="date" class="form-control" placeholder="Contract Date" autofocus="">
+                    <input type="text" name="manager" class="form-control" placeholder="Contract Manager" autofocus="">
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" th:src="@{/js/jquery-3.2.1.slim.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+
+<!-- Graphs -->
+<script type="text/javascript" th:src="@{/js/Chart.min.js}"></script>
+<script type="text/javascript">
+    var app = angular.module('app', []);
+    var table;
+    app.controller('test', function ($scope, $http){
+        $scope.formData = {};
+        $scope.center = {};
+        $scope.enterprise = {};
+        $scope.model = {};
+        $scope.order = {};
+        $scope.staff = {};
+        $scope.contract = {};
+        $scope.tables = [];
+        $scope.mysubmit = function (){
+            if($scope.tables.table === 'center'){
+                $http({
+                    method: 'post',
+                    url: 'api/database/select/center',
+                    data: $scope.center
+                }).then(
+                    function (data, status, header, config){
+                        $scope.centerData = data.data;
+                        console.log($scope.centerData);
+                    }
+                ).catch(function (data, status, header, config){
+                    console.log(data, status);
+                });
+            } else if($scope.tables.table === 'enterprise'){
+                $http({
+                    method: 'post',
+                    url: 'api/database/select',
+                    data: $scope.enterprise
+                });
+            } else if($scope.tables.table === 'model'){
+                $http({
+                    method: 'post',
+                    url: 'api/database/select',
+                    data: $scope.model
+                });
+            } else if($scope.tables.table === 'order'){
+                $http({
+                    method: 'post',
+                    url: 'api/database/select',
+                    data: $scope.order
+                });
+            } else if($scope.tables.table === 'staff'){
+                $http({
+                    method: 'post',
+                    url: 'api/database/select',
+                    data: $scope.staff
+                });
+            } else if($scope.tables.table === 'contract'){
+                $http({
+                    method: 'post',
+                    url: 'api/database/select',
+                    data: $scope.contract
+                });
+            }
+        }
+    })
+</script>
+
+</body>
+
+</html>
