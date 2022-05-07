@@ -45,15 +45,16 @@ public class DatabaseController {
     }
 
     @PostMapping("/center")
-    public String addCenter(
+    @ResponseBody
+    public Map<String, Object> addCenter(
 //            @RequestParam("id") String id,
 //            @RequestParam("name") String name,
 //            @RequestParam("type") String type,
 //            @RequestParam(value = "updateid", required = false) String updateId,
 //            @RequestParam(value = "updatename", required = false) String updateName,
-            @RequestBody Map<String, Object> map,
-            Model model
+            @RequestBody Map<String, Object> map
     ) {
+        Map<String, Object> response = new HashMap<>();
         String[] para = new String[]{"id", "name"};
         String[] update = new String[]{"updateid", "updatename"};
         Object[] obj;
@@ -82,16 +83,16 @@ public class DatabaseController {
             sql = new StringBuilder("update center set ");
             obj = new Object[res.size() + temp.size()];
             int i = 0;
-            for(var entry: temp.entrySet()){
+            for(var entry: res.entrySet()){
                 sql.append(entry.getKey());
                 sql.append("=?");
-                if(i != temp.size()-1){
+                if(i != res.size()-1){
                     sql.append(',');
                 }
                 obj[i++] = entry.getValue();
             }
             sql.append(" where ");
-            for(var entry: res.entrySet()){
+            for(var entry: temp.entrySet()){
                 sql.append(entry.getKey());
                 sql.append("=? ");
                 if(i != obj.length-1){
@@ -112,17 +113,16 @@ public class DatabaseController {
                 obj[i++] = entry.getValue();
             }
         } else {
-            model.addAttribute("centermsg", "Failed");
-            return "childPages/management";
+            response.put("result", "failed");
+            return response;
         }
-        model.addAttribute("centermsg", "Failed");
         try {
             jdbc.update(sql.toString(), obj);
-            model.addAttribute("centermsg", "Success");
         } catch (Exception e) {
             throw e;
         }
-        return "childPages/management";
+        response.put("result", "success");
+        return response;
     }
 
     @PostMapping("/enterprise")

@@ -3,6 +3,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 	<head>
+		<script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<meta name="description" content="">
@@ -42,133 +43,160 @@
 		</style>
 	</head>
 
-	<body>
+	<body ng-app="manage" ng-controller="manager">
 		<div th:replace="~{childPages/common::topbar}"></div>
 		<div class="container-fluid">
 			<div class="row">
 				<div th:replace="~{childPages/common::sidebar(active='manage')}"></div>
 				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
 					<h2>Center Add</h2>
-					<select name="table" onchange="inputSwitch()">
-						<option>Center</option>
-						<option>Enterprise</option>
-						<option>Model</option>
-						<option>Order</option>
-						<option>Staff</option>
+					<select name="select" ng-init="select='center'" ng-model="select">
+						<option ng-show="false" value=""></option>
+						<option value="center">Center</option>
+						<option value="enterprise">Enterprise</option>
+						<option value="model">Model</option>
+						<option value="order">Order</option>
+						<option value="staff">Staff</option>
 					</select>
-					<form class="form-center" id="form-center" th:action="@{/api/database/center/}" th:method="post" style="display: block;">
-						<div th:replace="~{childPages/common::typeselect}"></div>
+					<div ng-switch="select">
+					<form class="form-center" id="form-center" ng-switch-when="center" ng-submit="mysubmit()">
+						<select name="type" ng-model="center.type" ng-init="center.type='Insert'">
+							<option ng-show="false" value=""></option>
+							<option value="Insert">Insert</option>
+							<option value="Select">Select</option>
+							<option value="Update">Update</option>
+							<option value="Delete">Delete</option>
+						</select>
 						<div class="center">
-							<label class="sr-only">Center Id</label>
-							<input type="number" name="id" class="form-control" placeholder="Center Id" autofocus="">
-							<label class="sr-only">Center Name</label>
-							<input type="text" name="name" class="form-control" placeholder="Center Name" required="">
-							<input type="text" name="updateid" class="form-control" placeholder="Original Id" style="display: none">
-							<input type="text" name="updatename" class="form-control" placeholder="Original Center Name" style="display: none">
+							<input type="number" name="id" class="form-control" placeholder="Center Id" autofocus="" ng-model="center.id">
+							<input type="text" name="name" class="form-control" placeholder="Center Name" required="" ng-model="center.name">
+							<div ng-switch="center.type">
+								<input type="text" name="updateid" class="form-control" placeholder="Original Id" ng-switch-when="Update" ng-model="center.updateid">
+								<input type="text" name="updatename" class="form-control" placeholder="Original Center Name" ng-switch-when="Update" ng-model="center.updatename">
+							</div>
 						</div>
-						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
-							<button type="button" class="close" data-dismiss="alert">&times;</button>
-							<strong th:text="${centermsg}"> </strong>
+						<div class="alert alert-success alert-dismissible" ng-show="centerData">
+<!--							<button type="button" class="close" data-dismiss="alert">&times;</button>-->
+							<strong> {{centerData}} </strong>
 						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
-					<form class="form-enterprise" id="form-enterprise" th:action="@{/api/database/enterprise/}" th:method="post" style="display: none;">
-						<div th:replace="~{childPages/common::typeselect}"></div>
+					<form class="form-enterprise" id="form-enterprise" ng-switch-when="enterprise" ng-submit="mysubmit()">
+						<select name="type" ng-model="enterprise.type" ng-init="enterprise.type='Insert'">
+							<option ng-show="false" value=""></option>
+							<option value="Insert">Insert</option>
+							<option value="Select">Select</option>
+							<option value="Update">Update</option>
+							<option value="Delete">Delete</option>
+						</select>
 						<div class="enterprise">
-							<label class="sr-only">Enterprise Id</label>
-							<input type="number" name="id" class="form-control" placeholder="Enterprise Id" required="" autofocus="">
-							<label class="sr-only">Center Name</label>
-							<input type="text" name="name" class="form-control" placeholder="Center Name" required="">
-							<label class="sr-only">Supply Center</label>
-							<input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" required="">
-							<label class="sr-only">Country</label>
-							<input type="text" name="country" class="form-control" placeholder="Country" required="">
-							<label class="sr-only">City</label>
-							<input type="text" name="city" class="form-control" placeholder="City" required="">
-							<label class="sr-only">Industry</label>
-							<input type="text" name="industry" class="form-control" placeholder="Industry" required="">
+							<input type="number" name="id" class="form-control" placeholder="Enterprise Id" required="" autofocus="" ng-model="enterprise.id">
+							<input type="text" name="name" class="form-control" placeholder="Center Name" required="" ng-model="enterprise.name">
+							<input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" required="" ng-model="enterprise.supplycenter">
+							<input type="text" name="country" class="form-control" placeholder="Country" required="" ng-model="enterprise.country">
+							<input type="text" name="city" class="form-control" placeholder="City" required="" ng-model="enterprise.city">
+							<input type="text" name="industry" class="form-control" placeholder="Industry" required="" ng-model="enterprise.industry">
 						</div>
-						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
-						<button type="button" class="close" data-dismiss="alert">&times;</button>
-						<strong th:text="${centermsg}"> </strong>
+						<div class="alert alert-success alert-dismissible" ng-show="enterpriseData">
+<!--						<button type="button" class="close" data-dismiss="alert">&times;</button>-->
+						<strong>{{enterpriseData}}</strong>
 					</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
-					<form class="form-model" th:action="@{/api/database/model/}" th:method="post" style="display: none;">
-						<div th:replace="~{childPages/common::typeselect}"></div>
+					<form class="form-model" ng-switch-when="model" ng-submit="mysubmit()">
+						<select name="type" ng-model="model.type" ng-init="model.type='Insert'">
+							<option ng-show="false" value=""></option>
+							<option value="Insert">Insert</option>
+							<option value="Select">Select</option>
+							<option value="Update">Update</option>
+							<option value="Delete">Delete</option>
+						</select>
 
 						<div class="model">
 							<label class="sr-only">Model Id</label>
-							<input type="number" name="id" class="form-control" placeholder="Model Id" required="" autofocus="">
+							<input type="number" name="id" class="form-control" placeholder="Model Id" required="" autofocus="" ng-model="model.id">
 							<label class="sr-only">Center Name</label>
-							<input type="text" name="name" class="form-control" placeholder="Center Name" required="">
+							<input type="text" name="name" class="form-control" placeholder="Center Name" required="" ng-model="model.name">
 							<label class="sr-only">Number</label>
-							<input type="text" name="number" class="form-control" placeholder="Number" required="">
+							<input type="text" name="number" class="form-control" placeholder="Number" required="" ng-model="model.number">
 							<label class="sr-only">Model</label>
-							<input type="text" name="model" class="form-control" placeholder="Model" required="">
+							<input type="text" name="model" class="form-control" placeholder="Model" required="" ng-model="model.model">
 							<label class="sr-only">Unit price</label>
-							<input type="number" name="unitprice" class="form-control" placeholder="Unit price" required="">
+							<input type="number" name="unitprice" class="form-control" placeholder="Unit price" required="" ng-model="model.unitprice">
 						</div>
-						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
-							<button type="button" class="close" data-dismiss="alert">&times;</button>
-							<strong th:text="${centermsg}"> </strong>
+						<div class="alert alert-success alert-dismissible" ng-show="modelData">
+<!--							<button type="button" class="close" data-dismiss="alert">&times;</button>-->
+							<strong>{{modelData}}</strong>
 						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
-					<form class="form-order" th:action="@{/api/database/order/}" th:method="post" style="display: none;">
-						<div th:replace="~{childPages/common::typeselect}"></div>
+					<form class="form-order" ng-switch-when="order" ng-submit="mysubmit()">
+						<select name="type" ng-model="order.type" ng-init="order.type='Insert'">
+							<option ng-show="false" value=""></option>
+							<option value="Insert">Insert</option>
+							<option value="Select">Select</option>
+							<option value="Update">Update</option>
+							<option value="Delete">Delete</option>
+						</select>
 						<div class="order">
 							<label class="sr-only">Order Id</label>
-							<input type="number" name="id" class="form-control" placeholder="Order Id" required="" autofocus="">
+							<input type="number" name="id" class="form-control" placeholder="Order Id" required="" autofocus="" ng-model="order.id">
 							<label class="sr-only">Product Model</label>
-							<input type="text" name="productmodel" class="form-control" placeholder="Product Model" required="">
+							<input type="text" name="productmodel" class="form-control" placeholder="Product Model" required="" ng-model="order.productmodel">
 							<label class="sr-only">Supply Center</label>
-							<input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" required="">
+							<input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" required="" ng-model="order.supplycenter">
 							<label class="sr-only">Supply Staff</label>
-							<input type="text" name="supplystaff" class="form-control" placeholder="Supply Staff" required="">
+							<input type="text" name="supplystaff" class="form-control" placeholder="Supply Staff" required="" ng-model="order.supplystaff">
 							<label class="sr-only">Date</label>
-							<input type="text" name="date" class="form-control" placeholder="Date" required="">
+							<input type="text" name="date" class="form-control" placeholder="Date" required="" ng-model="order.date">
 							<label class="sr-only">Purchase Price</label>
-							<input type="text" name="purchaseprice" class="form-control" placeholder="Purchase Price" required="">
+							<input type="text" name="purchaseprice" class="form-control" placeholder="Purchase Price" required="" ng-model="order.purchaseprice">
 							<label class="sr-only">Quantity</label>
-							<input type="text" name="quantity" class="form-control" placeholder="Quantity" required="">
+							<input type="text" name="quantity" class="form-control" placeholder="Quantity" required="" ng-model="order.quantity">
 						</div>
-						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
-							<button type="button" class="close" data-dismiss="alert">&times;</button>
-							<strong th:text="${centermsg}"> </strong>
+						<div class="alert alert-success alert-dismissible" ng-show="orderData">
+<!--							<button type="button" class="close" data-dismiss="alert">&times;</button>-->
+							<strong>{{orderData}}</strong>
 						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
-					<form class="form-staff" th:action="@{/api/database/staff/}" th:method="post" style="display: none;">
-						<div th:replace="~{childPages/common::typeselect}"></div>
+					<form class="form-staff" ng-switch-when="staff" ng-submit="mysubmit()">
+						<select name="type" ng-model="staff.type" ng-init="staff.type='Insert'">
+							<option ng-show="false" value=""></option>
+							<option value="Insert" ng-model="staff.type">Insert</option>
+							<option value="Select" ng-model="staff.type">Select</option>
+							<option value="Update" ng-model="staff.type">Update</option>
+							<option value="Delete" ng-model="staff.type">Delete</option>
+						</select>
 						<div class="staff">
 							<label class="sr-only">Staff Id</label>
-							<input type="number" name="id" class="form-control" placeholder="Staff Id" required="" autofocus="">
+							<input type="number" name="id" class="form-control" placeholder="Staff Id" required="" autofocus="" ng-model="staff.id">
 							<label class="sr-only">Name</label>
-							<input type="text" name="name" class="form-control" placeholder="Name" required="">
+							<input type="text" name="name" class="form-control" placeholder="Name" required="" ng-model="staff.name">
 							<label class="sr-only">Number</label>
-							<input type="text" name="number" class="form-control" placeholder="Number" required="">
+							<input type="text" name="number" class="form-control" placeholder="Number" required="" ng-model="staff.number">
 							<label class="sr-only">Gender</label>
-							<input type="text" name="gender" class="form-control" placeholder="gender" required="">
+							<input type="text" name="gender" class="form-control" placeholder="gender" required="" ng-model="staff.gender">
 							<label class="sr-only">Age</label>
-							<input type="number" name="age" class="form-control" placeholder="Age" required="">
+							<input type="number" name="age" class="form-control" placeholder="Age" required="" ng-model="staff.age">
 							<label class="sr-only">Mobile Number</label>
-							<input type="text" name="mobilenumber" class="form-control" placeholder="Mobile Number" required="">
+							<input type="text" name="mobilenumber" class="form-control" placeholder="Mobile Number" required="" ng-model="staff.mobilenumber">
 							<label for="Director">Director</label>
-							<input type="radio" name="type" id="Director" class="form-control" placeholder="Director" required="">
+							<input type="radio" name="type" id="Director" class="form-control" placeholder="Director" required="" ng-value="0" ng-model="staff.staffType">
 							<label for="supply">Supply Staff</label>
-							<input type="radio" name="type" id="supply" class="form-control" placeholder="Supply Staff" required="">
+							<input type="radio" name="type" id="supply" class="form-control" placeholder="Supply Staff" required="" ng-value="1" ng-model="staff.staffType">
 							<label for="contracts">Contracts Manager</label>
-							<input type="radio" name="type" id="contracts" class="form-control" placeholder="Contracts Manager" required="">
+							<input type="radio" name="type" id="contracts" class="form-control" placeholder="Contracts Manager" required="" ng-value="2" ng-model="staff.staffType">
 							<label for="salesman">Salesman</label>
-							<input type="radio" name="type" id="salesman" class="form-control" placeholder="Salesman" required="">
+							<input type="radio" name="type" id="salesman" class="form-control" placeholder="Salesman" required="" ng-value="3" ng-model="staff.staffType">
 						</div>
-						<div class="alert alert-success alert-dismissible" th:if="${! #strings.isEmpty(centermsg)}">
-							<button type="button" class="close" data-dismiss="alert">&times;</button>
-							<strong th:text="${centermsg}"> </strong>
+						<div class="alert alert-success alert-dismissible" ng-show="staffData">
+<!--							<button type="button" class="close" data-dismiss="alert">&times;</button>-->
+							<strong>{{staffData}}</strong>
 						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
+					</div>
 				</main>
 			</div>
 		</div>
@@ -218,61 +246,7 @@
 			});
 		</script>
 
-		<script type="text/javascript">
-			function inputSwitch(){
-				var table = document.getElementsByName('table');
-				var index = table[0].selectedIndex;
-				var value = table[0].options[index].value;
-				console.log(value);
-				switch (value){
-					case 'Center':
-						document.getElementsByClassName('form-center')[0].style.display="block";
-						document.getElementsByClassName('form-enterprise')[0].style.display="none";
-						document.getElementsByClassName('form-staff')[0].style.display="none";
-						document.getElementsByClassName('form-order')[0].style.display="none";
-						document.getElementsByClassName('form-model')[0].style.display="none";
-						var select = document.getElementsByClassName('form-center')[0].children[0];
-						index = select.selectedIndex;
-						value = select.options[index].value;
-						if(value === 'Update'){
-							document.getElementsByClassName('form-center')[0].children[1].children[4].style.display="block";
-							document.getElementsByClassName('form-center')[0].children[1].children[5].style.display="block";
-						} else {
-							document.getElementsByClassName('form-center')[0].children[1].children[4].style.display="none";
-							document.getElementsByClassName('form-center')[0].children[1].children[5].style.display="none";
-						}
-						break;
-					case 'Enterprise':
-						document.getElementsByClassName('form-center')[0].style.display="none";
-						document.getElementsByClassName('form-enterprise')[0].style.display="block";
-						document.getElementsByClassName('form-staff')[0].style.display="none";
-						document.getElementsByClassName('form-order')[0].style.display="none";
-						document.getElementsByClassName('form-model')[0].style.display="none";
-						break;
-					case 'Staff':
-						document.getElementsByClassName('form-center')[0].style.display="none";
-						document.getElementsByClassName('form-enterprise')[0].style.display="none";
-						document.getElementsByClassName('form-staff')[0].style.display="block";
-						document.getElementsByClassName('form-order')[0].style.display="none";
-						document.getElementsByClassName('form-model')[0].style.display="none";
-						break;
-					case 'Model':
-						document.getElementsByClassName('form-center')[0].style.display="none";
-						document.getElementsByClassName('form-enterprise')[0].style.display="none";
-						document.getElementsByClassName('form-staff')[0].style.display="none";
-						document.getElementsByClassName('form-order')[0].style.display="none";
-						document.getElementsByClassName('form-model')[0].style.display="block";
-						break;
-					case 'Order':
-						document.getElementsByClassName('form-center')[0].style.display="none";
-						document.getElementsByClassName('form-enterprise')[0].style.display="none";
-						document.getElementsByClassName('form-staff')[0].style.display="none";
-						document.getElementsByClassName('form-order')[0].style.display="block";
-						document.getElementsByClassName('form-model')[0].style.display="none";
-						break;
-				}
-			}
-		</script>
+		<script type="text/javascript" th:src="@{/js/manage.js}"></script>
 
 	</body>
 
