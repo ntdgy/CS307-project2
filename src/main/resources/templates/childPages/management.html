@@ -72,7 +72,7 @@
 						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
-					<form class="form-enterprise" id="form-enterprise" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
+					<form class="form-enterprise" id="form-enterprise" th:action="@{/api/database/enterprise/}" th:method="post" style="display: none;">
 						<div th:replace="~{childPages/common::typeselect}"></div>
 						<div class="enterprise">
 							<label class="sr-only">Enterprise Id</label>
@@ -94,7 +94,7 @@
 					</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
-					<form class="form-model" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
+					<form class="form-model" th:action="@{/api/database/model/}" th:method="post" style="display: none;">
 						<div th:replace="~{childPages/common::typeselect}"></div>
 
 						<div class="model">
@@ -115,7 +115,7 @@
 						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
-					<form class="form-order" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
+					<form class="form-order" th:action="@{/api/database/order/}" th:method="post" style="display: none;">
 						<div th:replace="~{childPages/common::typeselect}"></div>
 						<div class="order">
 							<label class="sr-only">Order Id</label>
@@ -139,7 +139,7 @@
 						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
-					<form class="form-staff" th:action="@{/api/database/center/add/}" th:method="post" style="display: none;">
+					<form class="form-staff" th:action="@{/api/database/staff/}" th:method="post" style="display: none;">
 						<div th:replace="~{childPages/common::typeselect}"></div>
 						<div class="staff">
 							<label class="sr-only">Staff Id</label>

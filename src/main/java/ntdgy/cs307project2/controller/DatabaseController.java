@@ -14,12 +14,10 @@ import java.util.*;
 @RequestMapping("/api/database")
 public class DatabaseController {
 
-    final DataSource dataSource;
 
     final JdbcTemplate jdbc;
 
-    public DatabaseController(DataSource dataSource, JdbcTemplate jdbc) {
-        this.dataSource = dataSource;
+    public DatabaseController(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 
@@ -110,7 +108,7 @@ public class DatabaseController {
             @RequestParam("name") String name,
             @RequestParam("country") String country,
             @RequestParam("city") @Nullable String city,
-            @RequestParam("supply_center") String supplyCenter,
+            @RequestParam("supplycenter") String supplyCenter,
             @RequestParam("type") String type,
             @RequestParam("industry") String industry,
             Model model
@@ -165,8 +163,8 @@ public class DatabaseController {
             @RequestParam("number") String number,
             @RequestParam("gender") String q,
             @RequestParam("age") String age,
-            @RequestParam("mobile_number") String mobileNumber,
-            @RequestParam("supply_center_id") String supplyCenterId,
+            @RequestParam("mobilenumber") String mobileNumber,
+            @RequestParam("supplycenterid") String supplyCenterId,
             @RequestParam("type") String type,
             Model model
     ) {
@@ -221,7 +219,7 @@ public class DatabaseController {
             @RequestParam("number") String number,
             @RequestParam("model") String model1,
             @RequestParam("name") String name,
-            @RequestParam("unit_price") String unitPrice,
+            @RequestParam("unitprice") String unitPrice,
             @RequestParam("type") String type,
             Model model
     ) {
@@ -264,12 +262,12 @@ public class DatabaseController {
 
     @PostMapping("/stockIn")
     public String stockIn(
-            @RequestParam("supply_center") String supplyCenter,
-            @RequestParam("product_model") String productModel,
-            @RequestParam("supply_staff") String supplyStaff,
+            @RequestParam("supplycenter") String supplyCenter,
+            @RequestParam("productmodel") String productModel,
+            @RequestParam("supplystaff") String supplyStaff,
             @RequestParam("date") String date,
             @RequestParam("type") String type,
-            @RequestParam("purchase_price") String price,
+            @RequestParam("purchaseprice") String price,
             @RequestParam("quantity") String quantity,
             Model model
     ) {
