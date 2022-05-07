@@ -27,15 +27,7 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ){
         String sql = "select * from center where";
-        List<String> s = new LinkedList<>();
-        for(var entry: map.entrySet()){
-            if(entry.getValue() == null || entry.getValue().equals("")) {
-                s.add(entry.getKey());
-            }
-        }
-        for(String i: s){
-            map.remove(i);
-        }
+        removeEmpty(map);
         if(map.isEmpty())
             //todo: error code
             return null;
@@ -54,47 +46,78 @@ public class DatabaseController {
 
     @PostMapping("/center")
     public String addCenter(
-            @RequestParam("id") String id,
-            @RequestParam("name") String name,
-            @RequestParam("type") String type,
-            @RequestParam(value = "updateid", required = false) String updateId,
-            @RequestParam(value = "updatename", required = false) String updateName,
+//            @RequestParam("id") String id,
+//            @RequestParam("name") String name,
+//            @RequestParam("type") String type,
+//            @RequestParam(value = "updateid", required = false) String updateId,
+//            @RequestParam(value = "updatename", required = false) String updateName,
+            @RequestBody Map<String, Object> map,
             Model model
     ) {
-        String sql;
+        String[] para = new String[]{"id", "name"};
+        String[] update = new String[]{"updateid", "updatename"};
         Object[] obj;
+        removeEmpty(map);
+        Map<String, Object> res = wash(map, para);
+        String type = (String)map.get("type");
+        StringBuilder sql;
         if (type.equals("Insert")) {
-            if (id.equals("")) {
-                sql = "insert into center(name) values(?)";
-                obj = new Object[1];
-                obj[0] = name;
-            } else {
-                sql = "insert into center(id, name) values(?, ?)";
-                obj = new Object[2];
-                obj[0] = Integer.parseInt(id);
-                obj[1] = name;
+            sql = new StringBuilder("insert into center(");
+            obj = new Object[res.size()];
+            int i = 0;
+            for(var entry: res.entrySet()){
+                sql.append(entry.getKey());
+                if(i != res.size()-1){
+                    sql.append(',');
+                }
+                obj[i++] = entry.getValue();
             }
+            sql.append(") values(");
+            for (int k = 1; k < res.size(); k++) {
+                sql.append("?,");
+            }
+            sql.append("?)");
         } else if (type.equals("Update")) { //TODO
-            sql = "update center set id=?, name=? where id=? and name=?";
-            obj = new Object[4];
-            obj[0] = Integer.parseInt(id);
-            obj[1] = name;
-            obj[2] = Integer.parseInt(updateId);
-            obj[3] = updateName;
+            var temp = wash(map, update);
+            sql = new StringBuilder("update center set ");
+            obj = new Object[res.size() + temp.size()];
+            int i = 0;
+            for(var entry: temp.entrySet()){
+                sql.append(entry.getKey());
+                sql.append("=?");
+                if(i != temp.size()-1){
+                    sql.append(',');
+                }
+                obj[i++] = entry.getValue();
+            }
+            sql.append(" where ");
+            for(var entry: res.entrySet()){
+                sql.append(entry.getKey());
+                sql.append("=? ");
+                if(i != obj.length-1){
+                    sql.append("and ");
+                }
+                obj[i++] = entry.getValue();
+            }
         } else if (type.equals("Delete")) {
-            sql = "delete from center where name = ?";
-            obj = new Object[1];
-            obj[0] = name;
-        } else if (type.equals("Select")) { //TODO
-            sql = "";
-            obj = new Object[1];
+            sql = new StringBuilder("delete from center where ");
+            obj = new Object[res.size()];
+            int i = 0;
+            for(var entry: res.entrySet()){
+                sql.append(entry.getKey());
+                sql.append("=? ");
+                if(i != res.size()-1){
+                    sql.append("and ");
+                }
+                obj[i++] = entry.getValue();
+            }
         } else {
             model.addAttribute("centermsg", "Failed");
             return "childPages/management";
         }
         model.addAttribute("centermsg", "Failed");
         try {
-            jdbc.update(sql, obj);
+            jdbc.update(sql.toString(), obj);
             model.addAttribute("centermsg", "Success");
         } catch (Exception e) {
             throw e;
@@ -138,11 +161,7 @@ public class DatabaseController {
             sql = "delete from enterprise where id = ?";
             obj = new Object[1];
             obj[0] = id;
-        } else if (type.equals("Select")) {
-            sql = "";
-            obj = new Object[1];
-
-        } else {
+        }  else {
             model.addAttribute("centermsg", "操作异常");
             return "childPages/management";
         }
@@ -196,10 +215,7 @@ public class DatabaseController {
             obj = new Object[1];
             obj[0] = id;
 
-        } else if (type.equals("Select")) {
-            sql = "";
-            obj = new Object[1];
-        } else {
+        }  else {
             model.addAttribute("centermsg", "操作异常");
             return "childPages/management";
         }
@@ -244,10 +260,7 @@ public class DatabaseController {
         } else if (type.equals("Delete")) {
             sql = "delete from model where id = ?";
             obj = new Object[1];
-        } else if (type.equals("Select")) {
-            sql = "";
-            obj = new Object[1];
-        } else {
+        }  else {
             model.addAttribute("centermsg", "操作异常");
             return "childPages/management";
         }
@@ -391,6 +404,29 @@ public class DatabaseController {
             jdbc.update(sql, m1);
             return true;
         }
+    }
+
+
+    private void removeEmpty(Map<String, Object> map) {
+        List<String> s = new LinkedList<>();
+        for(var entry: map.entrySet()){
+            if(entry.getValue() == null || entry.getValue().equals("")) {
+                s.add(entry.getKey());
+            }
+        }
+        for(String i: s){
+            map.remove(i);
+        }
+    }
+
+    private Map<String, Object> wash(Map<String, Object> map, String[] para){
+        Map<String, Object> res = new HashMap<>();
+        for(String s: para){
+            if(map.containsKey(s)){
+                res.put(s, map.get(s));
+            }
+        }
+        return res;
     }
 
 }
