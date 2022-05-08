@@ -450,18 +450,28 @@ public class DatabaseController {
         }
         String check5 = "select * from contract where contract_num = ?";
         List<Map<String, Object>> check6 = jdbc.queryForList(check5, map.get("contractnum"));
+        String check7 = "select count(*) from sold where model_name = ?";
+        Integer check8 = jdbc.queryForObject(check7, Integer.class, map.get("productmodel"));
         if (check6.size() != 0) {
-            sql = new String[2];
+            sql = new String[3];
             objects = new ArrayList<>();
             sql[0] = "insert into contract_content (contract_number, product_model_name, quantity, estimated_delivery_date, lodgement_date, salesman)\n" +
                     "values (?, ?, ?, ?, ?, ?)";
             objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), map.get("quantity"), map.get("estimated_delivery_date"), map.get("lodgementdate"), map.get("salesmannum")});
             sql[1] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
             objects.add(new Object[]{map.get("quantity"), check4.get(0).get("center_name"), map.get("productmodel")});
+            if (check8 != null && check8 == 0) {
+                sql[2] = "insert into sold (model_name, quantity) values (?, ?)";
+                objects.add(new Object[]{map.get("productmodel"), map.get("quantity")});
+            } else {
+                sql[2] = "update sold set quantity = quantity + ? where model_name = ?";
+                objects.add(new Object[]{map.get("quantity"), map.get("productmodel")});
+            }
             jdbc.update(sql[0], objects.get(0));
             jdbc.update(sql[1], objects.get(1));
+            jdbc.update(sql[2], objects.get(2));
         } else {
-            sql = new String[3];
+            sql = new String[4];
             objects = new ArrayList<>();
             sql[0] = "insert into contract (number, enterprise, contract_date, estimated_delivery_date, contract_manager, contract_type) values (?, ?, ?, ?, ?, ?)";
             objects.add(new Object[]{map.get("contractnum"), map.get("enterprise"), map.get("contractdate"), map.get("estimated_delivery_date"), map.get("contractmanager"), map.get("contracttype")});
@@ -469,9 +479,17 @@ public class DatabaseController {
             objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), map.get("quantity"), map.get("estimated_delivery_date"), map.get("lodgementdate"), map.get("salesmannum")});
             sql[2] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
             objects.add(new Object[]{map.get("quantity"), check4.get(0).get("center_name"), map.get("productmodel")});
+            if (check8 != null && check8 == 0) {
+                sql[3] = "insert into sold (model_name, quantity) values (?, ?)";
+                objects.add(new Object[]{map.get("productmodel"), map.get("quantity")});
+            } else {
+                sql[3] = "update sold set quantity = quantity + ? where model_name = ?";
+                objects.add(new Object[]{map.get("quantity"), map.get("productmodel")});
+            }
             jdbc.update(sql[0], objects.get(0));
             jdbc.update(sql[1], objects.get(1));
             jdbc.update(sql[2], objects.get(2));
+            jdbc.update(sql[3], objects.get(3));
         }
         res.put("result", "Success");
         return res;
@@ -498,25 +516,31 @@ public class DatabaseController {
         List<Object[]> objects;
         String check1 = "select * from contract_content where contract_number = ? and salesman = ? and product_model_name = ?";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contract"), map.get("salesman"), map.get("productmodel"));
+        int quantity = (Integer) map.get("quantity") - (Integer) check2.get(0).get("quantity");
         if (check2.size() == 0) {
             throw new InvalidDataException("该合同不属于该销售员");
         }
         if ((Integer) map.get("quantity") == 0) {
-            sql = new String[1];
+            sql = new String[2];
             objects = new ArrayList<>();
             sql[0] = "delete from contract_content where contract_number = ? and product_model_name = ? and salesman = ?";
             objects.add(new Object[]{map.get("contract"), map.get("productmodel"), map.get("salesman")});
+            sql[1] = "update sold set quantity = quantity - ? where model_name = ?";
+            objects.add(new Object[]{quantity, map.get("productmodel")});
             jdbc.update(sql[0], objects.get(0));
+            jdbc.update(sql[1], objects.get(1));
         } else {
-            sql = new String[2];
+            sql = new String[3];
             objects = new ArrayList<>();
             sql[0] = "update contract_content set quantity = ?, estimated_delivery_date = ?, lodgement_date = ? where contract_number = ? and product_model_name = ? and salesman = ?";
             objects.add(new Object[]{map.get("quantity"), map.get("estimated_delivery_date"), map.get("lodgement_date"), map.get("contract"), map.get("productmodel"), map.get("salesman")});
             sql[1] = "update warehousing set quantity = quantity - ? where model_name = ? and center_name = ?;";
-            int quantity = (Integer) map.get("quantity") - (Integer) check2.get(0).get("quantity");
             objects.add(new Object[]{(Object) quantity, map.get("productmodel"), check2.get(0).get("center_name")});
+            sql[2] = "update sold set quantity = quantity + ? where model_name = ?";
+            objects.add(new Object[]{(Object) quantity, map.get("productmodel")});
             jdbc.update(sql[0], objects.get(0));
             jdbc.update(sql[1], objects.get(1));
+            jdbc.update(sql[2], objects.get(2));
         }
         res.put("result", "Success");
         return res;
@@ -535,18 +559,27 @@ public class DatabaseController {
         List<Object[]> objects;
         String check1 = "select * from contract_content where contract_number = ? and salesman = ? order by estimated_delivery_date, product_model_name;";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contract"), map.get("salesman"));
+        String check3 = "select count(*) from sold where model_name = ?";
+        Integer check4 = jdbc.queryForObject(check3, Integer.class, map.get("productmodel"));
         if (check2.size() == 0) {
             throw new InvalidDataException("该合同不属于该销售员");
         }
-        //String productmodel = check2.get((Integer) map.get("seq")).get("product_model_name").toString();
-        sql = new String[2];
+        sql = new String[3];
         objects = new ArrayList<>();
         sql[0] = "delete from contract_content where contract_number = ? and product_model_name = ? and salesman = ?";
         objects.add(new Object[]{map.get("contract"), check2.get((Integer) map.get("seq")).get("product_model_name"), map.get("salesman")});
         sql[1] = "update warehousing set quantity = quantity + ? where model_name = ? and center_name = ?;";
         objects.add(new Object[]{check2.get((Integer) map.get("seq")).get("quantity"), check2.get((Integer) map.get("seq")).get("product_model_name"), check2.get((Integer) map.get("seq")).get("center_name")});
+        if(check4!=null && check4 == check2.get((Integer) map.get("seq")).get("quantity")){
+            sql[2] = "delete from sold where model_name = ?";
+            objects.add(new Object[]{check2.get((Integer) map.get("seq")).get("product_model_name")});
+        }else{
+            sql[2] = "update sold set quantity = quantity - ? where model_name = ?";
+            objects.add(new Object[]{check2.get((Integer) map.get("seq")).get("quantity"), check2.get((Integer) map.get("seq")).get("product_model_name")});
+        }
         jdbc.update(sql[0], objects.get(0));
         jdbc.update(sql[1], objects.get(1));
+        jdbc.update(sql[2], objects.get(2));
         res.put("result", "Success");
         return res;
     }
