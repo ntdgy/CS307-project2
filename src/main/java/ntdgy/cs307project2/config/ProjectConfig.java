@@ -23,6 +23,7 @@ public class ProjectConfig implements WebMvcConfigurer {
         registry.addViewController("/management.html").setViewName("childPages/management");
         registry.addViewController("/register.html").setViewName("signup");
         registry.addViewController("/selection.html").setViewName("childPages/selection");
+        registry.addViewController("/stockIn.html").setViewName("childPages/stockIn");
     }
 
     @Override
