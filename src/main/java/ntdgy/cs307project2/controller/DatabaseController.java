@@ -614,6 +614,24 @@ public class DatabaseController {
         return res;
     }
 
+    @GetMapping("/getNeverSoldProductCount")
+    public Map<String, Object> getNeverSoldProductCount() {
+        Map<String, Object> res = new HashMap<>();
+        String sql = "select count(*) from product where model_name not in (select product_model_name from contract_content);";
+        res.put("never sold", jdbc.queryForObject(sql, Integer.class));
+        return res;
+    }
+
+    //getFavoriteProductModel:
+    @PostMapping("/getFavoriteProductModel")
+    public Map<String, Object> getFavoriteProductModel() {
+        Map<String, Object> res = new HashMap<>();
+        String sql = "select model_name,quantity from sold s where (select quantity q from sold order by quantity limit 1) = s.quantity;";
+        List<Map<String, Object>> check = jdbc.queryForList(sql);
+        res.put("result", check);
+        return res;
+    }
+
 
     public boolean login(String name, String pwd) {
         String salt = "djj is super smart and beautiful mei shao nv";
