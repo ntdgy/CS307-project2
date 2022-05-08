@@ -4,6 +4,7 @@ package ntdgy.cs307project2.handler;
 import lombok.extern.slf4j.Slf4j;
 import ntdgy.cs307project2.exception.InvalidDataException;
 import ntdgy.cs307project2.exception.InvalidOperationException;
+import ntdgy.cs307project2.exception.WrongDataException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -29,6 +30,15 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(InvalidOperationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, Object> handleInvalidOperationException(InvalidOperationException e) {
+        Map<String, Object> res = new HashMap<>();
+        res.put("result", "fail " + e.getMessage());
+        return res;
+    }
+
+    @ExceptionHandler(WrongDataException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> handleWrongDataException(WrongDataException e) {
+        log.warn(e.getCause().getMessage());
         Map<String, Object> res = new HashMap<>();
         res.put("result", "fail " + e.getMessage());
         return res;

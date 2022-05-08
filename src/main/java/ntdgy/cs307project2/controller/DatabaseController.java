@@ -443,7 +443,7 @@ public class DatabaseController {
         if (!check2.get(0).get("type").equals("3")) {
             throw new InvalidDataException("该员工不是salesman");
         }
-        String check3 = "select from warehousing w join (select e.supply_center from contract join enterprise e on contract.enterprise = e.name where contract.number = ?) as cesc on w.center_name = cesc.supply_center and w.model_name = ? and w.quantity >= ?;";
+        String check3 = "select * from warehousing w join (select e.supply_center from contract join enterprise e on contract.enterprise = e.name where contract.number = ?) as cesc on w.center_name = cesc.supply_center and w.model_name = ? and w.quantity >= ?;";
         List<Map<String, Object>> check4 = jdbc.queryForList(check3, map.get("contractnum"), map.get("productmodel"), map.get("quantity"));
         if (check4.size() == 0) {
             throw new InvalidDataException("库存不足");
@@ -453,7 +453,25 @@ public class DatabaseController {
         if (check6.size() != 0) {
             sql = new String[2];
             objects = new ArrayList<>();
-
+            sql[0] = "insert into contract_content (contract_number, product_model_name, quantity, estimated_delivery_date, lodgement_date, salesman)\n" +
+                    "values (?, ?, ?, ?, ?, ?)";
+            objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), map.get("quantity"), map.get("estimated_delivery_date"), map.get("lodgementdate"), map.get("salesmannum")});
+            sql[1] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
+            objects.add(new Object[]{map.get("quantity"), check4.get(0).get("center_name"), map.get("productmodel")});
+            jdbc.update(sql[0], objects.get(0));
+            jdbc.update(sql[1], objects.get(1));
+        }else{
+            sql = new String[3];
+            objects = new ArrayList<>();
+            sql[0] = "insert into contract (number, enterprise, contract_date, estimated_delivery_date, contract_manager, contract_type) values (?, ?, ?, ?, ?, ?)";
+            objects.add(new Object[]{map.get("contractnum"), map.get("enterprise"), map.get("contractdate"), map.get("estimated_delivery_date"), map.get("contractmanager"), map.get("contracttype")});
+            sql[1] = "insert into contract_content (contract_number, product_model_name, quantity, estimated_delivery_date, lodgement_date, salesman) values (?, ?, ?, ?, ?, ?)";
+            objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), map.get("quantity"), map.get("estimated_delivery_date"), map.get("lodgementdate"), map.get("salesmannum")});
+            sql[2] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
+            objects.add(new Object[]{map.get("quantity"), check4.get(0).get("center_name"), map.get("productmodel")});
+            jdbc.update(sql[0], objects.get(0));
+            jdbc.update(sql[1], objects.get(1));
+            jdbc.update(sql[2], objects.get(2));
         }
         return res;
     }
