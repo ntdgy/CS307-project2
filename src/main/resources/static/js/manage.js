@@ -13,11 +13,11 @@ app.controller('manager', function ($scope, $http, $timeout) {
                 url: 'api/database/center',
                 data: $scope.center
             }).then(
-                function () {
-                    $scope.centerData = 'success';
+                function (data, status, header, config) {
+                    $scope.centerData = data.data.result;
                 }
             ).catch(function (data, status, header, config) {
-                $scope.centerData = 'failed';
+                $scope.centerData = data.data.result;
                 console.log(data, status);
             });
             $timeout(function (){
@@ -30,10 +30,10 @@ app.controller('manager', function ($scope, $http, $timeout) {
                 data: $scope.enterprise
             }).then(
                 function (data, status, header, config) {
-                    $scope.enterpriseData = 'success';
+                    $scope.enterpriseData = data.data.result;
                 }
             ).catch(function (data, status, header, config) {
-                $scope.enterpriseData = 'failed';
+                $scope.enterpriseData = data.data.result;
                 console.log(data, status);
             });
             $timeout(function (){
@@ -46,10 +46,10 @@ app.controller('manager', function ($scope, $http, $timeout) {
                 data: $scope.model
             }).then(
                 function (data, status, header, config) {
-                    $scope.modelData = 'success';
+                    $scope.modelData = data.data.result;
                 }
             ).catch(function (data, status, header, config) {
-                $scope.modelData = 'failed';
+                $scope.modelData = data.data.result;
                 console.log(data, status);
             });
             $timeout(function (){
@@ -62,10 +62,10 @@ app.controller('manager', function ($scope, $http, $timeout) {
                 data: $scope.order
             }).then(
                 function (data, status, header, config) {
-                    $scope.orderData = 'success';
+                    $scope.orderData = data.data.result;
                 }
             ).catch(function (data, status, header, config) {
-                $scope.orderData = 'failed';
+                $scope.orderData = data.data.result;
                 console.log(data, status);
             });
             $timeout(function (){
@@ -78,10 +78,10 @@ app.controller('manager', function ($scope, $http, $timeout) {
                 data: $scope.staff
             }).then(
                 function (data, status, header, config) {
-                    $scope.staffData = 'success';
+                    $scope.staffData = data.data.result;
                 }
             ).catch(function (data, status, header, config) {
-                $scope.staffData = 'failed';
+                $scope.staffData = data.data.result;
                 console.log(data, status);
             });
             $timeout(function (){
