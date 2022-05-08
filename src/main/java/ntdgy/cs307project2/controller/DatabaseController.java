@@ -460,7 +460,7 @@ public class DatabaseController {
             objects.add(new Object[]{map.get("quantity"), check4.get(0).get("center_name"), map.get("productmodel")});
             jdbc.update(sql[0], objects.get(0));
             jdbc.update(sql[1], objects.get(1));
-        }else{
+        } else {
             sql = new String[3];
             objects = new ArrayList<>();
             sql[0] = "insert into contract (number, enterprise, contract_date, estimated_delivery_date, contract_manager, contract_type) values (?, ?, ?, ?, ?, ?)";
@@ -498,16 +498,16 @@ public class DatabaseController {
         List<Object[]> objects;
         String check1 = "select * from contract_content where contract_number = ? and salesman = ? and product_model_name = ?";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contract"), map.get("salesman"), map.get("productmodel"));
-        if(check2.size() == 0){
+        if (check2.size() == 0) {
             throw new InvalidDataException("该合同不属于该销售员");
         }
-        if((Integer) map.get("quantity") == 0){
+        if ((Integer) map.get("quantity") == 0) {
             sql = new String[1];
             objects = new ArrayList<>();
             sql[0] = "delete from contract_content where contract_number = ? and product_model_name = ? and salesman = ?";
             objects.add(new Object[]{map.get("contract"), map.get("productmodel"), map.get("salesman")});
             jdbc.update(sql[0], objects.get(0));
-        }else{
+        } else {
             sql = new String[2];
             objects = new ArrayList<>();
             sql[0] = "update contract_content set quantity = ?, estimated_delivery_date = ?, lodgement_date = ? where contract_number = ? and product_model_name = ? and salesman = ?";
@@ -518,6 +518,35 @@ public class DatabaseController {
             jdbc.update(sql[0], objects.get(0));
             jdbc.update(sql[1], objects.get(1));
         }
+        res.put("result", "Success");
+        return res;
+    }
+
+    @PostMapping("/deleteOrder")
+    public Map<String, Object> deleteOrder(
+//            contract: The contract number
+//            salesman: The salesman number
+//            seq:
+            @RequestBody Map<String, Object> map
+    ) throws InvalidDataException {
+        removeEmpty(map);
+        Map<String, Object> res = new HashMap<>();
+        String[] sql;
+        List<Object[]> objects;
+        String check1 = "select * from contract_content where contract_number = ? and salesman = ? order by estimated_delivery_date, product_model_name;";
+        List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contract"), map.get("salesman"));
+        if (check2.size() == 0) {
+            throw new InvalidDataException("该合同不属于该销售员");
+        }
+        //String productmodel = check2.get((Integer) map.get("seq")).get("product_model_name").toString();
+        sql = new String[2];
+        objects = new ArrayList<>();
+        sql[0] = "delete from contract_content where contract_number = ? and product_model_name = ? and salesman = ?";
+        objects.add(new Object[]{map.get("contract"), check2.get((Integer) map.get("seq")).get("product_model_name"), map.get("salesman")});
+        sql[1] = "update warehousing set quantity = quantity + ? where model_name = ? and center_name = ?;";
+        objects.add(new Object[]{check2.get((Integer) map.get("seq")).get("quantity"), check2.get((Integer) map.get("seq")).get("product_model_name"), check2.get((Integer) map.get("seq")).get("center_name")});
+        jdbc.update(sql[0], objects.get(0));
+        jdbc.update(sql[1], objects.get(1));
         res.put("result", "Success");
         return res;
     }
