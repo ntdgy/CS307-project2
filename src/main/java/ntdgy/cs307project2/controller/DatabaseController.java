@@ -622,7 +622,6 @@ public class DatabaseController {
         return res;
     }
 
-    //getFavoriteProductModel:
     @PostMapping("/getFavoriteProductModel")
     public Map<String, Object> getFavoriteProductModel() {
         Map<String, Object> res = new HashMap<>();
