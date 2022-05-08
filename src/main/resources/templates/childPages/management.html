@@ -78,9 +78,6 @@
 <!--							<button type="button" class="close" data-dismiss="alert">&times;</button>-->
 							<strong> {{centerData}} </strong>
 						</div>
-						<div class="alert alert-danger alert-dismissible" ng-show="centerFail">
-							<strong> {{centerFail}} </strong>
-						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
 					<form class="form-enterprise" id="form-enterprise" ng-switch-when="enterprise" ng-submit="mysubmit()">
@@ -110,9 +107,6 @@
 <!--						<button type="button" class="close" data-dismiss="alert">&times;</button>-->
 						<strong>{{enterpriseData}}</strong>
 					</div>
-						<div class="alert alert-danger alert-dismissible" ng-show="enterpriseFail">
-							<strong> {{enterpriseFail}} </strong>
-						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
 					<form class="form-model" ng-switch-when="model" ng-submit="mysubmit()">
@@ -151,59 +145,53 @@
 <!--							<button type="button" class="close" data-dismiss="alert">&times;</button>-->
 							<strong>{{modelData}}</strong>
 						</div>
-						<div class="alert alert-danger alert-dismissible" ng-show="modelFail">
-							<strong> {{modelFail}} </strong>
-						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
-					<form class="form-order" ng-switch-when="order" ng-submit="mysubmit()">
-						<select name="type" ng-model="order.type" ng-init="order.type='Insert'">
-							<option ng-show="false" value=""></option>
-							<option value="Insert">Insert</option>
-							<option value="Update">Update</option>
-							<option value="Delete">Delete</option>
-						</select>
-						<div class="order">
-							<label class="sr-only">Order Id</label>
-							<input type="number" name="id" class="form-control" placeholder="Order Id" required="" autofocus="" ng-model="order.id">
-							<label class="sr-only">Product Model</label>
-							<input type="text" name="productmodel" class="form-control" placeholder="Product Model" required="" ng-model="order.productmodel">
-							<label class="sr-only">Supply Center</label>
-							<input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" required="" ng-model="order.supplycenter">
-							<label class="sr-only">Supply Staff</label>
-							<input type="text" name="supplystaff" class="form-control" placeholder="Supply Staff" required="" ng-model="order.supplystaff">
-							<label class="sr-only">Date</label>
-							<input type="text" name="date" class="form-control" placeholder="Date" required="" ng-model="order.date">
-							<label class="sr-only">Purchase Price</label>
-							<input type="text" name="purchaseprice" class="form-control" placeholder="Purchase Price" required="" ng-model="order.purchaseprice">
-							<label class="sr-only">Quantity</label>
-							<input type="text" name="quantity" class="form-control" placeholder="Quantity" required="" ng-model="order.quantity">
-							<div ng-switch="order.type">
-								<label class="sr-only">Order Id</label>
-								<input type="number" name="updateid" class="form-control" placeholder="Original Order Id" required="" autofocus="" ng-model="order.updateid" ng-switch-when="Update">
-								<label class="sr-only">Product Model</label>
-								<input type="text" name="updateproductmodel" class="form-control" placeholder="Original Product Model" required="" ng-model="order.updateproductmodel" ng-switch-when="Update">
-								<label class="sr-only">Supply Center</label>
-								<input type="text" name="updatesupplycenter" class="form-control" placeholder="Original Supply Center" required="" ng-model="order.updatesupplycenter" ng-switch-when="Update">
-								<label class="sr-only">Supply Staff</label>
-								<input type="text" name="updatesupplystaff" class="form-control" placeholder="Original Supply Staff" required="" ng-model="order.updatesupplystaff" ng-switch-when="Update">
-								<label class="sr-only">Date</label>
-								<input type="text" name="updatedate" class="form-control" placeholder="Original Date" required="" ng-model="order.updatedate" ng-switch-when="Update">
-								<label class="sr-only">Purchase Price</label>
-								<input type="text" name="updatepurchaseprice" class="form-control" placeholder="Original Purchase Price" required="" ng-model="order.updatepurchaseprice" ng-switch-when="Update">
-								<label class="sr-only">Quantity</label>
-								<input type="text" name="updatequantity" class="form-control" placeholder="Original Quantity" required="" ng-model="order.updatequantity" ng-switch-when="Update">
-							</div>
-						</div>
-						<div class="alert alert-success alert-dismissible" ng-show="orderData">
-<!--							<button type="button" class="close" data-dismiss="alert">&times;</button>-->
-							<strong>{{orderData}}</strong>
-						</div>
-						<div class="alert alert-danger alert-dismissible" ng-show="orderFail">
-							<strong>{{orderFail}}</strong>
-						</div>
-						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
-					</form>
+<!--					<form class="form-order" ng-switch-when="order" ng-submit="mysubmit()">-->
+<!--						<select name="type" ng-model="order.type" ng-init="order.type='Insert'">-->
+<!--							<option ng-show="false" value=""></option>-->
+<!--							<option value="Insert">Insert</option>-->
+<!--							<option value="Update">Update</option>-->
+<!--							<option value="Delete">Delete</option>-->
+<!--						</select>-->
+<!--						<div class="order">-->
+<!--							<label class="sr-only">Order Id</label>-->
+<!--							<input type="number" name="id" class="form-control" placeholder="Order Id" required="" autofocus="" ng-model="order.id">-->
+<!--							<label class="sr-only">Product Model</label>-->
+<!--							<input type="text" name="productmodel" class="form-control" placeholder="Product Model" required="" ng-model="order.productmodel">-->
+<!--							<label class="sr-only">Supply Center</label>-->
+<!--							<input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" required="" ng-model="order.supplycenter">-->
+<!--							<label class="sr-only">Supply Staff</label>-->
+<!--							<input type="text" name="supplystaff" class="form-control" placeholder="Supply Staff" required="" ng-model="order.supplystaff">-->
+<!--							<label class="sr-only">Date</label>-->
+<!--							<input type="text" name="date" class="form-control" placeholder="Date" required="" ng-model="order.date">-->
+<!--							<label class="sr-only">Purchase Price</label>-->
+<!--							<input type="text" name="purchaseprice" class="form-control" placeholder="Purchase Price" required="" ng-model="order.purchaseprice">-->
+<!--							<label class="sr-only">Quantity</label>-->
+<!--							<input type="text" name="quantity" class="form-control" placeholder="Quantity" required="" ng-model="order.quantity">-->
+<!--							<div ng-switch="order.type">-->
+<!--								<label class="sr-only">Order Id</label>-->
+<!--								<input type="number" name="updateid" class="form-control" placeholder="Original Order Id" required="" autofocus="" ng-model="order.updateid" ng-switch-when="Update">-->
+<!--								<label class="sr-only">Product Model</label>-->
+<!--								<input type="text" name="updateproductmodel" class="form-control" placeholder="Original Product Model" required="" ng-model="order.updateproductmodel" ng-switch-when="Update">-->
+<!--								<label class="sr-only">Supply Center</label>-->
+<!--								<input type="text" name="updatesupplycenter" class="form-control" placeholder="Original Supply Center" required="" ng-model="order.updatesupplycenter" ng-switch-when="Update">-->
+<!--								<label class="sr-only">Supply Staff</label>-->
+<!--								<input type="text" name="updatesupplystaff" class="form-control" placeholder="Original Supply Staff" required="" ng-model="order.updatesupplystaff" ng-switch-when="Update">-->
+<!--								<label class="sr-only">Date</label>-->
+<!--								<input type="text" name="updatedate" class="form-control" placeholder="Original Date" required="" ng-model="order.updatedate" ng-switch-when="Update">-->
+<!--								<label class="sr-only">Purchase Price</label>-->
+<!--								<input type="text" name="updatepurchaseprice" class="form-control" placeholder="Original Purchase Price" required="" ng-model="order.updatepurchaseprice" ng-switch-when="Update">-->
+<!--								<label class="sr-only">Quantity</label>-->
+<!--								<input type="text" name="updatequantity" class="form-control" placeholder="Original Quantity" required="" ng-model="order.updatequantity" ng-switch-when="Update">-->
+<!--							</div>-->
+<!--						</div>-->
+<!--						<div class="alert alert-success alert-dismissible" ng-show="orderData">-->
+<!--&lt;!&ndash;							<button type="button" class="close" data-dismiss="alert">&times;</button>&ndash;&gt;-->
+<!--							<strong>{{orderData}}</strong>-->
+<!--						</div>-->
+<!--						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>-->
+<!--					</form>-->
 					<form class="form-staff" ng-switch-when="staff" ng-submit="mysubmit()">
 						<select name="type" ng-model="staff.type" ng-init="staff.type='Insert'">
 							<option ng-show="false" value=""></option>
@@ -252,9 +240,6 @@
 						<div class="alert alert-success alert-dismissible" ng-show="staffData">
 <!--							<button type="button" class="close" data-dismiss="alert">&times;</button>-->
 							<strong>{{staffData}}</strong>
-						</div>
-						<div class="alert alert-danger alert-dismissible" ng-show="staffFail">
-							<strong>{{staffFail}}</strong>
 						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
