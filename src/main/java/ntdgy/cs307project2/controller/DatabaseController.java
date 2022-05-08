@@ -1,5 +1,6 @@
 package ntdgy.cs307project2.controller;
 
+import ntdgy.cs307project2.exception.InvalidDataException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
@@ -26,27 +27,31 @@ public class DatabaseController {
     public List<Map<String, Object>> selectCenter(
             @RequestBody Map<String, Object> map
     ){
-        String sql = "select * from center where";
+        StringBuilder sql = new StringBuilder("select * from center where");
         removeEmpty(map);
-        if(map.isEmpty())
-            //todo: error code
-            return null;
+        if(map.isEmpty()){
+            List<Map<String, Object>> list = new ArrayList<>();
+            Map<String, Object> res = new HashMap<>();
+            res.put("centermsg", "查询结果为空");
+            list.add(res);
+            return list;
+        }
         Object[] obj = new Object[map.size()];
         int i = 0;
         for(var entry: map.entrySet()){
             if(i == 0){
-                sql = sql + " " +  entry.getKey() + " = ?";
+                sql.append(" ").append(entry.getKey()).append(" = ?");
             } else {
-                sql = sql + " and " +  entry.getKey() + " = ?";
+                sql.append(" and ").append(entry.getKey()).append(" = ?");
             }
             obj[i++] = entry.getValue();
         }
-        return jdbc.queryForList(sql, obj);
+        return jdbc.queryForList(sql.toString(), obj);
     }
 
     @PostMapping("/center")
     @ResponseBody
-    public Map<String, Object> addCenter(
+    public Map<String, Object> Center(
 //            @RequestParam("id") String id,
 //            @RequestParam("name") String name,
 //            @RequestParam("type") String type,
@@ -74,9 +79,7 @@ public class DatabaseController {
                 obj[i++] = entry.getValue();
             }
             sql.append(") values(");
-            for (int k = 1; k < res.size(); k++) {
-                sql.append("?,");
-            }
+            sql.append("?,".repeat(Math.max(0, res.size() - 1)));
             sql.append("?)");
         } else if (type.equals("Update")) { //TODO
             var temp = wash(map, update);
@@ -274,23 +277,27 @@ public class DatabaseController {
     }
 
     @PostMapping("/stockIn")
-    public String stockIn(
-            @RequestParam("supplycenter") String supplyCenter,
-            @RequestParam("productmodel") String productModel,
-            @RequestParam("supplystaff") String supplyStaff,
-            @RequestParam("date") String date,
-            @RequestParam("type") String type,
-            @RequestParam("purchaseprice") String price,
-            @RequestParam("quantity") String quantity,
-            Model model
-    ) {
+    public List<Map<String, Object>> stockIn (
+//            @RequestParam("supplycenter") String supplyCenter,
+//            @RequestParam("productmodel") String productModel,
+//            @RequestParam("supplystaff") String supplyStaff,
+//            @RequestParam("date") String date,
+//            @RequestParam("type") String type,
+//            @RequestParam("purchaseprice") String price,
+//            @RequestParam("quantity") String quantity,
+//            Model model
+            @RequestBody Map<String, Object> map
+            //map的参数同上
+    ) throws Exception {
+        removeEmpty(map);
+        List<Map<String, Object>> list = new ArrayList<>();
+        Map<String, Object> map1 = new HashMap<>();
         String sql;
         Object[] obj;
         String check1 = "select * from staff where staff.number = ?";
-        List<Map<String, Object>> check2 = jdbc.queryForList(check1, supplyStaff);
+        List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("supplystaff"));
         if (check2.size() == 0) {
-            model.addAttribute("centermsg", "⼈员不存在");
-            return "childPages/management";
+            throw new InvalidDataException("供应商不存在");
         }
         if (!check2.get(0).get("type").equals("1")) {
             model.addAttribute("centermsg", "⼈员的类型不是supply_staff");
