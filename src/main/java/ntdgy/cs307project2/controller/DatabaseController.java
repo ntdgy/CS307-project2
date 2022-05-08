@@ -1,12 +1,14 @@
 package ntdgy.cs307project2.controller;
 
 import ntdgy.cs307project2.exception.InvalidDataException;
+import ntdgy.cs307project2.exception.InvalidOperationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.util.DigestUtils;
+import org.springframework.dao.DuplicateKeyException;
 
 import javax.sql.DataSource;
 import java.util.*;
@@ -54,7 +56,7 @@ public class DatabaseController {
 //            @RequestParam(value = "updateid", required = false) String updateId,
 //            @RequestParam(value = "updatename", required = false) String updateName,
             @RequestBody Map<String, Object> map
-    ) {
+    ) throws Exception {
         Map<String, Object> response = new HashMap<>();
         String[] para = new String[]{"id", "name"};
         String[] update = new String[]{"updateid", "updatename"};
@@ -112,14 +114,14 @@ public class DatabaseController {
                 obj[i++] = entry.getValue();
             }
         } else {
-            response.put("result", "failed");
-            return response;
+            throw new InvalidOperationException("type is not valid");
         }
         try {
             jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
-            throw e;
+            throw new InvalidDataException("wssb", e);
         }
+
         response.put("result", "success");
         return response;
     }
@@ -308,7 +310,7 @@ public class DatabaseController {
         String type = (String) map.get("type");
         StringBuilder sql;
         if (type.equals("Insert")) {
-            sql = new StringBuilder("insert into enterprise(");
+            sql = new StringBuilder("insert into model(");
             obj = new Object[res.size()];
             int i = 0;
             for (var entry : res.entrySet()) {
@@ -323,7 +325,7 @@ public class DatabaseController {
             sql.append("?)");
         } else if (type.equals("Update")) { //TODO
             var temp = wash(map, update);
-            sql = new StringBuilder("update enterprise set ");
+            sql = new StringBuilder("update model set ");
             obj = new Object[res.size() + temp.size()];
             int i = 0;
             for (var entry : res.entrySet()) {
@@ -344,7 +346,7 @@ public class DatabaseController {
                 obj[i++] = entry.getValue();
             }
         } else if (type.equals("Delete")) {
-            sql = new StringBuilder("delete from enterprise where ");
+            sql = new StringBuilder("delete from model where ");
             obj = new Object[res.size()];
             int i = 0;
             for (var entry : res.entrySet()) {
@@ -514,7 +516,7 @@ public class DatabaseController {
         Map<String, Object> res = new HashMap<>();
         for (String s : para) {
             if (map.containsKey(s)) {
-                if(s.startsWith("update")){
+                if (s.startsWith("update")) {
                     res.put(s.replace("update", ""), map.get(s));
                 } else
                     res.put(s, map.get(s));

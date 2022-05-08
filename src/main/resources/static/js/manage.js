@@ -17,11 +17,12 @@ app.controller('manager', function ($scope, $http, $timeout) {
                     $scope.centerData = data.data.result;
                 }
             ).catch(function (data, status, header, config) {
-                $scope.centerData = data.data.result;
+                $scope.centerFail = data.data.result;
                 console.log(data, status);
             });
             $timeout(function (){
                 $scope.centerData = '';
+                $scope.centerFail = '';
             }, 3000);
         } else if ($scope.select === 'enterprise') {
             $http({
@@ -33,11 +34,12 @@ app.controller('manager', function ($scope, $http, $timeout) {
                     $scope.enterpriseData = data.data.result;
                 }
             ).catch(function (data, status, header, config) {
-                $scope.enterpriseData = data.data.result;
+                $scope.enterpriseFail = data.data.result;
                 console.log(data, status);
             });
             $timeout(function (){
                 $scope.enterpriseData = '';
+                $scope.enterpriseFail = '';
             }, 3000);
         } else if ($scope.select === 'model') {
             $http({
@@ -49,11 +51,12 @@ app.controller('manager', function ($scope, $http, $timeout) {
                     $scope.modelData = data.data.result;
                 }
             ).catch(function (data, status, header, config) {
-                $scope.modelData = data.data.result;
+                $scope.modelFail = data.data.result;
                 console.log(data, status);
             });
             $timeout(function (){
                 $scope.modelData = '';
+                $scope.modelFail = '';
             }, 3000);
         } else if ($scope.select === 'order') {
             $http({
@@ -65,11 +68,12 @@ app.controller('manager', function ($scope, $http, $timeout) {
                     $scope.orderData = data.data.result;
                 }
             ).catch(function (data, status, header, config) {
-                $scope.orderData = data.data.result;
+                $scope.orderFail = data.data.result;
                 console.log(data, status);
             });
             $timeout(function (){
                 $scope.orderData = '';
+                $scope.orderFail = '';
             }, 3000);
         } else if ($scope.select === 'staff') {
             $http({
@@ -81,11 +85,12 @@ app.controller('manager', function ($scope, $http, $timeout) {
                     $scope.staffData = data.data.result;
                 }
             ).catch(function (data, status, header, config) {
-                $scope.staffData = data.data.result;
+                $scope.staffFail = data.data.result;
                 console.log(data, status);
             });
             $timeout(function (){
                 $scope.staffData = '';
+                $scope.staffFail = '';
             }, 3000);
         }
     }
