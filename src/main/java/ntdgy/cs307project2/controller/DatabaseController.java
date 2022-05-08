@@ -551,6 +551,21 @@ public class DatabaseController {
         return res;
     }
 
+    //getAllStaffCount:
+    @GetMapping("/getAllStaffCount")
+    public Map<String, Object> getAllStaffCount() {
+        Map<String, Object> res = new HashMap<>();
+        String sql = "select count(*) from staff where stafftype = 0;";
+        res.put("director", jdbc.queryForObject(sql, Integer.class));
+        sql = "select count(*) from staff where stafftype = 1;";
+        res.put("supply staff", jdbc.queryForObject(sql, Integer.class));
+        sql = "select count(*) from staff where stafftype = 2;";
+        res.put("contracts manage", jdbc.queryForObject(sql, Integer.class));
+        sql = "select count(*) from staff where stafftype = 3;";
+        res.put("salesman", jdbc.queryForObject(sql, Integer.class));
+        return res;
+    }
+
     public boolean login(String name, String pwd) {
         String salt = "djj is super smart and beautiful mei shao nv";
         pwd = pwd + salt;
