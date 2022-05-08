@@ -473,6 +473,52 @@ public class DatabaseController {
             jdbc.update(sql[1], objects.get(1));
             jdbc.update(sql[2], objects.get(2));
         }
+        res.put("result", "Success");
+        return res;
+    }
+
+    @PostMapping("/updateOrder")
+    public Map<String, Object> updateOrder(
+//            contract: The contract number
+//            productmodel: The model of the product which is selled to the client enterprise
+//            salesman: The salesman number
+//            quantity: The number of the product which is selled to the client enterprise, this value maybe update
+//            estimatedeliverydate: Estimated delivery date of the product, this vcalue may be update
+//            lodgementdate: Actual delivery date of the product, this vcalue may be update
+//            The salesman can only update the order correspond to himself, error should be taken when
+//            illegal update appears
+//            The "quantity" in stock should update according to the update of quantity in order
+//            If the final value of quantity after update is 0, this order should be deleted from the contract
+//             After updating, if there is no order in contract, do not delete contract.
+            @RequestBody Map<String, Object> map
+    ) throws InvalidDataException {
+        removeEmpty(map);
+        Map<String, Object> res = new HashMap<>();
+        String[] sql;
+        List<Object[]> objects;
+        String check1 = "select * from contract_content where contract_number = ? and salesman = ? and product_model_name = ?";
+        List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contract"), map.get("salesman"), map.get("productmodel"));
+        if(check2.size() == 0){
+            throw new InvalidDataException("该合同不属于该销售员");
+        }
+        if((Integer) map.get("quantity") == 0){
+            sql = new String[1];
+            objects = new ArrayList<>();
+            sql[0] = "delete from contract_content where contract_number = ? and product_model_name = ? and salesman = ?";
+            objects.add(new Object[]{map.get("contract"), map.get("productmodel"), map.get("salesman")});
+            jdbc.update(sql[0], objects.get(0));
+        }else{
+            sql = new String[2];
+            objects = new ArrayList<>();
+            sql[0] = "update contract_content set quantity = ?, estimated_delivery_date = ?, lodgement_date = ? where contract_number = ? and product_model_name = ? and salesman = ?";
+            objects.add(new Object[]{map.get("quantity"), map.get("estimated_delivery_date"), map.get("lodgement_date"), map.get("contract"), map.get("productmodel"), map.get("salesman")});
+            sql[1] = "update warehousing set quantity = quantity - ? where model_name = ? and center_name = ?;";
+            int quantity = (Integer) map.get("quantity") - (Integer) check2.get(0).get("quantity");
+            objects.add(new Object[]{(Object) quantity, map.get("productmodel"), check2.get(0).get("center_name")});
+            jdbc.update(sql[0], objects.get(0));
+            jdbc.update(sql[1], objects.get(1));
+        }
+        res.put("result", "Success");
         return res;
     }
 
