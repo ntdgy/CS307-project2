@@ -321,6 +321,7 @@ public class DatabaseController {
         obj[1] = id;
         jdbc.update(sql, obj);
         res.put("result", "Success");
+        return res;
     }
 
     @PostMapping("/placeorder")
