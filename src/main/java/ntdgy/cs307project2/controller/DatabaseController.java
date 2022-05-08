@@ -573,6 +573,13 @@ public class DatabaseController {
         return res;
     }
 
+    @GetMapping("/getOrderCount")
+    public Map<String, Object> getOrderCount() {
+        Map<String, Object> res = new HashMap<>();
+        String sql = "select count(*) from contract_content;";
+        res.put("order", jdbc.queryForObject(sql, Integer.class));
+        return res;
+    }
 
 
     public boolean login(String name, String pwd) {
