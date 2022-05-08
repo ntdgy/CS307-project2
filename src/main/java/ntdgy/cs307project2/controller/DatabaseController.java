@@ -145,7 +145,7 @@ public class DatabaseController {
         String type = (String) map.get("type");
         StringBuilder sql;
         if (type.equals("Insert")) {
-            sql = new StringBuilder("insert into staff(");
+            sql = new StringBuilder("insert into enterprise(");
             obj = new Object[res.size()];
             int i = 0;
             for (var entry : res.entrySet()) {
@@ -160,7 +160,7 @@ public class DatabaseController {
             sql.append("?)");
         } else if (type.equals("Update")) {
             var temp = wash(map, update);
-            sql = new StringBuilder("update staff set ");
+            sql = new StringBuilder("update enterprise set ");
             obj = new Object[res.size() + temp.size()];
             int i = 0;
             for (var entry : res.entrySet()) {
@@ -181,7 +181,7 @@ public class DatabaseController {
                 obj[i++] = entry.getValue();
             }
         } else if (type.equals("Delete")) {
-            sql = new StringBuilder("delete from staff where ");
+            sql = new StringBuilder("delete from enterprise where ");
             obj = new Object[res.size()];
             int i = 0;
             for (var entry : res.entrySet()) {
@@ -228,7 +228,7 @@ public class DatabaseController {
         String type = (String) map.get("type");
         StringBuilder sql;
         if (type.equals("Insert")) {
-            sql = new StringBuilder("insert into enterprise(");
+            sql = new StringBuilder("insert into staff(");
             obj = new Object[res.size()];
             int i = 0;
             for (var entry : res.entrySet()) {
@@ -241,9 +241,9 @@ public class DatabaseController {
             sql.append(") values(");
             sql.append("?,".repeat(Math.max(0, res.size() - 1)));
             sql.append("?)");
-        } else if (type.equals("Update")) { //TODO
+        } else if (type.equals("Update")) {
             var temp = wash(map, update);
-            sql = new StringBuilder("update enterprise set ");
+            sql = new StringBuilder("update staff set ");
             obj = new Object[res.size() + temp.size()];
             int i = 0;
             for (var entry : res.entrySet()) {
@@ -264,7 +264,7 @@ public class DatabaseController {
                 obj[i++] = entry.getValue();
             }
         } else if (type.equals("Delete")) {
-            sql = new StringBuilder("delete from enterprise where ");
+            sql = new StringBuilder("delete from staff where ");
             obj = new Object[res.size()];
             int i = 0;
             for (var entry : res.entrySet()) {
