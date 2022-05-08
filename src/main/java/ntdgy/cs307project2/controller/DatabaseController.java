@@ -145,7 +145,7 @@ public class DatabaseController {
         String type = (String) map.get("type");
         StringBuilder sql;
         if (type.equals("Insert")) {
-            sql = new StringBuilder("insert into enterprise(");
+            sql = new StringBuilder("insert into staff(");
             obj = new Object[res.size()];
             int i = 0;
             for (var entry : res.entrySet()) {
@@ -160,7 +160,7 @@ public class DatabaseController {
             sql.append("?)");
         } else if (type.equals("Update")) {
             var temp = wash(map, update);
-            sql = new StringBuilder("update enterprise set ");
+            sql = new StringBuilder("update staff set ");
             obj = new Object[res.size() + temp.size()];
             int i = 0;
             for (var entry : res.entrySet()) {
@@ -181,7 +181,7 @@ public class DatabaseController {
                 obj[i++] = entry.getValue();
             }
         } else if (type.equals("Delete")) {
-            sql = new StringBuilder("delete from enterprise where ");
+            sql = new StringBuilder("delete from staff where ");
             obj = new Object[res.size()];
             int i = 0;
             for (var entry : res.entrySet()) {
@@ -215,13 +215,13 @@ public class DatabaseController {
 //            @RequestParam("age") String age,
 //            @RequestParam("mobilenumber") String mobileNumber,
 //            @RequestParam("supplycenterid") String supplyCenterId,
-//            @RequestParam("type") String type,
+//            @RequestParam("stafftype") String type,
 //            Model model
             @RequestBody Map<String, Object> map
     ) {
         Map<String, Object> response = new HashMap<>();
-        String[] para = new String[]{"id", "name", "number", "gender", "age", "mobilenumber", "supplycenterid", "type"};
-        String[] update = new String[]{"updateid", "updatename", "updategender", "updateage", "updatemobilenumber", "updatemobilenumber", "updatesupplycenterid"};
+        String[] para = new String[]{"id", "name", "number", "gender", "age", "mobilenumber", "supplycenterid", "stafftype"};
+        String[] update = new String[]{"updateid", "updatename", "updategender", "updateage", "updatemobilenumber", "updatemobilenumber", "updatesupplycenterid", "updatestafftype"};
         Object[] obj;
         removeEmpty(map);
         Map<String, Object> res = wash(map, para);
@@ -418,40 +418,42 @@ public class DatabaseController {
     }
 
     @PostMapping("/placeorder")
-    public String placeOrder(
-            @RequestParam("contract_num") String contractNum,
-            @RequestParam("enterprise") String enterprise,
-            @RequestParam("product_model") String productModel,
-            @RequestParam("quantity") String quantity,
-            @RequestParam("contract_manager") String contractManager,
-            @RequestParam("contract_date") String contractDate,
-            @RequestParam("estimated_delivery_date") String estimatedDeliveryDate,
-            @RequestParam("lodgement_date") String lodgementDate,
-            @RequestParam("salesman_num") String salesmanNum,
-            @RequestParam("contract_type") String contractType,
-            Model model
-    ) {
-        String sql;
-        Object obj;
+    public Map<String, Object> placeOrder(
+//            @RequestParam("contractnum") String contractNum,
+//            @RequestParam("enterprise") String enterprise,
+//            @RequestParam("productmodel") String productModel,
+//            @RequestParam("quantity") String quantity,
+//            @RequestParam("contractmanager") String contractManager,
+//            @RequestParam("contractdate") String contractDate,
+//            @RequestParam("estimated_delivery_date") String estimatedDeliveryDate,
+//            @RequestParam("lodgementdate") String lodgementDate,
+//            @RequestParam("salesmannum") String salesmanNum,
+//            @RequestParam("contracttype") String contractType,
+//            Model model
+            @RequestBody Map<String, Object> map
+    ) throws Exception {
+        removeEmpty(map);
+        Map<String, Object> res = new HashMap<>();
+        String[] sql;
+        List<Object[]> objects;
         String check1 = "select * from staff where staff.number = ?";
-        List<Map<String, Object>> check2 = jdbc.queryForList(check1, contractManager);
+        List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contractmanager"));
         if (!check2.get(0).get("type").equals("3")) {
-            model.addAttribute("centermsg", "该员工不是salesman");
-            return "childPages/management";
+            throw new InvalidDataException("该员工不是salesman");
         }
-        String check3 = "select * from warehousing where supply_center = ? and product_model = ? and quantity >= ?;";
-        List<Map<String, Object>> check4 = jdbc.queryForList(check3, productModel, quantity);
+        String check3 = "select from warehousing w join (select e.supply_center from contract join enterprise e on contract.enterprise = e.name where contract.number = ?) as cesc on w.center_name = cesc.supply_center and w.model_name = ? and w.quantity >= ?;";
+        List<Map<String, Object>> check4 = jdbc.queryForList(check3, map.get("contractnum"), map.get("productmodel"), map.get("quantity"));
         if (check4.size() == 0) {
-            model.addAttribute("centermsg", "库存不足");
-            return "childPages/management";
+            throw new InvalidDataException("库存不足");
         }
-        try {
-            //jdbc.update(sql, obj);
-            model.addAttribute("centermsg", "Success");
-        } catch (Exception e) {
-            throw e;
+        String check5 = "select * from contract where contract_num = ?";
+        List<Map<String, Object>> check6 = jdbc.queryForList(check5, map.get("contractnum"));
+        if (check6.size() != 0) {
+            sql = new String[2];
+            objects = new ArrayList<>();
+
         }
-        return "childPages/management";
+        return res;
     }
 
     public boolean login(String name, String pwd) {
