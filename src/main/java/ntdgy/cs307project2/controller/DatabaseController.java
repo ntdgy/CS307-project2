@@ -512,7 +512,10 @@ public class DatabaseController {
         Map<String, Object> res = new HashMap<>();
         for (String s : para) {
             if (map.containsKey(s)) {
-                res.put(s, map.get(s));
+                if(s.startsWith("update")){
+                    res.put(s.replace("update", ""), map.get(s));
+                } else
+                    res.put(s, map.get(s));
             }
         }
         return res;
