@@ -29,13 +29,13 @@ public class DatabaseController {
     ) throws InvalidDataException {
         StringBuilder sql = new StringBuilder("select * from center where");
         removeEmpty(map);
-        if(map.isEmpty()){
+        if (map.isEmpty()) {
             throw new InvalidDataException("查询条件为空");
         }
         Object[] obj = new Object[map.size()];
         int i = 0;
-        for(var entry: map.entrySet()){
-            if(i == 0){
+        for (var entry : map.entrySet()) {
+            if (i == 0) {
                 sql.append(" ").append(entry.getKey()).append(" = ?");
             } else {
                 sql.append(" and ").append(entry.getKey()).append(" = ?");
@@ -61,15 +61,15 @@ public class DatabaseController {
         Object[] obj;
         removeEmpty(map);
         Map<String, Object> res = wash(map, para);
-        String type = (String)map.get("type");
+        String type = (String) map.get("type");
         StringBuilder sql;
         if (type.equals("Insert")) {
             sql = new StringBuilder("insert into center(");
             obj = new Object[res.size()];
             int i = 0;
-            for(var entry: res.entrySet()){
+            for (var entry : res.entrySet()) {
                 sql.append(entry.getKey());
-                if(i != res.size()-1){
+                if (i != res.size() - 1) {
                     sql.append(',');
                 }
                 obj[i++] = entry.getValue();
@@ -77,24 +77,24 @@ public class DatabaseController {
             sql.append(") values(");
             sql.append("?,".repeat(Math.max(0, res.size() - 1)));
             sql.append("?)");
-        } else if (type.equals("Update")) { //TODO
+        } else if (type.equals("Update")) {
             var temp = wash(map, update);
             sql = new StringBuilder("update center set ");
             obj = new Object[res.size() + temp.size()];
             int i = 0;
-            for(var entry: res.entrySet()){
+            for (var entry : res.entrySet()) {
                 sql.append(entry.getKey());
                 sql.append("=?");
-                if(i != res.size()-1){
+                if (i != res.size() - 1) {
                     sql.append(',');
                 }
                 obj[i++] = entry.getValue();
             }
             sql.append(" where ");
-            for(var entry: temp.entrySet()){
+            for (var entry : temp.entrySet()) {
                 sql.append(entry.getKey());
                 sql.append("=? ");
-                if(i != obj.length-1){
+                if (i != obj.length - 1) {
                     sql.append("and ");
                 }
                 obj[i++] = entry.getValue();
@@ -103,10 +103,10 @@ public class DatabaseController {
             sql = new StringBuilder("delete from center where ");
             obj = new Object[res.size()];
             int i = 0;
-            for(var entry: res.entrySet()){
+            for (var entry : res.entrySet()) {
                 sql.append(entry.getKey());
                 sql.append("=? ");
-                if(i != res.size()-1){
+                if (i != res.size() - 1) {
                     sql.append("and ");
                 }
                 obj[i++] = entry.getValue();
@@ -125,155 +125,251 @@ public class DatabaseController {
     }
 
     @PostMapping("/enterprise")
-    public String addEnterprise(
-            @RequestParam("id") int id,
-            @RequestParam("name") String name,
-            @RequestParam("country") String country,
-            @RequestParam("city") @Nullable String city,
-            @RequestParam("supplycenter") String supplyCenter,
-            @RequestParam("type") String type,
-            @RequestParam("industry") String industry,
-            Model model
+    public Map<String, Object> addEnterprise(
+//            @RequestParam("id") int id,
+//            @RequestParam("name") String name,
+//            @RequestParam("country") String country,
+//            @RequestParam("city") @Nullable String city,
+//            @RequestParam("supplycenter") String supplyCenter,
+//            @RequestParam("type") String type,
+//            @RequestParam("industry") String industry,
+//            Model model
+            @RequestBody Map<String, Object> map
     ) {
-        String sql;
+        Map<String, Object> response = new HashMap<>();
+        String[] para = new String[]{"id", "name", "country", "city", "supplycenter", "type", "industry"};
+        String[] update = new String[]{"updateid", "updatename", "updatecountry", "updatecity", "updatesupplycenter", "updatetype", "updateindustry"};
         Object[] obj;
+        removeEmpty(map);
+        Map<String, Object> res = wash(map, para);
+        String type = (String) map.get("type");
+        StringBuilder sql;
         if (type.equals("Insert")) {
-            sql = "insert into enterprise(id, name, country, city, supply_center, industry) values(?, ?, ?, ?, ?, ?)";
-            obj = new Object[6];
-            obj[0] = id;
-            obj[1] = name;
-            obj[2] = country;
-            obj[3] = city;
-            obj[4] = supplyCenter;
-            obj[5] = industry;
+            sql = new StringBuilder("insert into enterprise(");
+            obj = new Object[res.size()];
+            int i = 0;
+            for (var entry : res.entrySet()) {
+                sql.append(entry.getKey());
+                if (i != res.size() - 1) {
+                    sql.append(',');
+                }
+                obj[i++] = entry.getValue();
+            }
+            sql.append(") values(");
+            sql.append("?,".repeat(Math.max(0, res.size() - 1)));
+            sql.append("?)");
         } else if (type.equals("Update")) {
-            sql = "update enterprise set id=?, name=?, country=?, city=?, supply_center=?, industry=? where id=?";
-            obj = new Object[7];
-            obj[0] = id;
-            obj[1] = name;
-            obj[2] = country;
-            obj[3] = city;
-            obj[4] = supplyCenter;
-            obj[5] = industry;
-            obj[6] = id;
+            var temp = wash(map, update);
+            sql = new StringBuilder("update enterprise set ");
+            obj = new Object[res.size() + temp.size()];
+            int i = 0;
+            for (var entry : res.entrySet()) {
+                sql.append(entry.getKey());
+                sql.append("=?");
+                if (i != res.size() - 1) {
+                    sql.append(',');
+                }
+                obj[i++] = entry.getValue();
+            }
+            sql.append(" where ");
+            for (var entry : temp.entrySet()) {
+                sql.append(entry.getKey());
+                sql.append("=? ");
+                if (i != obj.length - 1) {
+                    sql.append("and ");
+                }
+                obj[i++] = entry.getValue();
+            }
         } else if (type.equals("Delete")) {
-            sql = "delete from enterprise where id = ?";
-            obj = new Object[1];
-            obj[0] = id;
-        }  else {
-            model.addAttribute("centermsg", "操作异常");
-            return "childPages/management";
+            sql = new StringBuilder("delete from enterprise where ");
+            obj = new Object[res.size()];
+            int i = 0;
+            for (var entry : res.entrySet()) {
+                sql.append(entry.getKey());
+                sql.append("=? ");
+                if (i != res.size() - 1) {
+                    sql.append("and ");
+                }
+                obj[i++] = entry.getValue();
+            }
+        } else {
+            response.put("result", "failed");
+            return response;
         }
         try {
-            jdbc.update(sql, obj);
-            model.addAttribute("centermsg", "Success");
+            jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
             throw e;
         }
-        return "childPages/management";
+        response.put("result", "success");
+        return response;
     }
 
 
     @PostMapping("/staff")
-    public String addEnterprise(
-            @RequestParam("id") int id,
-            @RequestParam("name") String name,
-            @RequestParam("number") String number,
-            @RequestParam("gender") String q,
-            @RequestParam("age") String age,
-            @RequestParam("mobilenumber") String mobileNumber,
-            @RequestParam("supplycenterid") String supplyCenterId,
-            @RequestParam("type") String type,
-            Model model
+    public Map<String, Object> Enterprise(
+//            @RequestParam("id") int id,
+//            @RequestParam("name") String name,
+//            @RequestParam("number") String number,
+//            @RequestParam("gender") String q,
+//            @RequestParam("age") String age,
+//            @RequestParam("mobilenumber") String mobileNumber,
+//            @RequestParam("supplycenterid") String supplyCenterId,
+//            @RequestParam("type") String type,
+//            Model model
+            @RequestBody Map<String, Object> map
     ) {
-        String sql;
+        Map<String, Object> response = new HashMap<>();
+        String[] para = new String[]{"id", "name", "number", "gender", "age", "mobilenumber", "supplycenterid", "type"};
+        String[] update = new String[]{"updateid", "updatename", "updategender", "updateage", "updatemobilenumber", "updatemobilenumber", "updatesupplycenterid"};
         Object[] obj;
+        removeEmpty(map);
+        Map<String, Object> res = wash(map, para);
+        String type = (String) map.get("type");
+        StringBuilder sql;
         if (type.equals("Insert")) {
-            sql = "insert into staff(id, name, number, q, age, mobile_number, supply_center_id) values(?, ?, ?, ?, ?, ?, ?)";
-            obj = new Object[7];
-            obj[0] = id;
-            obj[1] = name;
-            obj[2] = number;
-            obj[3] = q;
-            obj[4] = age;
-            obj[5] = mobileNumber;
-            obj[6] = supplyCenterId;
-        } else if (type.equals("Update")) {
-            sql = "update staff set id=?, name=?, number=?, q=?, age=?, mobile_number=?, supply_center_id=? where id=?";
-            obj = new Object[8];
-            obj[0] = id;
-            obj[1] = name;
-            obj[2] = number;
-            obj[3] = q;
-            obj[4] = age;
-            obj[5] = mobileNumber;
-            obj[6] = supplyCenterId;
-            obj[7] = id;
+            sql = new StringBuilder("insert into enterprise(");
+            obj = new Object[res.size()];
+            int i = 0;
+            for (var entry : res.entrySet()) {
+                sql.append(entry.getKey());
+                if (i != res.size() - 1) {
+                    sql.append(',');
+                }
+                obj[i++] = entry.getValue();
+            }
+            sql.append(") values(");
+            sql.append("?,".repeat(Math.max(0, res.size() - 1)));
+            sql.append("?)");
+        } else if (type.equals("Update")) { //TODO
+            var temp = wash(map, update);
+            sql = new StringBuilder("update enterprise set ");
+            obj = new Object[res.size() + temp.size()];
+            int i = 0;
+            for (var entry : res.entrySet()) {
+                sql.append(entry.getKey());
+                sql.append("=?");
+                if (i != res.size() - 1) {
+                    sql.append(',');
+                }
+                obj[i++] = entry.getValue();
+            }
+            sql.append(" where ");
+            for (var entry : temp.entrySet()) {
+                sql.append(entry.getKey());
+                sql.append("=? ");
+                if (i != obj.length - 1) {
+                    sql.append("and ");
+                }
+                obj[i++] = entry.getValue();
+            }
         } else if (type.equals("Delete")) {
-            sql = "delete from staff where id = ?";
-            obj = new Object[1];
-            obj[0] = id;
-
-        }  else {
-            model.addAttribute("centermsg", "操作异常");
-            return "childPages/management";
+            sql = new StringBuilder("delete from enterprise where ");
+            obj = new Object[res.size()];
+            int i = 0;
+            for (var entry : res.entrySet()) {
+                sql.append(entry.getKey());
+                sql.append("=? ");
+                if (i != res.size() - 1) {
+                    sql.append("and ");
+                }
+                obj[i++] = entry.getValue();
+            }
+        } else {
+            response.put("result", "failed");
+            return response;
         }
         try {
-            jdbc.update(sql, obj);
-            model.addAttribute("centermsg", "Success");
+            jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
             throw e;
         }
-        return "childPages/management";
+        response.put("result", "success");
+        return response;
     }
 
-
     @PostMapping("/model")
-    public String stockIn(
-            @RequestParam("id") int id,
-            @RequestParam("number") String number,
-            @RequestParam("model") String model1,
-            @RequestParam("name") String name,
-            @RequestParam("unitprice") String unitPrice,
-            @RequestParam("type") String type,
-            Model model
+    public Map<String, Object> model(
+//            @RequestParam("id") int id,
+//            @RequestParam("number") String number,
+//            @RequestParam("model") String model1,
+//            @RequestParam("name") String name,
+//            @RequestParam("unitprice") String unitPrice,
+//            @RequestParam("type") String type,
+//            Model model
+            @RequestBody Map<String, Object> map
     ) {
-        String sql;
+        Map<String, Object> response = new HashMap<>();
+        String[] para = new String[]{"id", "number", "model", "name", "unitprice", "type"};
+        String[] update = new String[]{"updateid", "updatenumber", "updatemodel", "updatename", "updateunitprice", "updatetype"};
         Object[] obj;
+        removeEmpty(map);
+        Map<String, Object> res = wash(map, para);
+        String type = (String) map.get("type");
+        StringBuilder sql;
         if (type.equals("Insert")) {
-            sql = "insert into model(id, number, model, name, unit_price) values(?, ?, ?, ?, ?)";
-            obj = new Object[5];
-            obj[0] = id;
-            obj[1] = number;
-            obj[2] = model1;
-            obj[3] = name;
-            obj[4] = unitPrice;
-        } else if (type.equals("Update")) {
-            sql = "update model set number=?, model=?, name=?, unit_price=? where id=?";
-            obj = new Object[5];
-            obj[0] = number;
-            obj[1] = model1;
-            obj[2] = name;
-            obj[3] = unitPrice;
-            obj[4] = id;
+            sql = new StringBuilder("insert into enterprise(");
+            obj = new Object[res.size()];
+            int i = 0;
+            for (var entry : res.entrySet()) {
+                sql.append(entry.getKey());
+                if (i != res.size() - 1) {
+                    sql.append(',');
+                }
+                obj[i++] = entry.getValue();
+            }
+            sql.append(") values(");
+            sql.append("?,".repeat(Math.max(0, res.size() - 1)));
+            sql.append("?)");
+        } else if (type.equals("Update")) { //TODO
+            var temp = wash(map, update);
+            sql = new StringBuilder("update enterprise set ");
+            obj = new Object[res.size() + temp.size()];
+            int i = 0;
+            for (var entry : res.entrySet()) {
+                sql.append(entry.getKey());
+                sql.append("=?");
+                if (i != res.size() - 1) {
+                    sql.append(',');
+                }
+                obj[i++] = entry.getValue();
+            }
+            sql.append(" where ");
+            for (var entry : temp.entrySet()) {
+                sql.append(entry.getKey());
+                sql.append("=? ");
+                if (i != obj.length - 1) {
+                    sql.append("and ");
+                }
+                obj[i++] = entry.getValue();
+            }
         } else if (type.equals("Delete")) {
-            sql = "delete from model where id = ?";
-            obj = new Object[1];
-        }  else {
-            model.addAttribute("centermsg", "操作异常");
-            return "childPages/management";
+            sql = new StringBuilder("delete from enterprise where ");
+            obj = new Object[res.size()];
+            int i = 0;
+            for (var entry : res.entrySet()) {
+                sql.append(entry.getKey());
+                sql.append("=? ");
+                if (i != res.size() - 1) {
+                    sql.append("and ");
+                }
+                obj[i++] = entry.getValue();
+            }
+        } else {
+            response.put("result", "failed");
+            return response;
         }
         try {
-            jdbc.update(sql, obj);
-            model.addAttribute("centermsg", "Success");
+            jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
             throw e;
         }
-        return "childPages/management";
+        response.put("result", "success");
+        return response;
     }
 
     @PostMapping("/stockIn")
-    public Map<String, Object> stockIn (
+    public Map<String, Object> stockIn(
 //            @RequestParam("supplycenter") String supplyCenter,
 //            @RequestParam("productmodel") String productModel,
 //            @RequestParam("supplystaff") String supplyStaff,
@@ -404,20 +500,21 @@ public class DatabaseController {
 
     private void removeEmpty(Map<String, Object> map) {
         List<String> s = new LinkedList<>();
-        for(var entry: map.entrySet()){
-            if(entry.getValue() == null || entry.getValue().equals("")) {
+        for (var entry : map.entrySet()) {
+            if (entry.getValue() == null || entry.getValue().equals("")) {
                 s.add(entry.getKey());
             }
         }
-        for(String i: s){
+        for (String i : s) {
             map.remove(i);
         }
     }
 
-    private Map<String, Object> wash(Map<String, Object> map, String[] para){
+
+    private Map<String, Object> wash(Map<String, Object> map, String[] para) {
         Map<String, Object> res = new HashMap<>();
-        for(String s: para){
-            if(map.containsKey(s)){
+        for (String s : para) {
+            if (map.containsKey(s)) {
                 res.put(s, map.get(s));
             }
         }
