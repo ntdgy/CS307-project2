@@ -551,7 +551,6 @@ public class DatabaseController {
         return res;
     }
 
-    //getAllStaffCount:
     @GetMapping("/getAllStaffCount")
     public Map<String, Object> getAllStaffCount() {
         Map<String, Object> res = new HashMap<>();
@@ -565,6 +564,16 @@ public class DatabaseController {
         res.put("salesman", jdbc.queryForObject(sql, Integer.class));
         return res;
     }
+
+    @GetMapping("/getContractCount")
+    public Map<String, Object> getContractCount() {
+        Map<String, Object> res = new HashMap<>();
+        String sql = "select count(*) from contract;";
+        res.put("contract", jdbc.queryForObject(sql, Integer.class));
+        return res;
+    }
+
+
 
     public boolean login(String name, String pwd) {
         String salt = "djj is super smart and beautiful mei shao nv";
