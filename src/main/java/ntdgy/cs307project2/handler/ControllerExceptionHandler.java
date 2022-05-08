@@ -14,12 +14,10 @@ import java.util.Map;
 public class ControllerExceptionHandler {
 
     @ExceptionHandler(InvalidDataException.class)
-    public List<Map<String, Object>> handleInvalidDataException(InvalidDataException e) {
-        List<Map<String, Object>> list = new ArrayList<>();
+    public Map<String, Object> handleInvalidDataException(InvalidDataException e) {
         Map<String, Object> res = new HashMap<>();
         res.put("result", "fail " + e.getMessage());
-        list.add(res);
-        return list;
+        return res;
     }
 
 

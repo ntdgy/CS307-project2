@@ -26,15 +26,11 @@ public class DatabaseController {
     @ResponseBody
     public List<Map<String, Object>> selectCenter(
             @RequestBody Map<String, Object> map
-    ){
+    ) throws InvalidDataException {
         StringBuilder sql = new StringBuilder("select * from center where");
         removeEmpty(map);
         if(map.isEmpty()){
-            List<Map<String, Object>> list = new ArrayList<>();
-            Map<String, Object> res = new HashMap<>();
-            res.put("centermsg", "查询结果为空");
-            list.add(res);
-            return list;
+            throw new InvalidDataException("查询条件为空");
         }
         Object[] obj = new Object[map.size()];
         int i = 0;
@@ -277,7 +273,7 @@ public class DatabaseController {
     }
 
     @PostMapping("/stockIn")
-    public List<Map<String, Object>> stockIn (
+    public Map<String, Object> stockIn (
 //            @RequestParam("supplycenter") String supplyCenter,
 //            @RequestParam("productmodel") String productModel,
 //            @RequestParam("supplystaff") String supplyStaff,
@@ -290,8 +286,7 @@ public class DatabaseController {
             //map的参数同上
     ) throws Exception {
         removeEmpty(map);
-        List<Map<String, Object>> list = new ArrayList<>();
-        Map<String, Object> map1 = new HashMap<>();
+        Map<String, Object> res = new HashMap<>();
         String sql;
         Object[] obj;
         String check1 = "select * from staff where staff.number = ?";
@@ -300,40 +295,32 @@ public class DatabaseController {
             throw new InvalidDataException("供应商不存在");
         }
         if (!check2.get(0).get("type").equals("1")) {
-            model.addAttribute("centermsg", "⼈员的类型不是supply_staff");
-            return "childPages/management";
+            throw new InvalidDataException("⼈员的类型不是supply_staff");
         }
         String check3 = "select * from center where center.name = ?";
-        List<Map<String, Object>> check4 = jdbc.queryForList(check3, supplyCenter);
+        List<Map<String, Object>> check4 = jdbc.queryForList(check3, map.get("supplycenter"));
         if (check4.size() == 0) {
-            model.addAttribute("centermsg", "供应中⼼不存在");
-            return "childPages/management";
+            throw new InvalidDataException("供应中心不存在");
         }
         String check5 = "select * from model where model.model = ?";
-        List<Map<String, Object>> check6 = jdbc.queryForList(check5, productModel);
+        List<Map<String, Object>> check6 = jdbc.queryForList(check5, map.get("productmodel"));
         if (check6.size() == 0) {
-            model.addAttribute("centermsg", "产品型号不存在");
+            throw new InvalidDataException("产品型号不存在");
         }
         String check7 = "select c.name from staff join center c on staff.supply_center_id = c.id;";
-        List<Map<String, Object>> check8 = jdbc.queryForList(check7, supplyStaff);
-        if (!check8.get(0).get("name").equals(supplyCenter)) {
-            model.addAttribute("centermsg", "供应中⼼与⼈员所在的供应中⼼对应不上");
+        List<Map<String, Object>> check8 = jdbc.queryForList(check7, map.get("supplystaff"));
+        if (!check8.get(0).get("name").equals(map.get("supplycenter"))) {
+            throw new InvalidDataException("供应商不属于该供应中心");
         }
         String getid = "select id from model where model = ?";
-        List<Map<String, Object>> getid1 = jdbc.queryForList(getid, productModel);
+        List<Map<String, Object>> getid1 = jdbc.queryForList(getid, map.get("productmodel"));
         int id = (int) getid1.get(0).get("id");
         sql = "update warehousing set quantity = quantity + ? where model_id = ?";
         obj = new Object[2];
-        obj[0] = quantity;
+        obj[0] = map.get("quantity");
         obj[1] = id;
-        model.addAttribute("centermsg", "Failed");
-        try {
-            jdbc.update(sql, obj);
-            model.addAttribute("centermsg", "Success");
-        } catch (Exception e) {
-            throw e;
-        }
-        return "childPages/management";
+        jdbc.update(sql, obj);
+        res.put("result", "Success");
     }
 
     @PostMapping("/placeorder")
