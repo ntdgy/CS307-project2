@@ -388,7 +388,7 @@ public class DatabaseController {
         String check1 = "select * from staff where staff.number = ?";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("supplystaff"));
         if (check2.size() == 0) {
-            throw new InvalidDataException("供应商不存在");
+            throw new InvalidDataException("⼈员不存在");
         }
         if (!check2.get(0).get("type").equals("1")) {
             throw new InvalidDataException("⼈员的类型不是supply_staff");
@@ -403,18 +403,15 @@ public class DatabaseController {
         if (check6.size() == 0) {
             throw new InvalidDataException("产品型号不存在");
         }
-        String check7 = "select c.name from staff join center c on staff.supply_center_id = c.id;";
+        String check7 = "select staff.center from staff where staff.name = ?;";
         List<Map<String, Object>> check8 = jdbc.queryForList(check7, map.get("supplystaff"));
         if (!check8.get(0).get("name").equals(map.get("supplycenter"))) {
             throw new InvalidDataException("供应商不属于该供应中心");
         }
-        String getid = "select id from model where model = ?";
-        List<Map<String, Object>> getid1 = jdbc.queryForList(getid, map.get("productmodel"));
-        int id = (int) getid1.get(0).get("id");
-        sql = "update warehousing set quantity = quantity + ? where model_id = ?";
+        sql = "update warehousing set quantity = quantity + ? where center_name = ?";
         obj = new Object[2];
         obj[0] = map.get("quantity");
-        obj[1] = id;
+        obj[1] = map.get("supplycenter");
         jdbc.update(sql, obj);
         res.put("result", "Success");
         return res;
