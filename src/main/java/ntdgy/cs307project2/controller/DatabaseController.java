@@ -2,6 +2,7 @@ package ntdgy.cs307project2.controller;
 
 import ntdgy.cs307project2.exception.InvalidDataException;
 import ntdgy.cs307project2.exception.InvalidOperationException;
+import ntdgy.cs307project2.exception.WrongDataException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
@@ -119,7 +120,7 @@ public class DatabaseController {
         try {
             jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
-            throw new InvalidDataException("wssb", e);
+            throw new WrongDataException("wssb", e);
         }
 
         response.put("result", "success");

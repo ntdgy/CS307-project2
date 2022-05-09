@@ -78,6 +78,9 @@
 <!--							<button type="button" class="close" data-dismiss="alert">&times;</button>-->
 							<strong> {{centerData}} </strong>
 						</div>
+						<div class="alert alert-danger alert-dismissible" ng-show="centerFail">
+							<strong> {{centerFail}} </strong>
+						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
 					<form class="form-enterprise" id="form-enterprise" ng-switch-when="enterprise" ng-submit="mysubmit()">
@@ -107,6 +110,9 @@
 <!--						<button type="button" class="close" data-dismiss="alert">&times;</button>-->
 						<strong>{{enterpriseData}}</strong>
 					</div>
+						<div class="alert alert-danger alert-dismissible" ng-show="enterpriseFail">
+							<strong> {{enterpriseFail}} </strong>
+						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
 					<form class="form-model" ng-switch-when="model" ng-submit="mysubmit()">
@@ -144,6 +150,10 @@
 						<div class="alert alert-success alert-dismissible" ng-show="modelData">
 <!--							<button type="button" class="close" data-dismiss="alert">&times;</button>-->
 							<strong>{{modelData}}</strong>
+						</div>
+						<div class="alert alert-success alert-dismissible" ng-show="modelFail">
+							<!--							<button type="button" class="close" data-dismiss="alert">&times;</button>-->
+							<strong>{{modelFail}}</strong>
 						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
@@ -240,6 +250,9 @@
 						<div class="alert alert-success alert-dismissible" ng-show="staffData">
 <!--							<button type="button" class="close" data-dismiss="alert">&times;</button>-->
 							<strong>{{staffData}}</strong>
+						</div>
+						<div class="alert alert-danger alert-dismissible" ng-show="staffFail">
+							<strong>{{staffFail}}</strong>
 						</div>
 						<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 					</form>
