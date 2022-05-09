@@ -617,7 +617,7 @@ public class DatabaseController {
     @GetMapping("/getNeverSoldProductCount")
     public Map<String, Object> getNeverSoldProductCount() {
         Map<String, Object> res = new HashMap<>();
-        String sql = "select count(*) from product where model_name not in (select product_model_name from contract_content);";
+        String sql = "select count(*) from model where name not in (select product_model_name from contract_content);";
         res.put("never sold", jdbc.queryForObject(sql, Integer.class));
         return res;
     }
@@ -626,6 +626,16 @@ public class DatabaseController {
     public Map<String, Object> getFavoriteProductModel() {
         Map<String, Object> res = new HashMap<>();
         String sql = "select model_name,quantity from sold s where (select quantity q from sold order by quantity limit 1) = s.quantity;";
+        List<Map<String, Object>> check = jdbc.queryForList(sql);
+        res.put("result", check);
+        return res;
+    }
+
+
+    @PostMapping("/getAvgStockByCenter")
+    public Map<String, Object> getAvgStockByCenter() {
+        Map<String, Object> res = new HashMap<>();
+        String sql = "select center_name,round(avg(quantity),1) from warehousing group by center_name order by center_name;";
         List<Map<String, Object>> check = jdbc.queryForList(sql);
         res.put("result", check);
         return res;
