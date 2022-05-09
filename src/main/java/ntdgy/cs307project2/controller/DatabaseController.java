@@ -651,6 +651,20 @@ public class DatabaseController {
         return null;
     }
 
+    //13) getContractInfo
+    @PostMapping("/getContractInfo")
+    public Map<String, Object> getContractInfo(@RequestBody Map<String, Object> map) {
+        String contract_number = (String) map.get("contract_number");
+        Map<String, Object> res = new HashMap<>();
+        String sql = "select * from contract where contract_number = ?;";
+        List<Map<String, Object>> check = jdbc.queryForList(sql, contract_number);
+        String sql2 = "select * from contract_content where contract_number = ?;";
+        List<Map<String, Object>> check2 = jdbc.queryForList(sql2, contract_number);
+        res.put("result", check);
+        res.put("result2", check2);
+        return res;
+    }
+
 
     public boolean login(String name, String pwd) {
         String salt = "djj is super smart and beautiful mei shao nv";
