@@ -641,6 +641,16 @@ public class DatabaseController {
         return res;
     }
 
+//    getProductByNumber:
+    @PostMapping("/getProductByNumber")
+    public Map<String, Object> getProductByNumber(@RequestBody Map<String, Object> map) {
+        //TODO:
+        //等待相关问题的解答
+        Map<String, Object> res = new HashMap<>();
+        String sql = "select * from model where model_name = ?;";
+        return null;
+    }
+
 
     public boolean login(String name, String pwd) {
         String salt = "djj is super smart and beautiful mei shao nv";
