@@ -644,11 +644,11 @@ public class DatabaseController {
 //    getProductByNumber:
     @PostMapping("/getProductByNumber")
     public Map<String, Object> getProductByNumber(@RequestBody Map<String, Object> map) {
-        //TODO:
-        //等待相关问题的解答
         Map<String, Object> res = new HashMap<>();
-        String sql = "select * from model where model_name = ?;";
-        return null;
+        String sql = "select center_name,model_name,m.model,quantity from warehousing join model m on warehousing.model_name = m.name where model_name = ?;";
+        List<Map<String, Object>> check = jdbc.queryForList(sql, map.get("model_name"));
+        res.put("result", check);
+        return res;
     }
 
     //13) getContractInfo
