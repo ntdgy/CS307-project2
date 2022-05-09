@@ -120,9 +120,8 @@ public class DatabaseController {
         try {
             jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
-            throw new WrongDataException("wssb", e);
+            throw new WrongDataException("", e);
         }
-
         response.put("result", "success");
         return response;
     }
@@ -138,7 +137,7 @@ public class DatabaseController {
 //            @RequestParam("industry") String industry,
 //            Model model
             @RequestBody Map<String, Object> map
-    ) {
+    ) throws WrongDataException {
         Map<String, Object> response = new HashMap<>();
         String[] para = new String[]{"id", "name", "country", "city", "supplycenter", "type", "industry"};
         String[] update = new String[]{"updateid", "updatename", "updatecountry", "updatecity", "updatesupplycenter", "updatetype", "updateindustry"};
@@ -202,7 +201,7 @@ public class DatabaseController {
         try {
             jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
-            throw e;
+            throw new WrongDataException("数据错误", e);
         }
         response.put("result", "success");
         return response;
@@ -221,7 +220,7 @@ public class DatabaseController {
 //            @RequestParam("stafftype") String type,
 //            Model model
             @RequestBody Map<String, Object> map
-    ) {
+    ) throws WrongDataException {
         Map<String, Object> response = new HashMap<>();
         String[] para = new String[]{"id", "name", "number", "gender", "age", "mobilenumber", "supplycenterid", "stafftype"};
         String[] update = new String[]{"updateid", "updatename", "updategender", "updateage", "updatemobilenumber", "updatemobilenumber", "updatesupplycenterid", "updatestafftype"};
@@ -285,7 +284,7 @@ public class DatabaseController {
         try {
             jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
-            throw e;
+            throw new WrongDataException("数据错误", e);
         }
         response.put("result", "success");
         return response;
@@ -301,7 +300,7 @@ public class DatabaseController {
 //            @RequestParam("type") String type,
 //            Model model
             @RequestBody Map<String, Object> map
-    ) {
+    ) throws WrongDataException {
         Map<String, Object> response = new HashMap<>();
         String[] para = new String[]{"id", "number", "model", "name", "unitprice", "type"};
         String[] update = new String[]{"updateid", "updatenumber", "updatemodel", "updatename", "updateunitprice", "updatetype"};
@@ -365,7 +364,7 @@ public class DatabaseController {
         try {
             jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
-            throw e;
+            throw new WrongDataException("数据错误", e);
         }
         response.put("result", "success");
         return response;

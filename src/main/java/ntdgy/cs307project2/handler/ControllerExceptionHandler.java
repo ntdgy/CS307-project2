@@ -38,9 +38,11 @@ public class ControllerExceptionHandler {
     public Map<String, Object> handleWrongDataException(WrongDataException e) {
         log.error(e.getCause().toString());
         log.error(e.getCause().getMessage());
-        if(e.getCause() instanceof DuplicateKeyException) {
+        if (e.getCause() instanceof DuplicateKeyException) {
             Map<String, Object> res = new HashMap<>();
-            res.put("result", "数据重复"+e.getCause().getMessage());
+            String message = e.getCause().getMessage();
+            message = message.substring(message.indexOf("详细") + 2,message.indexOf("; nested exception"));
+            res.put("result", "数据重复 "  + message);
             return res;
         }
         Map<String, Object> res = new HashMap<>();
