@@ -71,6 +71,10 @@
                         <input type="text" name="contractmanager" class="form-control" placeholder="Contract Manager"
                                required=""
                                ng-model="place.contractmanager">
+                        <input type="text" name="salesmannum" class="form-control" placeholder="Salesman Num"
+                        required="" ng-model="place.salesmannum">
+                        <input type="text" name="contracttype" class="form-control" placeholder="Contract Type"
+                        required="" ng-model="place.contracttype">
                         <label for="contractdate" style="float: left;">Contract Date：</label>
                         <input type="date" id="contractdate" name="contractdate" style="width: auto;"
                                class="form-control" placeholder="Contract Date" required=""
@@ -84,10 +88,6 @@
                         <input type="date" id="lodgementdate" name="lodgementdate" style="width: auto;"
                                class="form-control" placeholder="Estimated Delivery Date" required=""
                                ng-model="place.lodgementdate">
-                        <input type="text" name="salesmannum" class="form-control" placeholder="Salesman Num"
-                               required="" ng-model="place.salesmannum">
-                        <input type="text" name="contracttype" class="form-control" placeholder="Contract Type"
-                               required="" ng-model="place.contracttype">
                     </div>
                     <div ng-switch-when="update">
                         <input type="text" name="contract" class="form-control" placeholder="Contract Number"
