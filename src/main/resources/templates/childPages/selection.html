@@ -65,7 +65,7 @@
                     <input type="number" name="id" class="form-control" placeholder="Center Id" autofocus="" ng-model="center.id">
                     <input type="text" name="name" class="form-control" placeholder="Center Name" ng-model="center.name">
                     <button type="submit" class="btn btn-lg btn-primary btn-block" >Query</button>
-                    <table class="table table-striped table-sm">
+                    <table class="table table-striped table-sm" ng-show="centerData">
                         <thead>
                         <tr>
                             <td>id</td>
@@ -88,7 +88,7 @@
                     <input type="text" name="city" class="form-control" placeholder="City" ng-model="enterprise.city">
                     <input type="text" name="industry" class="form-control" placeholder="Industry" ng-model="enterprise.industry">
                     <button type="submit" class="btn btn-lg btn-primary btn-block" >Query</button>
-                    <table class="table table-striped table-sm">
+                    <table class="table table-striped table-sm" ng-show="enterpriseData">
                         <thead>
                         <tr>
                             <td>id</td>
@@ -118,7 +118,7 @@
                     <input type="text" name="model" class="form-control" placeholder="Model" ng-model="model.model">
                     <input type="number" name="unitprice" class="form-control" placeholder="Unit price" ng-model="model.unitprice">
                     <button type="submit" class="btn btn-lg btn-primary btn-block" >Query</button>
-                    <table class="table table-striped table-sm">
+                    <table class="table table-striped table-sm" ng-show="modelData">
                         <thead>
                         <tr>
                             <td>id</td>
@@ -148,7 +148,7 @@
                     <input type="text" name="purchaseprice" class="form-control" placeholder="Purchase Price" ng-model="order.purchaseprice">
                     <input type="text" name="quantity" class="form-control" placeholder="Quantity" ng-model="order.quantity">
                     <button type="submit" class="btn btn-lg btn-primary btn-block" >Query</button>
-                    <table class="table table-striped table-sm">
+                    <table class="table table-striped table-sm" ng-show="orderData">
                         <thead>
                         <tr>
                             <td>id</td>
@@ -189,7 +189,7 @@
                     <label for="salesman">Salesman</label>
                     <input type="radio" name="type" id="salesman" class="form-control" placeholder="Salesman">
                     <button type="submit" class="btn btn-lg btn-primary btn-block" >Query</button>
-                    <table class="table table-striped table-sm">
+                    <table class="table table-striped table-sm" ng-show="staffData">
                         <thead>
                         <tr>
                             <td>id</td>
@@ -221,7 +221,7 @@
                     <input type="date" name="date" class="form-control" placeholder="Contract Date" autofocus="">
                     <input type="text" name="manager" class="form-control" placeholder="Contract Manager" autofocus="">
                     <button type="submit" class="btn btn-lg btn-primary btn-block" >Query</button>
-                    <table class="table table-striped table-sm">
+                    <table class="table table-striped table-sm" ng-show="contractData">
                         <thead>
                         <tr>
                             <td>id</td>

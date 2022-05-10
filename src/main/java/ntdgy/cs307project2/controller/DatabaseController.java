@@ -3,16 +3,13 @@ package ntdgy.cs307project2.controller;
 import ntdgy.cs307project2.exception.InvalidDataException;
 import ntdgy.cs307project2.exception.InvalidOperationException;
 import ntdgy.cs307project2.exception.WrongDataException;
+
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.util.DigestUtils;
-import org.springframework.dao.DuplicateKeyException;
 
-import javax.sql.DataSource;
 import java.util.*;
 
 @EnableAsync
@@ -52,7 +49,7 @@ public class DatabaseController {
 
     @PostMapping("/center")
     @ResponseBody
-    public Map<String, Object> Center(
+    public Map<String, Object> center(
 //            @RequestParam("id") String id,
 //            @RequestParam("name") String name,
 //            @RequestParam("type") String type,
@@ -130,7 +127,7 @@ public class DatabaseController {
 
     @PostMapping("/enterprise")
     @ResponseBody
-    public Map<String, Object> addEnterprise(
+    public Map<String, Object> enterprise(
 //            @RequestParam("id") int id,
 //            @RequestParam("name") String name,
 //            @RequestParam("country") String country,
@@ -213,7 +210,7 @@ public class DatabaseController {
 
     @PostMapping("/staff")
     @ResponseBody
-    public Map<String, Object> Enterprise(
+    public Map<String, Object> staff(
 //            @RequestParam("id") int id,
 //            @RequestParam("name") String name,
 //            @RequestParam("number") String number,
@@ -705,7 +702,7 @@ public class DatabaseController {
         List<Map<String, Object>> re = jdbc.queryForList(sql, temp);
         if (re.isEmpty()) return false;
         if (re.get(0).get("isUsed") != null && (int) re.get(0).get("isUsed") >= 1) {
-            sql = "update rechapter set isUsed = case when isUsed is null then 1 else isUsed + 1 end where chapter = ?;";
+            //sql = "update rechapter set isUsed = case when isUsed is null then 1 else isUsed + 1 end where chapter = ?;";
             return false;
         } else {
             sql = "update rechapter set isUsed = 1,user_name = ?, used_date = ? where chapter = ?;";
