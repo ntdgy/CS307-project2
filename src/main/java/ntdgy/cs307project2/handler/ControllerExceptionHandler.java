@@ -44,10 +44,14 @@ public class ControllerExceptionHandler {
             message = message.substring(message.indexOf("详细") + 2,message.indexOf("; nested exception"));
             res.put("result", "数据重复 "  + message);
             return res;
+        }else{
+            Map<String, Object> res = new HashMap<>();
+            String message = e.getCause().getMessage();
+            message = message.substring(message.indexOf("详细") + 2,message.indexOf("; nested exception"));
+            res.put("result", ""  + message);
+            return res;
         }
-        Map<String, Object> res = new HashMap<>();
-        res.put("result", "fail " + e.getMessage());
-        return res;
+
     }
 
 
