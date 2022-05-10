@@ -9,6 +9,12 @@ spring:
     password: CS307final
   thymeleaf:
     cache: false
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10GB
+      max-request-size: 10GB
+
 #  mvc:
 #    static-path-pattern: /res/**
 debug: true
