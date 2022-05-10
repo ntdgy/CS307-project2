@@ -5,6 +5,7 @@ import ntdgy.cs307project2.exception.InvalidOperationException;
 import ntdgy.cs307project2.exception.WrongDataException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.dao.DuplicateKeyException;
 import javax.sql.DataSource;
 import java.util.*;
 
+@EnableAsync
 @Controller
 @RequestMapping("/api/database")
 public class DatabaseController {
@@ -127,6 +129,7 @@ public class DatabaseController {
     }
 
     @PostMapping("/enterprise")
+    @ResponseBody
     public Map<String, Object> addEnterprise(
 //            @RequestParam("id") int id,
 //            @RequestParam("name") String name,
@@ -209,6 +212,7 @@ public class DatabaseController {
 
 
     @PostMapping("/staff")
+    @ResponseBody
     public Map<String, Object> Enterprise(
 //            @RequestParam("id") int id,
 //            @RequestParam("name") String name,
@@ -291,6 +295,7 @@ public class DatabaseController {
     }
 
     @PostMapping("/model")
+    @ResponseBody
     public Map<String, Object> model(
 //            @RequestParam("id") int id,
 //            @RequestParam("number") String number,
@@ -371,6 +376,7 @@ public class DatabaseController {
     }
 
     @PostMapping("/stockIn")
+    @ResponseBody
     public Map<String, Object> stockIn(
 //            @RequestParam("supplycenter") String supplyCenter,
 //            @RequestParam("productmodel") String productModel,
@@ -420,6 +426,7 @@ public class DatabaseController {
     }
 
     @PostMapping("/placeorder")
+    @ResponseBody
     public Map<String, Object> placeOrder(
 //            @RequestParam("contractnum") String contractNum,
 //            @RequestParam("enterprise") String enterprise,
@@ -496,6 +503,7 @@ public class DatabaseController {
     }
 
     @PostMapping("/updateOrder")
+    @ResponseBody
     public Map<String, Object> updateOrder(
 //            contract: The contract number
 //            productmodel: The model of the product which is selled to the client enterprise
@@ -547,6 +555,7 @@ public class DatabaseController {
     }
 
     @PostMapping("/deleteOrder")
+    @ResponseBody
     public Map<String, Object> deleteOrder(
 //            contract: The contract number
 //            salesman: The salesman number
@@ -584,7 +593,8 @@ public class DatabaseController {
         return res;
     }
 
-    @GetMapping("/getAllStaffCount")
+    @PostMapping("/getAllStaffCount")
+    @ResponseBody
     public Map<String, Object> getAllStaffCount() {
         Map<String, Object> res = new HashMap<>();
         String sql = "select count(*) from staff where stafftype = 0;";
@@ -598,7 +608,8 @@ public class DatabaseController {
         return res;
     }
 
-    @GetMapping("/getContractCount")
+    @PostMapping("/getContractCount")
+    @ResponseBody
     public Map<String, Object> getContractCount() {
         Map<String, Object> res = new HashMap<>();
         String sql = "select count(*) from contract;";
@@ -606,7 +617,8 @@ public class DatabaseController {
         return res;
     }
 
-    @GetMapping("/getOrderCount")
+    @PostMapping("/getOrderCount")
+    @ResponseBody
     public Map<String, Object> getOrderCount() {
         Map<String, Object> res = new HashMap<>();
         String sql = "select count(*) from contract_content;";
@@ -614,7 +626,8 @@ public class DatabaseController {
         return res;
     }
 
-    @GetMapping("/getNeverSoldProductCount")
+    @PostMapping("/getNeverSoldProductCount")
+    @ResponseBody
     public Map<String, Object> getNeverSoldProductCount() {
         Map<String, Object> res = new HashMap<>();
         String sql = "select count(*) from model where name not in (select product_model_name from contract_content);";
@@ -623,6 +636,7 @@ public class DatabaseController {
     }
 
     @PostMapping("/getFavoriteProductModel")
+    @ResponseBody
     public Map<String, Object> getFavoriteProductModel() {
         Map<String, Object> res = new HashMap<>();
         String sql = "select model_name,quantity from sold s where (select quantity q from sold order by quantity limit 1) = s.quantity;";
@@ -633,6 +647,7 @@ public class DatabaseController {
 
 
     @PostMapping("/getAvgStockByCenter")
+    @ResponseBody
     public Map<String, Object> getAvgStockByCenter() {
         Map<String, Object> res = new HashMap<>();
         String sql = "select center_name,round(avg(quantity),1) from warehousing group by center_name order by center_name;";
@@ -643,6 +658,7 @@ public class DatabaseController {
 
 //    getProductByNumber:
     @PostMapping("/getProductByNumber")
+    @ResponseBody
     public Map<String, Object> getProductByNumber(@RequestBody Map<String, Object> map) {
         Map<String, Object> res = new HashMap<>();
         String sql = "select center_name,model_name,m.model,quantity from warehousing join model m on warehousing.model_name = m.name where model_name = ?;";
@@ -653,6 +669,7 @@ public class DatabaseController {
 
     //13) getContractInfo
     @PostMapping("/getContractInfo")
+    @ResponseBody
     public Map<String, Object> getContractInfo(@RequestBody Map<String, Object> map) {
         String contract_number = (String) map.get("contract_number");
         Map<String, Object> res = new HashMap<>();
