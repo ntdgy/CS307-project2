@@ -1,128 +1,343 @@
 <!DOCTYPE html>
 <!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<meta name="description" content="">
-		<meta name="author" content="">
+<head>
+    <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom styles for this templates -->
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet">
+    <link th:href="@{/css/app.807e04c6.css}" rel="stylesheet">
+    <link th:href="@{/css/chunk-vendors.b8f03799.css}" rel="stylesheet">
+    <script type="text/javascript" th:src="@{/js/dashboard.js}"></script>
+    <style type="text/css">
+        /* Chart.js */
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
 
-		<title>Dashboard Template for Bootstrap</title>
-		<!-- Bootstrap core CSS -->
-		<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
 
-		<!-- Custom styles for this templates -->
-		<link th:href="@{/css/dashboard.css}" rel="stylesheet">
-		<style type="text/css">
-			/* Chart.js */
-			
-			@-webkit-keyframes chartjs-render-animation {
-				from {
-					opacity: 0.99
-				}
-				to {
-					opacity: 1
-				}
-			}
-			
-			@keyframes chartjs-render-animation {
-				from {
-					opacity: 0.99
-				}
-				to {
-					opacity: 1
-				}
-			}
-			
-			.chartjs-render-monitor {
-				-webkit-animation: chartjs-render-animation 0.001s;
-				animation: chartjs-render-animation 0.001s;
-			}
-		</style>
-	</head>
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+</head>
 
-	<body>
-		<div th:replace="~{childPages/common::topbar}"></div>
+<body  ng-app="main" ng-controller="tt">
+<div th:replace="~{childPages/common::topbar}"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="~{childPages/common::sidebar(active='dashboard')}"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
 
-		<div class="container-fluid">
-			<div class="row">
-				<div th:replace="~{childPages/common::sidebar(active='dashboard')}"></div>
+            <div class="ant-row" data-v-3af43504="" style="margin-left: -6px; margin-right: -6px;background-color: #f0f2f5;">
+                <div class="mb-3 ant-col ant-col-xs-12 ant-col-sm-12 ant-col-md-12 ant-col-lg-6 ant-col-xl-6"
+                     style="padding-left: 6px; padding-right: 6px;">
+                    <div class="ant-card">
+                        <div class="ant-card-body" style="padding: 24px;">
+                            <div class="analysis-card-container">
+                                <div class="meta"><span class="analysis-card-title">Contracts manager</span><span
+                                        class="analysis-card-action">
+                                    <button onclick="staff()" class="">
+                                        <i aria-label="图标: plus" class="anticon anticon-plus">
+                                    <svg viewBox="64 64 896 896" data-icon="plus" width="1em" height="1em"
+                                         fill="currentColor" aria-hidden="true" focusable="false" class="">
+                                        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                                        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                                    </svg>
+                                </i></button></span>
+                                </div>
+                                <div class="number">
+                                    <span>{{staffData.contracts}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 ant-col ant-col-xs-12 ant-col-sm-12 ant-col-md-12 ant-col-lg-6 ant-col-xl-6"
+                     style="padding-left: 6px; padding-right: 6px;">
+                    <div class="ant-card">
+                        <div class="ant-card-body" style="padding: 24px;">
+                            <div class="analysis-card-container">
+                                <div class="meta"><span class="analysis-card-title">Director</span><span
+                                        class="analysis-card-action">
+                                    <button onclick="staff()" class="">
+                                        <i aria-label="图标: plus" class="anticon anticon-plus">
+                                    <svg viewBox="64 64 896 896" data-icon="plus" width="1em" height="1em"
+                                         fill="currentColor" aria-hidden="true" focusable="false" class="">
+                                        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                                        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                                    </svg>
+                                </i></button></span>
+                                </div>
+                                <div class="number">
+                                    <span>{{staffData.director}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 ant-col ant-col-xs-12 ant-col-sm-12 ant-col-md-12 ant-col-lg-6 ant-col-xl-6"
+                     style="padding-left: 6px; padding-right: 6px;">
+                    <div class="ant-card">
+                        <div class="ant-card-body" style="padding: 24px;">
+                            <div class="analysis-card-container">
+                                <div class="meta"><span class="analysis-card-title">Salesman</span><span
+                                        class="analysis-card-action">
+                                    <button onclick="staff()" class="">
+                                        <i aria-label="图标: plus" class="anticon anticon-plus">
+                                    <svg viewBox="64 64 896 896" data-icon="plus" width="1em" height="1em"
+                                         fill="currentColor" aria-hidden="true" focusable="false" class="">
+                                        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                                        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                                    </svg>
+                                </i></button></span>
+                                </div>
+                                <div class="number">
+                                    <span>{{staffData.salesman}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 ant-col ant-col-xs-12 ant-col-sm-12 ant-col-md-12 ant-col-lg-6 ant-col-xl-6"
+                     style="padding-left: 6px; padding-right: 6px;">
+                    <div class="ant-card">
+                        <div class="ant-card-body" style="padding: 24px;">
+                            <div class="analysis-card-container">
+                                <div class="meta"><span class="analysis-card-title">Supply Staff</span><span
+                                        class="analysis-card-action">
+                                    <button onclick="staff()" class="">
+                                        <i aria-label="图标: plus" class="anticon anticon-plus">
+                                    <svg viewBox="64 64 896 896" data-icon="plus" width="1em" height="1em"
+                                         fill="currentColor" aria-hidden="true" focusable="false" class="">
+                                        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                                        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                                    </svg>
+                                </i></button></span>
+                                </div>
+                                <div class="number">
+                                    <span>{{staffData.supply}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 ant-col ant-col-xs-12 ant-col-sm-12 ant-col-md-12 ant-col-lg-6 ant-col-xl-6"
+                     style="padding-left: 6px; padding-right: 6px;">
+                    <div class="ant-card">
+                        <div class="ant-card-body" style="padding: 24px;">
+                            <div class="analysis-card-container">
+                                <div class="meta"><span class="analysis-card-title">Contract Count</span><span
+                                        class="analysis-card-action">
+                                    <button onclick="contract()" class="">
+                                        <i aria-label="图标: plus" class="anticon anticon-plus">
+                                    <svg viewBox="64 64 896 896" data-icon="plus" width="1em" height="1em"
+                                         fill="currentColor" aria-hidden="true" focusable="false" class="">
+                                        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                                        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                                    </svg>
+                                </i></button></span>
+                                </div>
+                                <div class="number">
+                                    <span>{{contractData.contract}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 ant-col ant-col-xs-12 ant-col-sm-12 ant-col-md-12 ant-col-lg-6 ant-col-xl-6"
+                     style="padding-left: 6px; padding-right: 6px;">
+                    <div class="ant-card">
+                        <div class="ant-card-body" style="padding: 24px;">
+                            <div class="analysis-card-container">
+                                <div class="meta"><span class="analysis-card-title">Order Count</span><span
+                                        class="analysis-card-action">
+                                    <button onclick="order()" class="">
+                                        <i aria-label="图标: plus" class="anticon anticon-plus">
+                                    <svg viewBox="64 64 896 896" data-icon="plus" width="1em" height="1em"
+                                         fill="currentColor" aria-hidden="true" focusable="false" class="">
+                                        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                                        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                                    </svg>
+                                        </i></button></span>
+                                </div>
+                                <div class="number">
+                                    <span>{{orderData.order}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 ant-col ant-col-xs-12 ant-col-sm-12 ant-col-md-12 ant-col-lg-6 ant-col-xl-6"
+                     style="padding-left: 6px; padding-right: 6px;">
+                    <div class="ant-card">
+                        <div class="ant-card-body" style="padding: 24px;">
+                            <div class="analysis-card-container">
+                                <div class="meta"><span class="analysis-card-title">Never Sold Product</span><span
+                                        class="analysis-card-action">
+                                    <button onclick="never()" class="">
+                                        <i aria-label="图标: plus" class="anticon anticon-plus">
+                                    <svg viewBox="64 64 896 896" data-icon="plus" width="1em" height="1em"
+                                         fill="currentColor" aria-hidden="true" focusable="false" class="">
+                                        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                                        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                                    </svg>
+                                </i></button></span>
+                                </div>
+                                <div class="number">
+                                    <span>{{neverData.result}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 ant-col ant-col-xs-12 ant-col-sm-12 ant-col-md-12 ant-col-lg-6 ant-col-xl-6"
+                     style="padding-left: 6px; padding-right: 6px;">
+                    <div class="ant-card">
+                        <div class="ant-card-body" style="padding: 24px;">
+                            <div class="analysis-card-container">
+                                <div class="meta"><span class="analysis-card-title">Favorite Product Model</span><span
+                                        class="analysis-card-action">
+                                    <button onclick="favorite()" class="">
+                                        <i aria-label="图标: plus" class="anticon anticon-plus">
+                                    <svg viewBox="64 64 896 896" data-icon="plus" width="1em" height="1em"
+                                         fill="currentColor" aria-hidden="true" focusable="false" class="">
+                                        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                                        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                                    </svg>
+                                </i></button></span>
+                                </div>
+                                <div class="number">
+                                    <span>{{favoriteData.favorite}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 ant-col ant-col-xs-12 ant-col-sm-12 ant-col-md-12 ant-col-lg-6 ant-col-xl-6"
+                     style="padding-left: 6px; padding-right: 6px;" ng-repeat="x in avgData">
+                    <div class="ant-card">
+                        <div class="ant-card-body" style="padding: 24px;">
+                            <div class="analysis-card-container">
+                                <div class="meta"><span class="analysis-card-title">Average Stock</span>
+                                    <span
+                                        class="analysis-card-action">
+                                    <button onclick="avg()" class="">
+                                        <i aria-label="图标: plus" class="anticon anticon-plus">
+                                    <svg viewBox="64 64 896 896" data-icon="plus" width="1em" height="1em"
+                                         fill="currentColor" aria-hidden="true" focusable="false" class="">
+                                        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                                        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                                    </svg>
+                                </i></button></span>
+                                </div>
+                                <div class="number">
+                                    <span>{{x.center_name}}: {{x.round}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-					<div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
-						<div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-							<div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
-						</div>
-						<div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-							<div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
-						</div>
-					</div>
-					<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-						<h1 class="h2">Dashboard</h1>
-						<div class="btn-toolbar mb-2 mb-md-0">
-							<div class="btn-group mr-2">
-								<button class="btn btn-sm btn-outline-secondary">Share</button>
-								<button class="btn btn-sm btn-outline-secondary">Export</button>
-							</div>
-							<button class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                This week
-              </button>
-						</div>
-					</div>
+            <div class="chartjs-size-monitor"
+                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                <div class="chartjs-size-monitor-expand"
+                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                </div>
+                <div class="chartjs-size-monitor-shrink"
+                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <h1 class="h2">Dashboard</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group mr-2">
+                        <button class="btn btn-sm btn-outline-secondary">Share</button>
+                        <button class="btn btn-sm btn-outline-secondary">Export</button>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="feather feather-calendar">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        This week
+                    </button>
+                </div>
+            </div>
+            <canvas class="my-4 chartjs-render-monitor" id="myChart" width="1076" height="454"
+                    style="display: block; width: 1076px; height: 454px;"></canvas>
+        </main>
+    </div>
+</div>
 
-					<canvas class="my-4 chartjs-render-monitor" id="myChart" width="1076" height="454" style="display: block; width: 1076px; height: 454px;"></canvas>
-
-					
-				</main>
-			</div>
-		</div>
-
-		<!-- Bootstrap core JavaScript
-    ================================================== -->
-		<!-- Placed at the end of the document so the pages load faster -->
-		<script type="text/javascript" th:src="@{/js/jquery-3.2.1.slim.min.js}" ></script>
-		<script type="text/javascript" th:src="@{/js/popper.min.js}" ></script>
-		<script type="text/javascript" th:src="@{/js/bootstrap.min.js}" ></script>
-
-		<!-- Icons -->
-		<script type="text/javascript" th:src="@{/js/feather.min.js}" ></script>
-		<script>
-			feather.replace()
-		</script>
-
-		<!-- Graphs -->
-		<script type="text/javascript" th:src="@{/js/Chart.min.js}" ></script>
-		<script>
-			var ctx = document.getElementById("myChart");
-			var myChart = new Chart(ctx, {
-				type: 'line',
-				data: {
-					labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-					datasets: [{
-						data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-						lineTension: 0,
-						backgroundColor: 'transparent',
-						borderColor: '#007bff',
-						borderWidth: 4,
-						pointBackgroundColor: '#007bff'
-					}]
-				},
-				options: {
-					scales: {
-						yAxes: [{
-							ticks: {
-								beginAtZero: false
-							}
-						}]
-					},
-					legend: {
-						display: false,
-					}
-				}
-			});
-		</script>
-
-	</body>
-
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" th:src="@{/js/jquery-3.2.1.slim.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+<!-- Icons -->
+<script type="text/javascript" th:src="@{/js/feather.min.js}"></script>
+<script>
+    feather.replace()
+</script>
+<!-- Graphs -->
+<script type="text/javascript" th:src="@{/js/Chart.min.js}"></script>
+<script>
+    var ctx = document.getElementById("myChart");
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            datasets: [{
+                data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                lineTension: 0,
+                backgroundColor: 'transparent',
+                borderColor: '#007bff',
+                borderWidth: 4,
+                pointBackgroundColor: '#007bff'
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: false
+                    }
+                }]
+            },
+            legend: {
+                display: false,
+            }
+        }
+    });
+</script>
+</body>
 </html>

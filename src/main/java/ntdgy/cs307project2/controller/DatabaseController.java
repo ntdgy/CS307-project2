@@ -597,9 +597,9 @@ public class DatabaseController {
         String sql = "select count(*) from staff where stafftype = 0;";
         res.put("director", jdbc.queryForObject(sql, Integer.class));
         sql = "select count(*) from staff where stafftype = 1;";
-        res.put("supply staff", jdbc.queryForObject(sql, Integer.class));
+        res.put("supply", jdbc.queryForObject(sql, Integer.class));
         sql = "select count(*) from staff where stafftype = 2;";
-        res.put("contracts manage", jdbc.queryForObject(sql, Integer.class));
+        res.put("contracts", jdbc.queryForObject(sql, Integer.class));
         sql = "select count(*) from staff where stafftype = 3;";
         res.put("salesman", jdbc.queryForObject(sql, Integer.class));
         return res;
