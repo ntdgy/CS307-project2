@@ -3,10 +3,15 @@ server:
 
 spring:
   datasource:
+    type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://42.194.178.20:5432/final
     username: final
     password: CS307final
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      auto-commit: true
   thymeleaf:
     cache: false
   servlet:
