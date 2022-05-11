@@ -53,6 +53,10 @@ def insert_into_staff():
     cursor.executemany(sql.insert_into_staff, strings)
 
 
+def stock_in():
+
+
+
 
 
 drop_tables()

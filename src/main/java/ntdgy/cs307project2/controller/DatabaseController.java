@@ -413,11 +413,23 @@ public class DatabaseController {
         if (!check8.get(0).get("name").equals(map.get("supplycenter"))) {
             throw new InvalidDataException("供应商不属于该供应中心");
         }
-        sql = "update warehousing set quantity = quantity + ? where center_name = ?";
-        obj = new Object[2];
-        obj[0] = map.get("quantity");
-        obj[1] = map.get("supplycenter");
-        jdbc.update(sql, obj);
+        String check9 = "select * from warehousing where center_name = ? and model_name = ?;";
+        List<Map<String, Object>> check10 = jdbc.queryForList(check9, map.get("supplycenter"), map.get("productmodel"));
+        if (check10.size() != 0) {
+            sql = "update warehousing set quantity = quantity + ? where center_name = ? and model_name = ?;";
+            obj = new Object[3];
+            obj[0] = map.get("quantity");
+            obj[1] = map.get("supplycenter");
+            obj[2] = map.get("productmodel");
+            jdbc.update(sql, obj);
+        }else{
+            sql = "insert into warehousing(center_name,model_name,quantity) values(?,?,?)";
+            obj = new Object[3];
+            obj[0] = map.get("supplycenter");
+            obj[1] = map.get("productmodel");
+            obj[2] = map.get("quantity");
+        }
+
         res.put("result", "Success");
         return res;
     }
