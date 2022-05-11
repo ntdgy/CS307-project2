@@ -428,8 +428,8 @@ public class DatabaseController {
             obj[0] = map.get("supplycenter");
             obj[1] = map.get("productmodel");
             obj[2] = map.get("quantity");
+            jdbc.update(sql, obj);
         }
-
         res.put("result", "Success");
         return res;
     }
