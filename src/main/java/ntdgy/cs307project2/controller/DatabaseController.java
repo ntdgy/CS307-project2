@@ -1,5 +1,6 @@
 package ntdgy.cs307project2.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import ntdgy.cs307project2.exception.InvalidDataException;
 import ntdgy.cs307project2.exception.InvalidOperationException;
 import ntdgy.cs307project2.exception.WrongDataException;
@@ -10,8 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.util.DigestUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Slf4j
 @EnableAsync
 @Controller
 @RequestMapping("/api/database")
@@ -387,16 +390,21 @@ public class DatabaseController {
             //map的参数同上
     ) throws Exception {
         removeEmpty(map);
+        log.error(map.toString());
         Map<String, Object> res = new HashMap<>();
         String sql;
         Object[] obj;
         String check1 = "select * from staff where staff.number = ?";
-        List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("supplystaff"));
+        List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("supplystaff").toString());
         if (check2.size() == 0) {
             throw new InvalidDataException("⼈员不存在");
         }
-        if (!check2.get(0).get("type").equals("1")) {
+        if (!check2.get(0).get("stafftype").equals(1)) {
+            log.error(check2.get(0).get("stafftype").toString());
             throw new InvalidDataException("⼈员的类型不是supply_staff");
+        }
+        if (!check2.get(0).get("supply_center").equals(map.get("supplycenter"))) {
+            throw new InvalidDataException("供应商不属于该供应中心");
         }
         String check3 = "select * from center where center.name = ?";
         List<Map<String, Object>> check4 = jdbc.queryForList(check3, map.get("supplycenter"));
@@ -408,17 +416,17 @@ public class DatabaseController {
         if (check6.size() == 0) {
             throw new InvalidDataException("产品型号不存在");
         }
-        String check7 = "select staff.center from staff where staff.name = ?;";
-        List<Map<String, Object>> check8 = jdbc.queryForList(check7, map.get("supplystaff"));
-        if (!check8.get(0).get("name").equals(map.get("supplycenter"))) {
-            throw new InvalidDataException("供应商不属于该供应中心");
-        }
+//        String check7 = "select staff.supply_center from staff where staff.number = ?;";
+//        List<Map<String, Object>> check8 = jdbc.queryForList(check7, map.get("supplystaff"));
+//        if (!check8.get(0).get("name").equals(map.get("supplycenter"))) {
+//            throw new InvalidDataException("供应商不属于该供应中心");
+//        }
         String check9 = "select * from warehousing where center_name = ? and model_name = ?;";
         List<Map<String, Object>> check10 = jdbc.queryForList(check9, map.get("supplycenter"), map.get("productmodel"));
         if (check10.size() != 0) {
             sql = "update warehousing set quantity = quantity + ? where center_name = ? and model_name = ?;";
             obj = new Object[3];
-            obj[0] = map.get("quantity");
+            obj[0] = Integer.parseInt(map.get("quantity").toString());
             obj[1] = map.get("supplycenter");
             obj[2] = map.get("productmodel");
             jdbc.update(sql, obj);
@@ -427,18 +435,21 @@ public class DatabaseController {
             obj = new Object[3];
             obj[0] = map.get("supplycenter");
             obj[1] = map.get("productmodel");
-            obj[2] = map.get("quantity");
+            obj[2] = Integer.parseInt(map.get("quantity").toString());
             jdbc.update(sql, obj);
         }
         sql = "insert into stockin(id,supply_center,product_model,supply_staff,date,purchase_price,quantity) values(?,?,?,?,?,?,?)";
         obj = new Object[7];
-        obj[0] = map.get("id");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        obj[0] = Integer.parseInt(map.get("id").toString());
+        Random random = new Random();
+        obj[0] = random.nextInt();
         obj[1] = map.get("supplycenter");
         obj[2] = map.get("productmodel");
         obj[3] = map.get("supplystaff");
-        obj[4] = map.get("date");
+        obj[4] = map.get("date").toString();
         obj[5] = map.get("purchaseprice");
-        obj[6] = map.get("quantity");
+        obj[6] = Integer.parseInt(map.get("quantity").toString());
         jdbc.update(sql, obj);
         res.put("result", "Success");
         return res;
