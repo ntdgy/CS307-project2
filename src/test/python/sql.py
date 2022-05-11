@@ -32,7 +32,7 @@ create index enterprise_name on enterprise(name);
 create table staff
 (
     id            serial primary key,
-    name          varchar(30) not null unique ,
+    name          varchar(30) not null ,
     number        varchar(8) unique not null ,
     gender        varchar(6),
     age           int,
@@ -40,7 +40,7 @@ create table staff
     supply_center varchar references center(name) on update cascade on delete cascade,
     stafftype          int          -- 0 is director, 1 is supply staff, 2 is contracts manager, 3 is salesman
 );
-create index staff_name on staff(name);
+create index staff_name on staff(number);
 
 create table model
 (
@@ -88,7 +88,7 @@ create table contract_content
     quantity                int, -- not null,
     estimated_delivery_date date,
     lodgement_date          date,
-    salesman   varchar references staff(name) on update cascade on delete cascade -- references salesman (id) not null
+    salesman   varchar references staff(number) on update cascade on delete cascade -- references salesman (id) not null
 );
 
 create table users
@@ -111,4 +111,10 @@ create table rechapter
 insert into users(user_name, passwd_md5, level) values('admin', '993a55c9801b146aa9d5c8cfd1ff24cb', 0);
 insert into users(user_name, passwd_md5, level) values('user', '993a55c9801b146aa9d5c8cfd1ff24cb', 1);'''
 
-insert_into_enterprise = '''insert into enterprise(id,name,country,city,supply_center,industry) values(%s,%s,%s,%s,%s,%s);'''
+
+insert_into_enterprise = '''insert into enterprise(id,name,country,city,supply_center,industry) values(%s,%s,%s,%s,
+%s,%s); '''
+
+
+insert_into_staff = '''insert into staff(id,name,age,gender,number,supply_center,mobile_number,stafftype) values (%s,
+%s,%s,%s,%s,%s,%s,%s); '''

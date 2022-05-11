@@ -42,9 +42,17 @@ def insert_into_model():
 
 
 def insert_into_staff():
-    with open('data/staff.csv', 'r') as f:
-        f.readline()
-        cursor.copy_from(f, 'staff', sep=',')
+    file = pd.read_csv('data/staff.csv')
+    file['type'].replace('Director', '0', inplace=True)
+    file['type'].replace('Supply Staff', '1', inplace=True)
+    file['type'].replace('Contracts Manager', '2', inplace=True)
+    file['type'].replace('Salesman', '3', inplace=True)
+    strings = []
+    for index, row in file.iterrows():
+        strings.append([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]])
+    cursor.executemany(sql.insert_into_staff, strings)
+
+
 
 
 drop_tables()
@@ -52,3 +60,4 @@ create_tables()
 insert_into_center()
 insert_into_enterprise()
 insert_into_model()
+insert_into_staff()
