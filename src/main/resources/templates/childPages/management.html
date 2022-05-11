@@ -50,12 +50,11 @@
 				<div th:replace="~{childPages/common::sidebar(active='manage')}"></div>
 				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
 					<h2>Center Add</h2>
-					<select name="select" ng-init="select='center'" ng-model="select">
+					<select name="select" ng-init="select='center'" ng-model="select" style="float: left;">
 						<option ng-show="false" value=""></option>
 						<option value="center">Center</option>
 						<option value="enterprise">Enterprise</option>
 						<option value="model">Model</option>
-						<option value="order">Order</option>
 						<option value="staff">Staff</option>
 					</select>
 					<div ng-switch="select">
@@ -223,13 +222,13 @@
 							<label class="sr-only">Mobile Number</label>
 							<input type="text" name="mobilenumber" class="form-control" placeholder="Mobile Number" required="" ng-model="staff.mobilenumber">
 							<label for="Director">Director</label>
-							<input type="radio" name="type" id="Director" class="form-control" placeholder="Director" required="" ng-value="0" ng-model="staff.staffType">
+							<input type="radio" name="type" id="Director" placeholder="Director" required="" ng-value="0" ng-model="staff.staffType">
 							<label for="supply">Supply Staff</label>
-							<input type="radio" name="type" id="supply" class="form-control" placeholder="Supply Staff" required="" ng-value="1" ng-model="staff.staffType">
+							<input type="radio" name="type" id="supply" placeholder="Supply Staff" required="" ng-value="1" ng-model="staff.staffType">
 							<label for="contracts">Contracts Manager</label>
-							<input type="radio" name="type" id="contracts" class="form-control" placeholder="Contracts Manager" required="" ng-value="2" ng-model="staff.staffType">
+							<input type="radio" name="type" id="contracts" placeholder="Contracts Manager" required="" ng-value="2" ng-model="staff.staffType">
 							<label for="salesman">Salesman</label>
-							<input type="radio" name="type" id="salesman" class="form-control" placeholder="Salesman" required="" ng-value="3" ng-model="staff.staffType">
+							<input type="radio" name="type" id="salesman" placeholder="Salesman" required="" ng-value="3" ng-model="staff.staffType">
 							<div ng-switch="staff.type">
 								<input type="number" name="id" class="form-control" placeholder="Original Staff Id" required="" autofocus="" ng-model="staff.updateid" ng-switch-when="Update">
 								<input type="text" name="name" class="form-control" placeholder="Original Name" required="" ng-switch-when="Update" ng-model="staff.updatename">
@@ -238,13 +237,13 @@
 								<input type="number" name="age" class="form-control" placeholder="Original Age" required="" ng-switch-when="Update" ng-model="staff.updateage">
 								<input type="text" name="mobilenumber" class="form-control" placeholder="Original Mobile Number" required="" ng-switch-when="Update" ng-model="staff.updatemobilenumber">
 								<label for="updateDirector" ng-switch-when="Update">Original Director</label>
-								<input type="radio" name="type" id="updateDirector" class="form-control" placeholder="Original Director" required="" ng-switch-when="Update" ng-value="0" ng-model="staff.updatestaffType">
+								<input type="radio" name="type" id="updateDirector" placeholder="Original Director" required="" ng-switch-when="Update" ng-value="0" ng-model="staff.updatestaffType">
 								<label for="updatesupply" ng-switch-when="Update">Original Supply Staff</label>
-								<input type="radio" name="type" id="updatesupply" class="form-control" placeholder="Original Supply Staff" required="" ng-switch-when="Update" ng-value="1" ng-model="staff.updatestaffType">
+								<input type="radio" name="type" id="updatesupply" placeholder="Original Supply Staff" required="" ng-switch-when="Update" ng-value="1" ng-model="staff.updatestaffType">
 								<label for="updatecontracts" ng-switch-when="Update">Original Contracts Manager</label>
-								<input type="radio" name="type" id="updatecontracts" class="form-control" placeholder="Original Contracts Manager" ng-switch-when="Update" required="" ng-value="2" ng-model="staff.updatestaffType">
+								<input type="radio" name="type" id="updatecontracts" placeholder="Original Contracts Manager" ng-switch-when="Update" required="" ng-value="2" ng-model="staff.updatestaffType">
 								<label for="updatesalesman" ng-switch-when="Update">Original Salesman</label>
-								<input type="radio" name="type" id="updatesalesman" class="form-control" placeholder="Original Salesman" required="" ng-switch-when="Update" ng-value="3" ng-model="staff.updatestaffType">
+								<input type="radio" name="type" id="updatesalesman" placeholder="Original Salesman" required="" ng-switch-when="Update" ng-value="3" ng-model="staff.updatestaffType">
 							</div>
 						</div>
 						<div class="alert alert-success alert-dismissible" ng-show="staffData">
