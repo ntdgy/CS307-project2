@@ -430,6 +430,16 @@ public class DatabaseController {
             obj[2] = map.get("quantity");
             jdbc.update(sql, obj);
         }
+        sql = "insert into stockin(id,supply_center,product_model,supply_staff,date,purchase_price,quantity) values(?,?,?,?,?,?,?)";
+        obj = new Object[7];
+        obj[0] = map.get("id");
+        obj[1] = map.get("supplycenter");
+        obj[2] = map.get("productmodel");
+        obj[3] = map.get("supplystaff");
+        obj[4] = map.get("date");
+        obj[5] = map.get("purchaseprice");
+        obj[6] = map.get("quantity");
+        jdbc.update(sql, obj);
         res.put("result", "Success");
         return res;
     }
