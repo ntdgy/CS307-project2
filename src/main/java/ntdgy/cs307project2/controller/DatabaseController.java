@@ -5,15 +5,18 @@ import ntdgy.cs307project2.exception.InvalidDataException;
 import ntdgy.cs307project2.exception.InvalidOperationException;
 import ntdgy.cs307project2.exception.WrongDataException;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.util.DigestUtils;
 
-import java.text.SimpleDateFormat;
-import java.sql.Date;
+import java.util.Date;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Slf4j
 @EnableAsync
@@ -445,8 +448,15 @@ public class DatabaseController {
         obj[1] = map.get("supplycenter");
         obj[2] = map.get("productmodel");
         obj[3] = map.get("supplystaff");
-        java.sql.Date date = Date.valueOf(map.get("date").toString());
-        obj[4] = date;
+//        SimpleDateFormat jsFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");//yyyy-MM-dd HH:mm:ss
+        if(Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("date").toString())) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            Date date = jsFormat.parseDateTime(map.get("date").toString()).toDate();
+            obj[4] = date;
+        } else {
+            Date date = java.sql.Date.valueOf(map.get("date").toString().replace('/', '-'));
+            obj[4] = date;
+        }
         obj[5] = map.get("purchaseprice");
         obj[6] = Integer.parseInt(map.get("quantity").toString());
         jdbc.update(sql, obj);
