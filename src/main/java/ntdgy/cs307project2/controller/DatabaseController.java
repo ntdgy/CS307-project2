@@ -631,7 +631,7 @@ public class DatabaseController {
     public Map<String, Object> getNeverSoldProductCount() {
         Map<String, Object> res = new HashMap<>();
         String sql = "select count(*) from model where name not in (select product_model_name from contract_content);";
-        res.put("never sold", jdbc.queryForObject(sql, Integer.class));
+        res.put("result", jdbc.queryForObject(sql, Integer.class));
         return res;
     }
 
