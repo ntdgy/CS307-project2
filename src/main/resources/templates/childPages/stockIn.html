@@ -50,6 +50,7 @@
         <div th:replace="~{childPages/common::sidebar(active='stockin')}"></div>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <form ng-submit="mysubmit()">
+                <input type="number" name="id" class="form-control" placeholder="id" autofocus="" ng-model="order.id">
                 <input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" autofocus="" ng-model="order.supplycenter">
                 <input type="text" name="productmodel" class="form-control" placeholder="Product Model" ng-model="order.productmodel">
                 <input type="number" name="supplystaff" class="form-control" placeholder="Supply Staff" ng-model="order.supplystaff">

@@ -112,7 +112,7 @@ test = {
     'supplycenter': 'Asia',
     'productmodel': 'Repeater97',
     'supplystaff': '11210906',
-    'date': '2008/10/27',
+    'date': '2008-10-27',
     'purchase_price': '430',
     'quantity': '801'
 }

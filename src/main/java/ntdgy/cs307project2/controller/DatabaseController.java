@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.util.DigestUtils;
 
 import java.text.SimpleDateFormat;
+import java.sql.Date;
 import java.util.*;
 
 @Slf4j
@@ -440,14 +441,12 @@ public class DatabaseController {
         }
         sql = "insert into stockin(id,supply_center,product_model,supply_staff,date,purchase_price,quantity) values(?,?,?,?,?,?,?)";
         obj = new Object[7];
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//        obj[0] = Integer.parseInt(map.get("id").toString());
-        Random random = new Random();
-        obj[0] = random.nextInt();
+        obj[0] = Integer.parseInt(map.get("id").toString());
         obj[1] = map.get("supplycenter");
         obj[2] = map.get("productmodel");
         obj[3] = map.get("supplystaff");
-        obj[4] = map.get("date").toString();
+        java.sql.Date date = Date.valueOf(map.get("date").toString());
+        obj[4] = date;
         obj[5] = map.get("purchaseprice");
         obj[6] = Integer.parseInt(map.get("quantity").toString());
         jdbc.update(sql, obj);
@@ -741,7 +740,7 @@ public class DatabaseController {
             sql = "update rechapter set isUsed = 1,user_name = ?, used_date = ? where chapter = ?;";
             Object[] tmp = new Object[3];
             tmp[0] = name;
-            tmp[1] = new Date();
+            tmp[1] = new java.util.Date();
             tmp[2] = rechapter;
             jdbc.update(sql, tmp);
             sql = "insert into users(user_name, passwd_md5) values (?,?);";
