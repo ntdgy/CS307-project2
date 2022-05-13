@@ -510,18 +510,24 @@ public class DatabaseController {
         String check7 = "select count(*) from sold where model_name = ?";
         Integer check8 = jdbc.queryForObject(check7, Integer.class, map.get("productmodel"));
         log.error(check8.toString());
-        Date estimated_delivery_date,lodgement_date;
-        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("estimated_delivery_date").toString())) {
+        Date estimated_delivery_date,lodgement_date,contractdate;
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("estimateddeliverydate").toString())) {
             DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
-            estimated_delivery_date = jsFormat.parseDateTime(map.get("date").toString()).toDate();
+            estimated_delivery_date = jsFormat.parseDateTime(map.get("estimateddeliverydate").toString()).toDate();
         } else {
-            estimated_delivery_date = java.sql.Date.valueOf(map.get("date").toString().replace('/', '-'));
+            estimated_delivery_date = java.sql.Date.valueOf(map.get("estimateddeliverydate").toString().replace('/', '-'));
         }
-        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("lodgement_date").toString())) {
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("lodgementdate").toString())) {
             DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
-            lodgement_date = jsFormat.parseDateTime(map.get("date").toString()).toDate();
+            lodgement_date = jsFormat.parseDateTime(map.get("lodgementdate").toString()).toDate();
         } else {
-            lodgement_date = java.sql.Date.valueOf(map.get("date").toString().replace('/', '-'));
+            lodgement_date = java.sql.Date.valueOf(map.get("lodgementdate").toString().replace('/', '-'));
+        }
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("contractdate").toString())) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            contractdate = jsFormat.parseDateTime(map.get("contractdate").toString()).toDate();
+        }else {
+            contractdate = java.sql.Date.valueOf(map.get("contractdate").toString().replace('/', '-'));
         }
         if (check6.size() != 0) {
             sql = new String[3];
@@ -545,7 +551,7 @@ public class DatabaseController {
             sql = new String[4];
             objects = new ArrayList<>();
             sql[0] = "insert into contract (number, enterprise, contract_date, contract_manager, contract_type) values (?, ?, ?, ?, ?)";
-            objects.add(new Object[]{map.get("contractnum"), map.get("enterprise"), map.get("contractdate"), map.get("contractmanager"), map.get("contracttype")});
+            objects.add(new Object[]{map.get("contractnum"), map.get("enterprise"), contractdate, map.get("contractmanager"), map.get("contracttype")});
             sql[1] = "insert into contract_content (contract_number, product_model_name, quantity, estimated_delivery_date, lodgement_date, salesman) values (?, ?, ?, ?, ?, ?)";
             objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), Integer.parseInt(map.get("quantity").toString()),estimated_delivery_date, lodgement_date, map.get("salesmannum")});
             sql[2] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";

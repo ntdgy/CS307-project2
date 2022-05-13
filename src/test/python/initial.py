@@ -99,13 +99,13 @@ def place_prder():
     }
     test = {
         # id,supply_center,product_model,supply_staff,date,purchase_price,quantity
-        'contract_num': 'CSE0000101',
+        'contractnum': 'CSE0000101',
         'enterprise': 'ENI',
         'productmodel': 'ElectricKettleR3',
         'quantity': 1,
         'contractmanager': '12112115',
         'contractdate': '2022-01-01',
-        'estimateddelivery_date': '2022-01-06',
+        'estimateddeliverydate': '2022-01-06',
         'lodgementdate': '2022-01-06',
         'salesmannum': '11610016',
         'contracttype': 'Finished'
