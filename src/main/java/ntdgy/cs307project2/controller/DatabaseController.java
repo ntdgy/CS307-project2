@@ -472,7 +472,7 @@ public class DatabaseController {
 //            @RequestParam("quantity") String quantity,
 //            @RequestParam("contractmanager") String contractManager,
 //            @RequestParam("contractdate") String contractDate,
-//            @RequestParam("estimated_delivery_date") String estimatedDeliveryDate,
+//            @RequestParam("estimateddeliverydate") String estimatedDeliveryDate,
 //            @RequestParam("lodgementdate") String lodgementDate,
 //            @RequestParam("salesmannum") String salesmanNum,
 //            @RequestParam("contracttype") String contractType,
@@ -510,7 +510,7 @@ public class DatabaseController {
         String check7 = "select count(*) from sold where model_name = ?";
         Integer check8 = jdbc.queryForObject(check7, Integer.class, map.get("productmodel"));
         log.error(check8.toString());
-        Date estimated_delivery_date,lodgement_date,contractdate;
+        Date estimated_delivery_date, lodgement_date, contractdate;
         if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("estimateddeliverydate").toString())) {
             DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
             estimated_delivery_date = jsFormat.parseDateTime(map.get("estimateddeliverydate").toString()).toDate();
@@ -526,7 +526,7 @@ public class DatabaseController {
         if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("contractdate").toString())) {
             DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
             contractdate = jsFormat.parseDateTime(map.get("contractdate").toString()).toDate();
-        }else {
+        } else {
             contractdate = java.sql.Date.valueOf(map.get("contractdate").toString().replace('/', '-'));
         }
         if (check6.size() != 0) {
@@ -553,7 +553,7 @@ public class DatabaseController {
             sql[0] = "insert into contract (number, enterprise, contract_date, contract_manager, contract_type) values (?, ?, ?, ?, ?)";
             objects.add(new Object[]{map.get("contractnum"), map.get("enterprise"), contractdate, map.get("contractmanager"), map.get("contracttype")});
             sql[1] = "insert into contract_content (contract_number, product_model_name, quantity, estimated_delivery_date, lodgement_date, salesman) values (?, ?, ?, ?, ?, ?)";
-            objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), Integer.parseInt(map.get("quantity").toString()),estimated_delivery_date, lodgement_date, map.get("salesmannum")});
+            objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), Integer.parseInt(map.get("quantity").toString()), estimated_delivery_date, lodgement_date, map.get("salesmannum")});
             sql[2] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
             objects.add(new Object[]{Integer.parseInt(map.get("quantity").toString()), check4.get(0).get("center_name"), map.get("productmodel")});
             if (check8 == 0) {
@@ -575,7 +575,7 @@ public class DatabaseController {
     @PostMapping("/updateOrder")
     @ResponseBody
     public Map<String, Object> updateOrder(
-//            contract: The contract number
+//            contractnum: The contract number
 //            productmodel: The model of the product which is selled to the client enterprise
 //            salesman: The salesman number
 //            quantity: The number of the product which is selled to the client enterprise, this value maybe update
@@ -589,20 +589,35 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ) throws InvalidDataException {
         removeEmpty(map);
+        log.error(map.toString());
         Map<String, Object> res = new HashMap<>();
         String[] sql;
         List<Object[]> objects;
         String check1 = "select * from contract_content where contract_number = ? and salesman = ? and product_model_name = ?";
-        List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contract"), map.get("salesman"), map.get("productmodel"));
-        int quantity = (Integer) map.get("quantity") - (Integer) check2.get(0).get("quantity");
+        List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contractnum"), map.get("salesman"), map.get("productmodel"));
+        log.error(check2.toString());
         if (check2.size() == 0) {
             throw new InvalidDataException("该合同不属于该销售员");
         }
-        if ((Integer) map.get("quantity") == 0) {
+        int quantity = Integer.parseInt(map.get("quantity").toString()) - Integer.parseInt(check2.get(0).get("quantity").toString());
+        Date estimated_delivery_date, lodgement_date;
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("estimateddeliverydate").toString())) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            estimated_delivery_date = jsFormat.parseDateTime(map.get("estimateddeliverydate").toString()).toDate();
+        } else {
+            estimated_delivery_date = java.sql.Date.valueOf(map.get("estimateddeliverydate").toString().replace('/', '-'));
+        }
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("lodgementdate").toString())) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            lodgement_date = jsFormat.parseDateTime(map.get("lodgementdate").toString()).toDate();
+        } else {
+            lodgement_date = java.sql.Date.valueOf(map.get("lodgementdate").toString().replace('/', '-'));
+        }
+        if (map.get("quantity").toString().equals("0")) {
             sql = new String[2];
             objects = new ArrayList<>();
             sql[0] = "delete from contract_content where contract_number = ? and product_model_name = ? and salesman = ?";
-            objects.add(new Object[]{map.get("contract"), map.get("productmodel"), map.get("salesman")});
+            objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), map.get("salesman")});
             sql[1] = "update sold set quantity = quantity - ? where model_name = ?";
             objects.add(new Object[]{quantity, map.get("productmodel")});
             jdbc.update(sql[0], objects.get(0));
@@ -611,11 +626,11 @@ public class DatabaseController {
             sql = new String[3];
             objects = new ArrayList<>();
             sql[0] = "update contract_content set quantity = ?, estimated_delivery_date = ?, lodgement_date = ? where contract_number = ? and product_model_name = ? and salesman = ?";
-            objects.add(new Object[]{map.get("quantity"), map.get("estimated_delivery_date"), map.get("lodgement_date"), map.get("contract"), map.get("productmodel"), map.get("salesman")});
+            objects.add(new Object[]{Integer.parseInt(map.get("quantity").toString()), estimated_delivery_date, lodgement_date, map.get("contractnum"), map.get("productmodel"), map.get("salesman")});
             sql[1] = "update warehousing set quantity = quantity - ? where model_name = ? and center_name = ?;";
-            objects.add(new Object[]{(Object) quantity, map.get("productmodel"), check2.get(0).get("center_name")});
+            objects.add(new Object[]{quantity, map.get("productmodel"), check2.get(0).get("center_name")});
             sql[2] = "update sold set quantity = quantity + ? where model_name = ?";
-            objects.add(new Object[]{(Object) quantity, map.get("productmodel")});
+            objects.add(new Object[]{quantity, map.get("productmodel")});
             jdbc.update(sql[0], objects.get(0));
             jdbc.update(sql[1], objects.get(1));
             jdbc.update(sql[2], objects.get(2));
