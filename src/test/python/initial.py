@@ -96,8 +96,6 @@ insert_into_center()
 insert_into_enterprise()
 insert_into_model()
 insert_into_staff()
-
-
 stock_in()
 
 # url = "http://localhost:8080/api/database/stockIn"
