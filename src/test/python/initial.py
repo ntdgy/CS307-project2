@@ -90,29 +90,76 @@ def stock_in():
             print(re.text)
 
 
-drop_tables()
-create_tables()
-insert_into_center()
-insert_into_enterprise()
-insert_into_model()
-insert_into_staff()
-stock_in()
+def place_prder():
+    url = "http://localhost:8080/api/database/placeorder"
+    headers = {
+        'Content-Type': "application/json",
+        'Accept': "application/json",
+        'Cookie': 'JSESSIONID=FA4DAEBCC9F4A6EEA31927BB8DC857F9'
+    }
+    test = {
+        # id,supply_center,product_model,supply_staff,date,purchase_price,quantity
+        'contract_num': 'CSE0000101',
+        'enterprise': 'ENI',
+        'productmodel': 'ElectricKettleR3',
+        'quantity': 1,
+        'contractmanager': '12112115',
+        'contractdate': '2022-01-01',
+        'estimateddelivery_date': '2022-01-06',
+        'lodgementdate': '2022-01-06',
+        'salesmannum': '11610016',
+        'contracttype': 'Finished'
+    }
+    with open('data/task2_test_data_publish.csv', 'r') as f:
+        head = f.readline()
+        while True:
+            line = f.readline()
+            if not line:
+                break
+            line = line.split(',')
+            test['contract_num'] = line[0]
+            test['enterprise'] = line[1]
+            test['productmodel'] = line[2]
+            test['quantity'] = line[3]
+            test['contractmanager'] = line[4]
+            test['contractdate'] = line[5].replace('/', '-')
+            test['estimateddelivery_date'] = line[6].replace('/', '-')
+            test['lodgementdate'] = line[7].replace('/', '-')
+            test['salesmannum'] = line[8]
+            test['contracttype'] = line[9]
+            re = requests.post(url, headers=headers, json=test)
+            print(re.text)
 
-# url = "http://localhost:8080/api/database/stockIn"
+
+# drop_tables()
+# create_tables()
+# insert_into_center()
+# insert_into_enterprise()
+# insert_into_model()
+# insert_into_staff()
+# stock_in()
+place_prder()
+
+
+
+# url = "http://localhost:8080/api/database/placeorder"
 # headers = {
 #     'Content-Type': "application/json",
 #     'Accept': "application/json",
 #     'Cookie': 'JSESSIONID=FA4DAEBCC9F4A6EEA31927BB8DC857F9'
 # }
 # test = {
-#     # id,supply_center,product_model,supply_staff,date,purchase_price,quantity
-#     'id': 243041,
-#     'supplycenter': 'Asia',
-#     'productmodel': 'Repeater97',
-#     'supplystaff': '11210906',
-#     'date': '2008-10-27',
-#     'purchase_price': '430',
-#     'quantity': '801'
+#     # contract_num,enterprise,product_model,quantity,contract_manager,contract_date,estimated_delivery_date, lodgement_date,salesman_num,contract_type
+#     'contract_num': 'CSE0000101',
+#     'enterprise': 'ENI',
+#     'productmodel': 'ElectricKettleR3',
+#     'quantity': 1,
+#     'contractmanager': '12112115',
+#     'contractdate': '2022-01-01',
+#     'estimateddelivery_date': '2022-01-06',
+#     'lodgementdate': '2022-01-06',
+#     'salesmannum': '11610016',
+#     'contracttype': 'Finished'
 # }
 # print(json.dumps(test))
 # re = requests.post(url, headers=headers, json=test)

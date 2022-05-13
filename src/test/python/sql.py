@@ -76,7 +76,8 @@ create table contract
     number           varchar(10) not null unique ,
     enterprise    varchar references enterprise(name) on update cascade on delete cascade,
     contract_date    date not null,
-    contract_manager varchar(8)
+    contract_manager varchar(8),
+    contract_type varchar(20)
 );
 create index contract_number on contract(number);
 

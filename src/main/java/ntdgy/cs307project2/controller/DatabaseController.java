@@ -13,11 +13,13 @@ import org.springframework.util.DigestUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import org.joda.time.format.ISODateTimeFormat;
+
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -432,7 +434,7 @@ public class DatabaseController {
             obj[1] = map.get("supplycenter");
             obj[2] = map.get("productmodel");
             jdbc.update(sql, obj);
-        }else{
+        } else {
             sql = "insert into warehousing(center_name,model_name,quantity) values(?,?,?)";
             obj = new Object[3];
             obj[0] = map.get("supplycenter");
@@ -446,7 +448,7 @@ public class DatabaseController {
         obj[1] = map.get("supplycenter");
         obj[2] = map.get("productmodel");
         obj[3] = map.get("supplystaff");
-        if(Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("date").toString())) {
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("date").toString())) {
             DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
             Date date = jsFormat.parseDateTime(map.get("date").toString()).toDate();
             obj[4] = date;
@@ -478,37 +480,63 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ) throws Exception {
         removeEmpty(map);
+        log.error(map.toString());
         Map<String, Object> res = new HashMap<>();
         String[] sql;
         List<Object[]> objects;
         String check1 = "select * from staff where staff.number = ?";
-        List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contractmanager"));
-        if (!check2.get(0).get("type").equals("3")) {
+        List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("salesmannum"));
+        if (check2.isEmpty()) {
+            throw new InvalidDataException("员工不存在");
+        }
+        log.error(check2.toString());
+        if (!(check2.get(0).get("stafftype").toString().equals("3"))) {
             throw new InvalidDataException("该员工不是salesman");
         }
-        String check3 = "select * from warehousing w join (select e.supply_center from contract join enterprise e on contract.enterprise = e.name where contract.number = ?) as cesc on w.center_name = cesc.supply_center and w.model_name = ? and w.quantity >= ?;";
-        List<Map<String, Object>> check4 = jdbc.queryForList(check3, map.get("contractnum"), map.get("productmodel"), map.get("quantity"));
+        String check3 = "select *\n" +
+                "from warehousing w\n" +
+                "         join (select e.supply_center\n" +
+                "               from  enterprise e\n" +
+                "               where e.name = ?) as cesc\n" +
+                "              on w.center_name = cesc.supply_center and w.model_name = ? and w.quantity >= ?;";
+        List<Map<String, Object>> check4 = jdbc.queryForList(check3, map.get("enterprise"), map.get("productmodel"), Integer.parseInt(map.get("quantity").toString()));
+        log.error(check4.toString());
         if (check4.size() == 0) {
             throw new InvalidDataException("库存不足");
         }
-        String check5 = "select * from contract where contract_num = ?";
+        String check5 = "select * from contract where number = ?";
         List<Map<String, Object>> check6 = jdbc.queryForList(check5, map.get("contractnum"));
+        log.error(check6.toString());
         String check7 = "select count(*) from sold where model_name = ?";
         Integer check8 = jdbc.queryForObject(check7, Integer.class, map.get("productmodel"));
+        log.error(check8.toString());
+        Date estimated_delivery_date,lodgement_date;
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("estimated_delivery_date").toString())) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            estimated_delivery_date = jsFormat.parseDateTime(map.get("date").toString()).toDate();
+        } else {
+            estimated_delivery_date = java.sql.Date.valueOf(map.get("date").toString().replace('/', '-'));
+        }
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("lodgement_date").toString())) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            lodgement_date = jsFormat.parseDateTime(map.get("date").toString()).toDate();
+        } else {
+            lodgement_date = java.sql.Date.valueOf(map.get("date").toString().replace('/', '-'));
+        }
         if (check6.size() != 0) {
             sql = new String[3];
             objects = new ArrayList<>();
             sql[0] = "insert into contract_content (contract_number, product_model_name, quantity, estimated_delivery_date, lodgement_date, salesman)\n" +
                     "values (?, ?, ?, ?, ?, ?)";
-            objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), map.get("quantity"), map.get("estimated_delivery_date"), map.get("lodgementdate"), map.get("salesmannum")});
+            objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), Integer.parseInt(map.get("quantity").toString()), estimated_delivery_date, lodgement_date, map.get("salesmannum")});
             sql[1] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
-            objects.add(new Object[]{map.get("quantity"), check4.get(0).get("center_name"), map.get("productmodel")});
-            if (check8 != null && check8 == 0) {
+            objects.add(new Object[]{Integer.parseInt(map.get("quantity").toString()), check4.get(0).get("center_name"), map.get("productmodel")});
+            if (check8 == 0) {
                 sql[2] = "insert into sold (model_name, quantity) values (?, ?)";
-                objects.add(new Object[]{map.get("productmodel"), map.get("quantity")});
+                objects.add(new Object[]{map.get("productmodel"), Integer.parseInt(map.get("quantity").toString())});
             } else {
                 sql[2] = "update sold set quantity = quantity + ? where model_name = ?";
-                objects.add(new Object[]{map.get("quantity"), map.get("productmodel")});
+                objects.add(new Object[]{Integer.parseInt(map.get("quantity").toString()), map.get("productmodel")});
             }
             jdbc.update(sql[0], objects.get(0));
             jdbc.update(sql[1], objects.get(1));
@@ -516,18 +544,18 @@ public class DatabaseController {
         } else {
             sql = new String[4];
             objects = new ArrayList<>();
-            sql[0] = "insert into contract (number, enterprise, contract_date, estimated_delivery_date, contract_manager, contract_type) values (?, ?, ?, ?, ?, ?)";
-            objects.add(new Object[]{map.get("contractnum"), map.get("enterprise"), map.get("contractdate"), map.get("estimated_delivery_date"), map.get("contractmanager"), map.get("contracttype")});
+            sql[0] = "insert into contract (number, enterprise, contract_date, contract_manager, contract_type) values (?, ?, ?, ?, ?)";
+            objects.add(new Object[]{map.get("contractnum"), map.get("enterprise"), map.get("contractdate"), map.get("contractmanager"), map.get("contracttype")});
             sql[1] = "insert into contract_content (contract_number, product_model_name, quantity, estimated_delivery_date, lodgement_date, salesman) values (?, ?, ?, ?, ?, ?)";
-            objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), map.get("quantity"), map.get("estimated_delivery_date"), map.get("lodgementdate"), map.get("salesmannum")});
+            objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), Integer.parseInt(map.get("quantity").toString()),estimated_delivery_date, lodgement_date, map.get("salesmannum")});
             sql[2] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
-            objects.add(new Object[]{map.get("quantity"), check4.get(0).get("center_name"), map.get("productmodel")});
-            if (check8 != null && check8 == 0) {
+            objects.add(new Object[]{Integer.parseInt(map.get("quantity").toString()), check4.get(0).get("center_name"), map.get("productmodel")});
+            if (check8 == 0) {
                 sql[3] = "insert into sold (model_name, quantity) values (?, ?)";
-                objects.add(new Object[]{map.get("productmodel"), map.get("quantity")});
+                objects.add(new Object[]{map.get("productmodel"), Integer.parseInt(map.get("quantity").toString())});
             } else {
                 sql[3] = "update sold set quantity = quantity + ? where model_name = ?";
-                objects.add(new Object[]{map.get("quantity"), map.get("productmodel")});
+                objects.add(new Object[]{Integer.parseInt(map.get("quantity").toString()), map.get("productmodel")});
             }
             jdbc.update(sql[0], objects.get(0));
             jdbc.update(sql[1], objects.get(1));
@@ -615,10 +643,10 @@ public class DatabaseController {
         objects.add(new Object[]{map.get("contract"), check2.get((Integer) map.get("seq")).get("product_model_name"), map.get("salesman")});
         sql[1] = "update warehousing set quantity = quantity + ? where model_name = ? and center_name = ?;";
         objects.add(new Object[]{check2.get((Integer) map.get("seq")).get("quantity"), check2.get((Integer) map.get("seq")).get("product_model_name"), check2.get((Integer) map.get("seq")).get("center_name")});
-        if(check4!=null && check4 == check2.get((Integer) map.get("seq")).get("quantity")){
+        if (check4 != null && check4 == check2.get((Integer) map.get("seq")).get("quantity")) {
             sql[2] = "delete from sold where model_name = ?";
             objects.add(new Object[]{check2.get((Integer) map.get("seq")).get("product_model_name")});
-        }else{
+        } else {
             sql[2] = "update sold set quantity = quantity - ? where model_name = ?";
             objects.add(new Object[]{check2.get((Integer) map.get("seq")).get("quantity"), check2.get((Integer) map.get("seq")).get("product_model_name")});
         }
@@ -692,7 +720,7 @@ public class DatabaseController {
         return res;
     }
 
-//    getProductByNumber:
+    //    getProductByNumber:
     @PostMapping("/getProductByNumber")
     @ResponseBody
     public Map<String, Object> getProductByNumber(@RequestBody Map<String, Object> map) {
