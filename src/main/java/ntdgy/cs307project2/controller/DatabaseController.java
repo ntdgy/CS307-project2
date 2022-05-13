@@ -1,5 +1,6 @@
 package ntdgy.cs307project2.controller;
 
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import ntdgy.cs307project2.exception.InvalidDataException;
 import ntdgy.cs307project2.exception.InvalidOperationException;
@@ -24,6 +25,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 @Slf4j
+@Api
 @EnableAsync
 @Controller
 @RequestMapping("/api/database")
