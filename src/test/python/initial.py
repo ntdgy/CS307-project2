@@ -83,41 +83,41 @@ def stock_in():
             test['supplycenter'] = line[1]
             test['productmodel'] = line[2]
             test['supplystaff'] = line[3]
-            test['date'] = line[4]
+            test['date'] = line[4].replace('/', '-')
             test['purchaseprice'] = line[5]
-            test['quantity'] = line[6]
+            test['quantity'] = line[6].replace('\n', '')
             re = requests.post(url, headers=headers, json=test)
             print(re.text)
 
 
-# drop_tables()
-# create_tables()
-# insert_into_center()
-# insert_into_enterprise()
-# insert_into_model()
-# insert_into_staff()
-#
+drop_tables()
+create_tables()
+insert_into_center()
+insert_into_enterprise()
+insert_into_model()
+insert_into_staff()
 
-# stock_in()
 
-url = "http://localhost:8080/api/database/stockIn"
-headers = {
-    'Content-Type': "application/json",
-    'Accept': "application/json",
-    'Cookie': 'JSESSIONID=FA4DAEBCC9F4A6EEA31927BB8DC857F9'
-}
-test = {
-    # id,supply_center,product_model,supply_staff,date,purchase_price,quantity
-    'id': 1,
-    'supplycenter': 'Asia',
-    'productmodel': 'Repeater97',
-    'supplystaff': '11210906',
-    'date': '2008-10-27',
-    'purchase_price': '430',
-    'quantity': '801'
-}
-print(json.dumps(test))
-re = requests.post(url, headers=headers, json=test)
-print(re.status_code)
-print(re.text)
+stock_in()
+
+# url = "http://localhost:8080/api/database/stockIn"
+# headers = {
+#     'Content-Type': "application/json",
+#     'Accept': "application/json",
+#     'Cookie': 'JSESSIONID=FA4DAEBCC9F4A6EEA31927BB8DC857F9'
+# }
+# test = {
+#     # id,supply_center,product_model,supply_staff,date,purchase_price,quantity
+#     'id': 243041,
+#     'supplycenter': 'Asia',
+#     'productmodel': 'Repeater97',
+#     'supplystaff': '11210906',
+#     'date': '2008-10-27',
+#     'purchase_price': '430',
+#     'quantity': '801'
+# }
+# print(json.dumps(test))
+# re = requests.post(url, headers=headers, json=test)
+# print(re.status_code)
+# print(re.text)
 

@@ -11,9 +11,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.util.DigestUtils;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.sql.Date;
+import java.time.format.DateTimeFormatter;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Slf4j
 @EnableAsync
@@ -417,11 +422,6 @@ public class DatabaseController {
         if (check6.size() == 0) {
             throw new InvalidDataException("产品型号不存在");
         }
-//        String check7 = "select staff.supply_center from staff where staff.number = ?;";
-//        List<Map<String, Object>> check8 = jdbc.queryForList(check7, map.get("supplystaff"));
-//        if (!check8.get(0).get("name").equals(map.get("supplycenter"))) {
-//            throw new InvalidDataException("供应商不属于该供应中心");
-//        }
         String check9 = "select * from warehousing where center_name = ? and model_name = ?;";
         List<Map<String, Object>> check10 = jdbc.queryForList(check9, map.get("supplycenter"), map.get("productmodel"));
         if (check10.size() != 0) {
@@ -445,9 +445,15 @@ public class DatabaseController {
         obj[1] = map.get("supplycenter");
         obj[2] = map.get("productmodel");
         obj[3] = map.get("supplystaff");
-        java.sql.Date date = Date.valueOf(map.get("date").toString());
-        obj[4] = date;
-        obj[5] = map.get("purchaseprice");
+        if(Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("date").toString())) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            Date date = jsFormat.parseDateTime(map.get("date").toString()).toDate();
+            obj[4] = date;
+        } else {
+            Date date = java.sql.Date.valueOf(map.get("date").toString().replace('/', '-'));
+            obj[4] = date;
+        }
+        obj[5] = Integer.parseInt(map.get("purchase_price").toString());
         obj[6] = Integer.parseInt(map.get("quantity").toString());
         jdbc.update(sql, obj);
         res.put("result", "Success");
