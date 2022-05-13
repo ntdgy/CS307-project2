@@ -648,28 +648,34 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ) throws InvalidDataException {
         removeEmpty(map);
+        log.error(map.toString());
         Map<String, Object> res = new HashMap<>();
         String[] sql;
         List<Object[]> objects;
         String check1 = "select * from contract_content where contract_number = ? and salesman = ? order by estimated_delivery_date, product_model_name;";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contract"), map.get("salesman"));
+        log.error(check2.toString());
+        var content = check2.get(Integer.parseInt(map.get("seq").toString()) - 1);
         String check3 = "select count(*) from sold where model_name = ?";
-        Integer check4 = jdbc.queryForObject(check3, Integer.class, map.get("productmodel"));
+        Integer check4 = jdbc.queryForObject(check3, Integer.class, content.get("product_model_name"));
         if (check2.size() == 0) {
             throw new InvalidDataException("该合同不属于该销售员");
         }
+        String check5 = "select supply_center from contract join enterprise e on contract.enterprise = e.name\n" +
+                "    where number = 'CSE0000208';";
+        String check6 = jdbc.queryForObject(check5, String.class);
         sql = new String[3];
         objects = new ArrayList<>();
         sql[0] = "delete from contract_content where contract_number = ? and product_model_name = ? and salesman = ?";
-        objects.add(new Object[]{map.get("contract"), check2.get((Integer) map.get("seq")).get("product_model_name"), map.get("salesman")});
+        objects.add(new Object[]{map.get("contract"), content.get("product_model_name"), map.get("salesman")});
         sql[1] = "update warehousing set quantity = quantity + ? where model_name = ? and center_name = ?;";
-        objects.add(new Object[]{check2.get((Integer) map.get("seq")).get("quantity"), check2.get((Integer) map.get("seq")).get("product_model_name"), check2.get((Integer) map.get("seq")).get("center_name")});
-        if (check4 != null && check4 == check2.get((Integer) map.get("seq")).get("quantity")) {
+        objects.add(new Object[]{Integer.parseInt(content.get("quantity").toString()), content.get("product_model_name"), check6});
+        if (check4 != null && check4 == Integer.parseInt(content.get("quantity").toString())) {
             sql[2] = "delete from sold where model_name = ?";
-            objects.add(new Object[]{check2.get((Integer) map.get("seq")).get("product_model_name")});
+            objects.add(new Object[]{content.get("product_model_name")});
         } else {
             sql[2] = "update sold set quantity = quantity - ? where model_name = ?";
-            objects.add(new Object[]{check2.get((Integer) map.get("seq")).get("quantity"), check2.get((Integer) map.get("seq")).get("product_model_name")});
+            objects.add(new Object[]{Integer.parseInt(content.get("quantity").toString()), content.get("product_model_name")});
         }
         jdbc.update(sql[0], objects.get(0));
         jdbc.update(sql[1], objects.get(1));

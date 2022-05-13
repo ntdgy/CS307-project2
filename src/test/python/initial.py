@@ -175,26 +175,22 @@ def update_order():
 # insert_into_staff()
 # stock_in()
 # place_prder()
-
-update_order()
-
+# update_order()
 
 
-url = "http://localhost:8080/api/database/updateOrder"
+
+url = "http://localhost:8080/api/database/deleteOrder"
 headers = {
     'Content-Type': "application/json",
     'Accept': "application/json",
     'Cookie': 'JSESSIONID=FA4DAEBCC9F4A6EEA31927BB8DC857F9'
 }
 test = {
-    # contract	product_model	salesman	quantity	estimate_delivery_date	lodgement_date
-    # CSE0000208	ComputerTerminal43	11110405	1	2022-02-28	2022-02-13
-    'contractnum': 'CSE0000208',
-    'productmodel': 'ComputerTerminal43',
-    'salesmannum': '11110405',
-    'quantity': 1,
-    'estimateddeliverydate': '2022-02-28',
-    'lodgementdate': '2022-02-13'
+    # contract	salesman	seq
+    # CSE0000219	12110324	2
+    'contract': 'CSE0000219',
+    'salesmannum': '12110324',
+    'seq': 2
 }
 print(json.dumps(test))
 re = requests.post(url, headers=headers, json=test)
