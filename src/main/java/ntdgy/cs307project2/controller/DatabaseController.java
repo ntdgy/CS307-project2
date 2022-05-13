@@ -655,12 +655,12 @@ public class DatabaseController {
         String check1 = "select * from contract_content where contract_number = ? and salesman = ? order by estimated_delivery_date, product_model_name;";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contract"), map.get("salesman"));
         log.error(check2.toString());
+        if (check2.size() > Integer.parseInt(map.get("seq").toString())) {
+            throw new InvalidDataException("该合同不属于该销售员");
+        }
         var content = check2.get(Integer.parseInt(map.get("seq").toString()) - 1);
         String check3 = "select count(*) from sold where model_name = ?";
         Integer check4 = jdbc.queryForObject(check3, Integer.class, content.get("product_model_name"));
-        if (check2.size() == 0) {
-            throw new InvalidDataException("该合同不属于该销售员");
-        }
         String check5 = "select supply_center from contract join enterprise e on contract.enterprise = e.name\n" +
                 "    where number = 'CSE0000208';";
         String check6 = jdbc.queryForObject(check5, String.class);

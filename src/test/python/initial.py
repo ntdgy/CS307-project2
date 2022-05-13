@@ -188,9 +188,9 @@ headers = {
 test = {
     # contract	salesman	seq
     # CSE0000219	12110324	2
-    'contract': 'CSE0000219',
-    'salesmannum': '12110324',
-    'seq': 2
+    'contract': 'CSE0000310',
+    'salesman': '11612314',
+    'seq': 1
 }
 print(json.dumps(test))
 re = requests.post(url, headers=headers, json=test)
