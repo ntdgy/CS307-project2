@@ -94,5 +94,11 @@ app.controller('tt', function ($scope, $http) {
             }
         }
     };
-
+    //initialize
+    staff();
+    contract();
+    order();
+    never();
+    favorite();
+    avg();
 })
