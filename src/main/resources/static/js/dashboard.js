@@ -7,6 +7,9 @@ app.controller('tt', function ($scope, $http) {
     $scope.staffData = {
         a: 1
     }
+    $scope.favoriteData = {
+        a: 1
+    }
     staff = function () {
         $http({
             method: 'post',
@@ -65,7 +68,7 @@ app.controller('tt', function ($scope, $http) {
             url: 'api/database/getFavoriteProductModel'
         }).then(
             function (data, status, header, config) {
-                $scope.favoriteData = data.data;
+                $scope.favoriteData = data.data.result;
                 console.log(data);
             }
         ).catch(function (data, status, header, config) {
