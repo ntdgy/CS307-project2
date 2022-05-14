@@ -8,6 +8,8 @@ app.controller('test', function ($scope, $http) {
     $scope.order = {};
     $scope.staff = {};
     $scope.contract = {};
+    $scope.number = {};
+    $scope.info = {};
     $scope.tables = [];
     $scope.mysubmit = function () {
         if ($scope.tables.table === 'center') {
@@ -78,6 +80,32 @@ app.controller('test', function ($scope, $http) {
             }).then(
                 function (data, status, header, config) {
                     $scope.contractData = data.data;
+                }
+            ).catch(function (data, status, header, config) {
+                console.log(data, status);
+            });
+        } else if ($scope.tables.table === 'number') {
+            $http({
+                method: 'post',
+                url: 'api/database/getProductByNumber',
+                data: $scope.number
+            }).then(
+                function (data, status, header, config) {
+                    console.log(data, status);
+                    $scope.numberData = data.data;
+                }
+            ).catch(function (data, status, header, config) {
+                console.log(data, status);
+            });
+        } else if ($scope.tables.table === 'info') {
+            $http({
+                method: 'post',
+                url: 'api/database/getContractInfo',
+                data: $scope.info
+            }).then(
+                function (data, status, header, config) {
+                    $scope.infoData = data.data;
+                    console.log(data, status);
                 }
             ).catch(function (data, status, header, config) {
                 console.log(data, status);
