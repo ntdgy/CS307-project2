@@ -205,15 +205,15 @@ def delete_order():
 
 
 
-# drop_tables()
-# create_tables()
-# insert_into_center()
-# insert_into_enterprise()
-# insert_into_model()
-# insert_into_staff()
-# stock_in()
-# place_prder()
-# update_order()
+drop_tables()
+create_tables()
+insert_into_center()
+insert_into_enterprise()
+insert_into_model()
+insert_into_staff()
+stock_in()
+place_prder()
+update_order()
 
 delete_order()
 
