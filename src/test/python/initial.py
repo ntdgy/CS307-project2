@@ -174,51 +174,63 @@ def update_order():
             print(re.text)
 
 
-drop_tables()
-create_tables()
-insert_into_center()
-insert_into_enterprise()
-insert_into_model()
-insert_into_staff()
-stock_in()
-place_prder()
-update_order()
+def delete_order():
+    url = "http://localhost:8080/api/database/deleteOrder"
+    headers = {
+        'Content-Type': "application/json",
+        'Accept': "application/json",
+        'Cookie': 'JSESSIONID=FA4DAEBCC9F4A6EEA31927BB8DC857F9'
+    }
+    test = {
+        # contract	salesman	seq
+        # CSE0000103	11611117	1
+        'contract': 'CSE0000103',
+        'salesman': '11611117',
+        'seq': 1
+    }
+    with open('data/task34_delete_test_data_publish.tsv', 'r') as f:
+        head = f.readline()
+        while True:
+            line = f.readline()
+            if not line:
+                break
+            line = line.split()
+            test['contract'] = line[0]
+            test['salesman'] = line[1]
+            test['seq'] = line[2]
+            re = requests.post(url, headers=headers, json=test)
+            print(re.status_code)
+            print(re.text)
 
 
-# url = "http://localhost:8080/api/database/stockIn"
+
+
+# drop_tables()
+# create_tables()
+# insert_into_center()
+# insert_into_enterprise()
+# insert_into_model()
+# insert_into_staff()
+# stock_in()
+# place_prder()
+# update_order()
+
+delete_order()
+
+
+# url = "http://localhost:8080/api/database/deleteOrder"
 # headers = {
 #     'Content-Type': "application/json",
 #     'Accept': "application/json",
 #     'Cookie': 'JSESSIONID=FA4DAEBCC9F4A6EEA31927BB8DC857F9'
 # }
-# line = '8,"Hong Kong, Macao and Taiwan regions of China",LightningProtectionProducts26,11810528,2008/11/21,498,587'
-# line = line.replace('"', '').split(',')
-# print(line)
 # test = {
-#     # id,supply_center,product_model,supply_staff,date,purchase_price,quantity
-#     'id': 8,
-#     'supplycenter': '',
-#     'productmodel': 'LightningProtectionProducts26',
-#     'supplystaff': '11810528',
-#     'date': '2008/11/21',
-#     'purchase_price': 498,
-#     'quantity': 587
+#     # contract	salesman	seq
+#     # CSE0000103	11611117	1
+#     'contract': 'CSE0000103',
+#     'salesman': '11611117',
+#     'seq': 1
 # }
-# test['id'] = line[0]
-# if line[1] == 'Hong Kong':
-#     test['supplycenter'] = line[1]+', Macao and Taiwan regions of China'
-#     test['productmodel'] = line[3]
-#     test['supplystaff'] = line[4]
-#     test['date'] = line[5].replace('/', '-')
-#     test['purchase_price'] = line[6]
-#     test['quantity'] = line[7]
-# else:
-#     test['supplycenter'] = line[1]
-#     test['productmodel'] = line[2]
-#     test['supplystaff'] = line[3]
-#     test['date'] = line[4].replace('/', '-')
-#     test['purchase_price'] = line[5]
-#     test['quantity'] = line[6]
 # print(json.dumps(test))
 # re = requests.post(url, headers=headers, json=test)
 # print(re.status_code)

@@ -657,7 +657,7 @@ public class DatabaseController {
         String check1 = "select * from contract_content where contract_number = ? and salesman = ? order by estimated_delivery_date, product_model_name;";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contract"), map.get("salesman"));
         log.error(check2.toString());
-        if (check2.size() > Integer.parseInt(map.get("seq").toString())) {
+        if (check2.size() < Integer.parseInt(map.get("seq").toString())) {
             throw new InvalidDataException("该合同不属于该销售员");
         }
         var content = check2.get(Integer.parseInt(map.get("seq").toString()) - 1);
@@ -732,7 +732,7 @@ public class DatabaseController {
     @ResponseBody
     public Map<String, Object> getFavoriteProductModel() {
         Map<String, Object> res = new HashMap<>();
-        String sql = "select model_name,quantity from sold s where (select quantity q from sold order by quantity limit 1) = s.quantity;";
+        String sql = "select model_name,quantity from sold s where (select quantity q from sold order by quantity desc limit 1) = s.quantity;";
         List<Map<String, Object>> check = jdbc.queryForList(sql);
         res.put("result", check);
         return res;
@@ -764,11 +764,12 @@ public class DatabaseController {
     @PostMapping("/getContractInfo")
     @ResponseBody
     public Map<String, Object> getContractInfo(@RequestBody Map<String, Object> map) {
-        String contract_number = (String) map.get("contract_number");
+        log.error(map.toString());
+        String contract_number = (String) map.get("contractnumber");
         Map<String, Object> res = new HashMap<>();
-        String sql = "select * from contract where contract_number = ?;";
+        String sql = "select c.number,c.enterprise,e.supply_center,s.name from contract c join staff s on c.contract_manager = s.number join enterprise e on c.enterprise = e.name where c.number = ?;";
         List<Map<String, Object>> check = jdbc.queryForList(sql, contract_number);
-        String sql2 = "select * from contract_content where contract_number = ?;";
+        String sql2 = "select c.product_model_name,c.quantity,c.estimated_delivery_date,c.lodgement_date,s.name from contract_content c join staff s on c.salesman = s.number where contract_number = ?;";
         List<Map<String, Object>> check2 = jdbc.queryForList(sql2, contract_number);
         res.put("result", check);
         res.put("result2", check2);
