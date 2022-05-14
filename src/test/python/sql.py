@@ -22,7 +22,7 @@ create table enterprise
 (
     id               serial primary key,
     name             varchar not null unique ,
-    supply_center varchar references center(name) on update cascade on delete cascade,         -- references supply_center(id),-- not null ,
+    supply_center varchar not null references center(name) on update cascade on delete cascade,         -- references supply_center(id),-- not null ,
     country          varchar(30) not null,
     city             varchar(20),
     industry         varchar(40)
@@ -37,7 +37,7 @@ create table staff
     gender        varchar(6),
     age           int,
     mobile_number varchar(11) unique not null,
-    supply_center varchar references center(name) on update cascade on delete cascade,
+    supply_center varchar not null references center(name) on update cascade on delete cascade,
     stafftype          int          -- 0 is director, 1 is supply staff, 2 is contracts manager, 3 is salesman
 );
 create index staff_name on staff(number);
@@ -54,16 +54,16 @@ create index model_model on model(model);
 
 create table warehousing(
     id serial primary key,
-    model_name varchar references model(model) on update cascade on delete cascade,
+    model_name varchar not null references model(model) on update cascade on delete cascade,
     quantity int not null,
-    center_name varchar references center(name)  on update cascade on delete cascade
+    center_name varchar not null references center(name)  on update cascade on delete cascade
 );
 
 create table stockin
 (
     id             serial primary key,
-    supply_center  varchar references center(name) on update cascade on delete cascade,
-    product_model  varchar references model(model) on update cascade on delete cascade,
+    supply_center  varchar not null references center(name) on update cascade on delete cascade,
+    product_model  varchar not null references model(model) on update cascade on delete cascade,
     supply_staff   varchar(8),
     date           date,
     purchase_price int,
@@ -74,7 +74,7 @@ create table contract
 (
     id               serial primary key,
     number           varchar(10) not null unique ,
-    enterprise    varchar references enterprise(name) on update cascade on delete cascade,
+    enterprise    varchar not null references enterprise(name) on update cascade on delete cascade,
     contract_date    date not null,
     contract_manager varchar(8),
     contract_type varchar(20)
@@ -84,12 +84,12 @@ create index contract_number on contract(number);
 create table contract_content
 (
     id                      serial primary key,
-    contract_number            varchar(10) references contract(number) on update cascade on delete cascade, -- references contract (id) not null ,
-    product_model_name       varchar references model(model) on update cascade on delete cascade, -- references product_model (id) not null,
+    contract_number            varchar(10) not null references contract(number) on update cascade on delete cascade, -- references contract (id) not null ,
+    product_model_name       varchar not null references model(model) on update cascade on delete cascade, -- references product_model (id) not null,
     quantity                int, -- not null,
     estimated_delivery_date date,
     lodgement_date          date,
-    salesman   varchar references staff(number) on update cascade on delete cascade -- references salesman (id) not null
+    salesman   varchar not null references staff(number) on update cascade on delete cascade -- references salesman (id) not null
 );
 
 create table users
