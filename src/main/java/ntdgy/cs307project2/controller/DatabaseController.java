@@ -61,6 +61,92 @@ public class DatabaseController {
         return jdbc.queryForList(sql.toString(), obj);
     }
 
+    @PostMapping("/select/enterprise")
+    @ResponseBody
+    public List<Map<String, Object>> selectEnterprise(
+            @RequestBody Map<String, Object> map
+    ) throws InvalidDataException {
+        StringBuilder sql = new StringBuilder("select * from enterprise where");
+        removeEmpty(map);
+        if (map.isEmpty()) {
+            throw new InvalidDataException("查询条件为空");
+        }
+        Object[] obj = new Object[map.size()];
+        int i = 0;
+        for (var entry : map.entrySet()) {
+            if (i == 0) {
+                sql.append(" ").append(entry.getKey()).append(" = ?");
+            } else {
+                sql.append(" and ").append(entry.getKey()).append(" = ?");
+            }
+            obj[i++] = entry.getValue();
+        }
+        return jdbc.queryForList(sql.toString(), obj);
+    }
+
+    @PostMapping("/select/model")
+    @ResponseBody
+    public List<Map<String, Object>> selectModel(
+            @RequestBody Map<String, Object> map
+    ) throws InvalidDataException {
+        StringBuilder sql = new StringBuilder("select * from model where");
+        removeEmpty(map);
+        if (map.isEmpty()) {
+            throw new InvalidDataException("查询条件为空");
+        }
+        Object[] obj = new Object[map.size()];
+        int i = 0;
+        for (var entry : map.entrySet()) {
+            if (i == 0) {
+                sql.append(" ").append(entry.getKey()).append(" = ?");
+            } else {
+                sql.append(" and ").append(entry.getKey()).append(" = ?");
+            }
+            obj[i++] = entry.getValue();
+        }
+        return jdbc.queryForList(sql.toString(), obj);
+    }
+
+    @PostMapping("/select/staff")
+    @ResponseBody
+    public List<Map<String, Object>> selectStaff(
+            @RequestBody Map<String, Object> map
+    ) throws InvalidDataException {
+        StringBuilder sql = new StringBuilder("select * from staff where");
+        removeEmpty(map);
+        if (map.isEmpty()) {
+            throw new InvalidDataException("查询条件为空");
+        }
+        Object[] obj = new Object[map.size()];
+        int i = 0;
+        for (var entry : map.entrySet()) {
+            if (i == 0) {
+                sql.append(" ").append(entry.getKey()).append(" = ?");
+            } else {
+                sql.append(" and ").append(entry.getKey()).append(" = ?");
+            }
+            obj[i++] = entry.getValue();
+        }
+        var result = jdbc.queryForList(sql.toString(), obj);
+        for(var list: result){
+            switch ((Integer) list.get("stafftype")){
+                case 0:
+                    list.replace("stafftype", "Director");
+                    break;
+                case 1:
+                    list.replace("stafftype", "Supply Staff");
+                    break;
+                case 2:
+                    list.replace("stafftype", "Contracts Manager");
+                    break;
+                case 3:
+                    list.replace("stafftype", "Salesman");
+            }
+        }
+        return result;
+    }
+
+
     @PostMapping("/center")
     @ResponseBody
     public Map<String, Object> center(
