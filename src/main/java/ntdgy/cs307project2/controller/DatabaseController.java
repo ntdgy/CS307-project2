@@ -243,7 +243,6 @@ public class DatabaseController {
         String[] update = new String[]{"updateid", "updatename", "updatecountry", "updatecity", "updatesupplycenter", "updateindustry", "updatesupply_center"};
         Object[] obj;
         removeEmpty(map);
-        log.error(map.toString());
         Map<String, Object> res = wash(map, para);
         String type = (String) map.get("type");
         StringBuilder sql;
@@ -303,6 +302,7 @@ public class DatabaseController {
         try {
             jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
+            log.error(map.toString());
             throw new WrongDataException("数据错误", e);
         }
         response.put("result", "success");
@@ -331,7 +331,6 @@ public class DatabaseController {
                 "updatemobilenumber", "updatesupply_center", "updatemobile_number","updatestafftype"};
         Object[] obj;
         removeEmpty(map);
-        log.error(map.toString());
         Map<String, Object> res = wash(map, para);
         String type = (String) map.get("type");
         StringBuilder sql;
@@ -390,6 +389,7 @@ public class DatabaseController {
         try {
             jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
+            log.error(map.toString());
             throw new WrongDataException("数据错误", e);
         }
         response.put("result", "success");
@@ -492,13 +492,13 @@ public class DatabaseController {
             //map的参数同上
     ) throws Exception {
         removeEmpty(map);
-        log.error(map.toString());
         Map<String, Object> res = new HashMap<>();
         String sql;
         Object[] obj;
         String check1 = "select * from staff where staff.number = ?";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("supplystaff").toString());
         if (check2.size() == 0) {
+            log.error(map.toString());
             throw new InvalidDataException("⼈员不存在");
         }
         if (!check2.get(0).get("stafftype").equals(1)) {
@@ -506,16 +506,19 @@ public class DatabaseController {
             throw new InvalidDataException("⼈员的类型不是supply_staff");
         }
         if (!check2.get(0).get("supply_center").equals(map.get("supplycenter"))) {
+            log.error(map.toString());
             throw new InvalidDataException("供应商不属于该供应中心");
         }
         String check3 = "select * from center where center.name = ?";
         List<Map<String, Object>> check4 = jdbc.queryForList(check3, map.get("supplycenter"));
         if (check4.size() == 0) {
+            log.error(map.toString());
             throw new InvalidDataException("供应中心不存在");
         }
         String check5 = "select * from model where model.model = ?";
         List<Map<String, Object>> check6 = jdbc.queryForList(check5, map.get("productmodel"));
         if (check6.size() == 0) {
+            log.error(map.toString());
             throw new InvalidDataException("产品型号不存在");
         }
         String check9 = "select * from warehousing where center_name = ? and model_name = ?;";
@@ -573,16 +576,15 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ) throws Exception {
         removeEmpty(map);
-        log.error(map.toString());
         Map<String, Object> res = new HashMap<>();
         String[] sql;
         List<Object[]> objects;
         String check1 = "select * from staff where staff.number = ?";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("salesmannum"));
         if (check2.isEmpty()) {
+            log.error(map.toString());
             throw new InvalidDataException("员工不存在");
         }
-        log.error(check2.toString());
         if (!(check2.get(0).get("stafftype").toString().equals("3"))) {
             throw new InvalidDataException("该员工不是salesman");
         }
@@ -593,16 +595,14 @@ public class DatabaseController {
                 "               where e.name = ?) as cesc\n" +
                 "              on w.center_name = cesc.supply_center and w.model_name = ? and w.quantity >= ?;";
         List<Map<String, Object>> check4 = jdbc.queryForList(check3, map.get("enterprise"), map.get("productmodel"), Integer.parseInt(map.get("quantity").toString()));
-        log.error(check4.toString());
         if (check4.size() == 0) {
+            log.error(check4.toString());
             throw new InvalidDataException("库存不足");
         }
         String check5 = "select * from contract where number = ?";
         List<Map<String, Object>> check6 = jdbc.queryForList(check5, map.get("contractnum"));
-        log.error(check6.toString());
         String check7 = "select count(*) from sold where model_name = ?";
         Integer check8 = jdbc.queryForObject(check7, Integer.class, map.get("productmodel"));
-        log.error(check8.toString());
         Date estimated_delivery_date, lodgement_date, contractdate;
         if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("estimateddeliverydate").toString())) {
             DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
@@ -682,14 +682,13 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ) throws InvalidDataException {
         removeEmpty(map);
-        log.error(map.toString());
         Map<String, Object> res = new HashMap<>();
         String[] sql;
         List<Object[]> objects;
         String check1 = "select * from contract_content where contract_number = ? and salesman = ? and product_model_name = ?";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contractnum"), map.get("salesman"), map.get("productmodel"));
-        log.error(check2.toString());
         if (check2.size() == 0) {
+            log.error(check2.toString());
             throw new InvalidDataException("该合同不属于该销售员");
         }
         int quantity = Integer.parseInt(map.get("quantity").toString()) - Integer.parseInt(check2.get(0).get("quantity").toString());
@@ -741,14 +740,13 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ) throws InvalidDataException {
         removeEmpty(map);
-        log.error(map.toString());
         Map<String, Object> res = new HashMap<>();
         String[] sql;
         List<Object[]> objects;
         String check1 = "select * from contract_content where contract_number = ? and salesman = ? order by estimated_delivery_date, product_model_name;";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contract"), map.get("salesman"));
-        log.error(check2.toString());
         if (check2.size() < Integer.parseInt(map.get("seq").toString())) {
+            log.error(check2.toString());
             throw new InvalidDataException("该合同不属于该销售员");
         }
         var content = check2.get(Integer.parseInt(map.get("seq").toString()) - 1);
@@ -855,7 +853,6 @@ public class DatabaseController {
     @PostMapping("/getContractInfo")
     @ResponseBody
     public Map<String, Object> getContractInfo(@RequestBody Map<String, Object> map) {
-        log.error(map.toString());
         String contract_number = (String) map.get("contractnumber");
         Map<String, Object> res = new HashMap<>();
         String sql = "select c.number,c.enterprise,e.supply_center,s.name from contract c join staff s on c.contract_manager = s.number join enterprise e on c.enterprise = e.name where c.number = ?;";
