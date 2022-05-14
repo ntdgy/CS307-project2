@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Order</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Custom styles for this templates -->
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet">
+    <style type="text/css">
+        /* Chart.js */
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+</head>
+
+<body ng-app="order" ng-controller="order">
+<div th:replace="~{childPages/common::topbar}"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="~{childPages/common::sidebar(active='order')}"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <h2>Order Management</h2>
+            <form class="form-order" ng-submit="mysubmit()">
+                <select name="type" ng-model="type" ng-init="order.type='Place'">
+                    <option ng-show="false" value=""></option>
+                    <option value="Place">Place</option>
+                    <option value="Update">Update</option>
+                    <option value="Delete">Delete</option>
+                </select>
+                <div class="order" ng-switch="type">
+                    <div  ng-switch-when="Place">
+                        <input type="text" name="contractnum" class="form-control" placeholder="Contract Number" autofocus=""
+                               ng-model="order.contractnum">
+                        <input type="text" name="enterprise" class="form-control" placeholder="Enterprise"
+                               ng-model="order.enterprise">
+                        <input type="text" name="productmodel" class="form-control" placeholder="Product Model"
+                               ng-model="order.productmodel">
+                        <input type="text" name="quantity" class="form-control" placeholder="Quantity"
+                               ng-model="order.quantity">
+                        <input type="text" name="contractmanager" class="form-control" placeholder="Contract Manager"
+                               ng-model="order.contractmanager">
+
+                        <input type="text" name="supplystaff" class="form-control" placeholder="Supply Staff"
+                               ng-model="order.supplystaff">
+                        <input type="text" name="date" class="form-control" placeholder="Date" ng-model="order.date">
+                        <input type="text" name="purchaseprice" class="form-control" placeholder="Purchase Price"
+                               ng-model="order.purchaseprice">
+                    </div>
+                    <div  ng-switch-when="Update">
+                        <label class="sr-only">Order Id</label>
+                        <input type="number" name="updateid" class="form-control" placeholder="Original Order Id"
+                               autofocus=""
+                               ng-model="order.updateid">
+                        <label class="sr-only">Product Model</label>
+                        <input type="text" name="updateproductmodel" class="form-control"
+                               placeholder="Original Product Model"
+                               ng-model="order.updateproductmodel">
+                        <label class="sr-only">Supply Center</label>
+                        <input type="text" name="updatesupplycenter" class="form-control"
+                               placeholder="Original Supply Center"
+                               ng-model="order.updatesupplycenter">
+                        <label class="sr-only">Supply Staff</label>
+                        <input type="text" name="updatesupplystaff" class="form-control"
+                               placeholder="Original Supply Staff"
+                               ng-model="order.updatesupplystaff">
+                        <label class="sr-only">Date</label>
+                        <input type="text" name="updatedate" class="form-control" placeholder="Original Date"
+                               ng-model="order.updatedate">
+                        <label class="sr-only">Purchase Price</label>
+                        <input type="text" name="updatepurchaseprice" class="form-control"
+                               placeholder="Original Purchase Price"
+                               ng-model="order.updatepurchaseprice">
+                        <label class="sr-only">Quantity</label>
+                        <input type="text" name="updatequantity" class="form-control" placeholder="Original Quantity"
+                               ng-model="order.updatequantity">
+                    </div>
+                    <div  ng-switch-when="Delete">
+
+                    </div>
+                </div>
+                <div class="alert alert-success alert-dismissible" ng-show="orderData">
+                    <strong>{{orderData}}</strong>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+            </form>
+    </main>
+</div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" th:src="@{/js/jquery-3.2.1.slim.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+
+<script type="text/javascript" th:src="@{/js/order.js}"></script>
+
+</body>
+
+</html>

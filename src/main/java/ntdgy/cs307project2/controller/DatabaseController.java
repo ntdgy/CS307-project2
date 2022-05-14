@@ -843,8 +843,8 @@ public class DatabaseController {
     @ResponseBody
     public Map<String, Object> getProductByNumber(@RequestBody Map<String, Object> map) {
         Map<String, Object> res = new HashMap<>();
-        String sql = "select center_name,model_name,m.model,quantity from warehousing join model m on warehousing.model_name = m.name where model_name = ?;";
-        List<Map<String, Object>> check = jdbc.queryForList(sql, map.get("model_name"));
+        String sql = "select center_name,model_name,m.model,quantity from warehousing join model m on warehousing.model_name = m.name where number = ?;";
+        List<Map<String, Object>> check = jdbc.queryForList(sql, map.get("model_number"));
         res.put("result", check);
         return res;
     }
