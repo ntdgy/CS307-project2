@@ -239,8 +239,8 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ) throws WrongDataException {
         Map<String, Object> response = new HashMap<>();
-        String[] para = new String[]{"id", "name", "country", "city", "supplycenter", "industry"};
-        String[] update = new String[]{"updateid", "updatename", "updatecountry", "updatecity", "updatesupplycenter", "updateindustry"};
+        String[] para = new String[]{"id", "name", "country", "city", "supplycenter", "industry", "supply_center"};
+        String[] update = new String[]{"updateid", "updatename", "updatecountry", "updatecity", "updatesupplycenter", "updateindustry", "updatesupply_center"};
         Object[] obj;
         removeEmpty(map);
         log.error(map.toString());
@@ -325,10 +325,10 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ) throws WrongDataException {
         Map<String, Object> response = new HashMap<>();
-        String[] para = new String[]{"id", "name", "number", "gender", "age", "mobilenumber", "supplycenterid",
+        String[] para = new String[]{"id", "name", "number", "gender", "age", "supply_center",
                 "mobile_number","stafftype"};
-        String[] update = new String[]{"updateid", "updatename", "updategender", "updateage", "updatemobilenumber",
-                "updatemobilenumber", "updatesupplycenterid", "updatemobile_number","updatestafftype"};
+        String[] update = new String[]{"updateid", "updatename", "updategender", "updateage",
+                "updatemobilenumber", "updatesupply_center", "updatemobile_number","updatestafftype"};
         Object[] obj;
         removeEmpty(map);
         log.error(map.toString());
@@ -410,7 +410,7 @@ public class DatabaseController {
     ) throws WrongDataException {
         Map<String, Object> response = new HashMap<>();
         String[] para = new String[]{"id", "number", "model", "name", "unit_price"};
-        String[] update = new String[]{"updateid", "updatenumber", "updatemodel", "updatename", "updateunitprice"};
+        String[] update = new String[]{"updateid", "updatenumber", "updatemodel", "updatename", "updateunit_price"};
         Object[] obj;
         removeEmpty(map);
         Map<String, Object> res = wash(map, para);
