@@ -753,8 +753,8 @@ public class DatabaseController {
         String check3 = "select count(*) from sold where model_name = ?";
         Integer check4 = jdbc.queryForObject(check3, Integer.class, content.get("product_model_name"));
         String check5 = "select supply_center from contract join enterprise e on contract.enterprise = e.name\n" +
-                "    where number = 'CSE0000208';";
-        String check6 = jdbc.queryForObject(check5, String.class);
+                "    where number = ?;";
+        String check6 = jdbc.queryForObject(check5, String.class, map.get("contract"));
         sql = new String[3];
         objects = new ArrayList<>();
         sql[0] = "delete from contract_content where contract_number = ? and product_model_name = ? and salesman = ?";
