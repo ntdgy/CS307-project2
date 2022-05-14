@@ -240,7 +240,7 @@ public class DatabaseController {
     ) throws WrongDataException {
         Map<String, Object> response = new HashMap<>();
         String[] para = new String[]{"id", "name", "country", "city", "supplycenter", "industry"};
-        String[] update = new String[]{"updateid", "updatename", "updatecountry", "updatecity", "updatesupplycenter", "updatetype", "updateindustry"};
+        String[] update = new String[]{"updateid", "updatename", "updatecountry", "updatecity", "updatesupplycenter", "updateindustry"};
         Object[] obj;
         removeEmpty(map);
         log.error(map.toString());
@@ -325,8 +325,10 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ) throws WrongDataException {
         Map<String, Object> response = new HashMap<>();
-        String[] para = new String[]{"id", "name", "number", "gender", "age", "mobilenumber", "supplycenterid", "mobile_number","stafftype"};
-        String[] update = new String[]{"updateid", "updatename", "updategender", "updateage", "updatemobilenumber", "updatemobilenumber", "updatesupplycenterid", "updatestafftype"};
+        String[] para = new String[]{"id", "name", "number", "gender", "age", "mobilenumber", "supplycenterid",
+                "mobile_number","stafftype"};
+        String[] update = new String[]{"updateid", "updatename", "updategender", "updateage", "updatemobilenumber",
+                "updatemobilenumber", "updatesupplycenterid", "updatemobile_number","updatestafftype"};
         Object[] obj;
         removeEmpty(map);
         log.error(map.toString());
@@ -407,8 +409,8 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ) throws WrongDataException {
         Map<String, Object> response = new HashMap<>();
-        String[] para = new String[]{"id", "number", "model", "name", "unitprice", "type"};
-        String[] update = new String[]{"updateid", "updatenumber", "updatemodel", "updatename", "updateunitprice", "updatetype"};
+        String[] para = new String[]{"id", "number", "model", "name", "unit_price"};
+        String[] update = new String[]{"updateid", "updatenumber", "updatemodel", "updatename", "updateunitprice"};
         Object[] obj;
         removeEmpty(map);
         Map<String, Object> res = wash(map, para);
@@ -428,7 +430,7 @@ public class DatabaseController {
             sql.append(") values(");
             sql.append("?,".repeat(Math.max(0, res.size() - 1)));
             sql.append("?)");
-        } else if (type.equals("Update")) { //TODO
+        } else if (type.equals("Update")) {
             var temp = wash(map, update);
             sql = new StringBuilder("update model set ");
             obj = new Object[res.size() + temp.size()];
