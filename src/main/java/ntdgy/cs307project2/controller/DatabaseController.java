@@ -239,14 +239,16 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ) throws WrongDataException {
         Map<String, Object> response = new HashMap<>();
-        String[] para = new String[]{"id", "name", "country", "city", "supplycenter", "type", "industry"};
+        String[] para = new String[]{"id", "name", "country", "city", "supplycenter", "industry"};
         String[] update = new String[]{"updateid", "updatename", "updatecountry", "updatecity", "updatesupplycenter", "updatetype", "updateindustry"};
         Object[] obj;
         removeEmpty(map);
+        log.error(map.toString());
         Map<String, Object> res = wash(map, para);
         String type = (String) map.get("type");
         StringBuilder sql;
         if (type.equals("Insert")) {
+
             sql = new StringBuilder("insert into enterprise(");
             obj = new Object[res.size()];
             int i = 0;
@@ -323,10 +325,11 @@ public class DatabaseController {
             @RequestBody Map<String, Object> map
     ) throws WrongDataException {
         Map<String, Object> response = new HashMap<>();
-        String[] para = new String[]{"id", "name", "number", "gender", "age", "mobilenumber", "supplycenterid", "stafftype"};
+        String[] para = new String[]{"id", "name", "number", "gender", "age", "mobilenumber", "supplycenterid", "mobile_number","stafftype"};
         String[] update = new String[]{"updateid", "updatename", "updategender", "updateage", "updatemobilenumber", "updatemobilenumber", "updatesupplycenterid", "updatestafftype"};
         Object[] obj;
         removeEmpty(map);
+        log.error(map.toString());
         Map<String, Object> res = wash(map, para);
         String type = (String) map.get("type");
         StringBuilder sql;
