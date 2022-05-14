@@ -67,7 +67,7 @@
 						</select>
 						<div class="center">
 							<input type="number" name="id" class="form-control" placeholder="Center Id" autofocus="" ng-model="center.id">
-							<input type="text" name="name" class="form-control" placeholder="Center Name" required="" ng-model="center.name">
+							<input type="text" name="name" class="form-control" placeholder="Center Name" ng-model="center.name">
 							<div ng-switch="center.type">
 								<input type="text" name="updateid" class="form-control" placeholder="Original Id" ng-switch-when="Update" ng-model="center.updateid">
 								<input type="text" name="updatename" class="form-control" placeholder="Original Center Name" ng-switch-when="Update" ng-model="center.updatename">
@@ -90,19 +90,19 @@
 							<option value="Delete">Delete</option>
 						</select>
 						<div class="enterprise">
-							<input type="number" name="id" class="form-control" placeholder="Enterprise Id" required="" autofocus="" ng-model="enterprise.id">
-							<input type="text" name="name" class="form-control" placeholder="Center Name" required="" ng-model="enterprise.name">
-							<input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" required="" ng-model="enterprise.supplycenter">
-							<input type="text" name="country" class="form-control" placeholder="Country" required="" ng-model="enterprise.country">
-							<input type="text" name="city" class="form-control" placeholder="City" required="" ng-model="enterprise.city">
-							<input type="text" name="industry" class="form-control" placeholder="Industry" required="" ng-model="enterprise.industry">
+							<input type="number" name="id" class="form-control" placeholder="Enterprise Id" autofocus="" ng-model="enterprise.id">
+							<input type="text" name="name" class="form-control" placeholder="Center Name" ng-model="enterprise.name">
+							<input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" ng-model="enterprise.supplycenter">
+							<input type="text" name="country" class="form-control" placeholder="Country" ng-model="enterprise.country">
+							<input type="text" name="city" class="form-control" placeholder="City" ng-model="enterprise.city">
+							<input type="text" name="industry" class="form-control" placeholder="Industry" ng-model="enterprise.industry">
 							<div ng-switch="enterprise.type">
-								<input type="number" name="updateid" class="form-control" placeholder="Original Enterprise Id" required="" autofocus="" ng-model="enterprise.updateid" ng-switch-when="Update">
-								<input type="text" name="updatename" class="form-control" placeholder="Original Center Name" required="" ng-model="enterprise.updatename" ng-switch-when="Update">
-								<input type="text" name="updatesupplycenter" class="form-control" placeholder="Original Supply Center" required="" ng-model="enterprise.updatesupplycenter" ng-switch-when="Update">
-								<input type="text" name="updatecountry" class="form-control" placeholder="Original Country" required="" ng-model="enterprise.updatecountry" ng-switch-when="Update">
-								<input type="text" name="updatecity" class="form-control" placeholder="Original City" required="" ng-model="enterprise.updatecity" ng-switch-when="Update">
-								<input type="text" name="updateindustry" class="form-control" placeholder="Original Industry" required="" ng-model="enterprise.updateindustry" ng-switch-when="Update">
+								<input type="number" name="updateid" class="form-control" placeholder="Original Enterprise Id" autofocus="" ng-model="enterprise.updateid" ng-switch-when="Update">
+								<input type="text" name="updatename" class="form-control" placeholder="Original Center Name" ng-model="enterprise.updatename" ng-switch-when="Update">
+								<input type="text" name="updatesupplycenter" class="form-control" placeholder="Original Supply Center" ng-model="enterprise.updatesupplycenter" ng-switch-when="Update">
+								<input type="text" name="updatecountry" class="form-control" placeholder="Original Country" ng-model="enterprise.updatecountry" ng-switch-when="Update">
+								<input type="text" name="updatecity" class="form-control" placeholder="Original City" ng-model="enterprise.updatecity" ng-switch-when="Update">
+								<input type="text" name="updateindustry" class="form-control" placeholder="Original Industry" ng-model="enterprise.updateindustry" ng-switch-when="Update">
 							</div>
 						</div>
 						<div class="alert alert-success alert-dismissible" ng-show="enterpriseData">
@@ -124,26 +124,26 @@
 
 						<div class="model">
 							<label class="sr-only">Model Id</label>
-							<input type="number" name="id" class="form-control" placeholder="Model Id" required="" autofocus="" ng-model="model.id">
+							<input type="number" name="id" class="form-control" placeholder="Model Id" autofocus="" ng-model="model.id">
 							<label class="sr-only">Center Name</label>
-							<input type="text" name="name" class="form-control" placeholder="Center Name" required="" ng-model="model.name">
+							<input type="text" name="name" class="form-control" placeholder="Center Name" ng-model="model.name">
 							<label class="sr-only">Number</label>
-							<input type="text" name="number" class="form-control" placeholder="Number" required="" ng-model="model.number">
+							<input type="text" name="number" class="form-control" placeholder="Number" ng-model="model.number">
 							<label class="sr-only">Model</label>
-							<input type="text" name="model" class="form-control" placeholder="Model" required="" ng-model="model.model">
+							<input type="text" name="model" class="form-control" placeholder="Model" ng-model="model.model">
 							<label class="sr-only">Unit price</label>
-							<input type="number" name="unitprice" class="form-control" placeholder="Unit price" required="" ng-model="model.unitprice">
+							<input type="number" name="unitprice" class="form-control" placeholder="Unit price" ng-model="model.unitprice">
 							<div ng-switch="model.type">
 								<label class="sr-only">Model Id</label>
-								<input type="number" name="updateid" class="form-control" placeholder="Original Model Id" required="" autofocus="" ng-model="model.updateid" ng-switch-when="Update">
+								<input type="number" name="updateid" class="form-control" placeholder="Original Model Id" autofocus="" ng-model="model.updateid" ng-switch-when="Update">
 								<label class="sr-only">Center Name</label>
-								<input type="text" name="updatename" class="form-control" placeholder="Original Center Name" required="" ng-model="model.updatename" ng-switch-when="Update">
+								<input type="text" name="updatename" class="form-control" placeholder="Original Center Name" ng-model="model.updatename" ng-switch-when="Update">
 								<label class="sr-only">Number</label>
-								<input type="text" name="updatenumber" class="form-control" placeholder="Original Number" required="" ng-model="model.updatenumber" ng-switch-when="Update">
+								<input type="text" name="updatenumber" class="form-control" placeholder="Original Number" ng-model="model.updatenumber" ng-switch-when="Update">
 								<label class="sr-only">Model</label>
-								<input type="text" name="updatemodel" class="form-control" placeholder="Original Model" required="" ng-model="model.updatemodel" ng-switch-when="Update">
+								<input type="text" name="updatemodel" class="form-control" placeholder="Original Model" ng-model="model.updatemodel" ng-switch-when="Update">
 								<label class="sr-only">Unit price</label>
-								<input type="number" name="updateunitprice" class="form-control" placeholder="Original Unit price" required="" ng-model="model.updateunitprice" ng-switch-when="Update">
+								<input type="number" name="updateunitprice" class="form-control" placeholder="Original Unit price" ng-model="model.updateunitprice" ng-switch-when="Update">
 							</div>
 						</div>
 						<div class="alert alert-success alert-dismissible" ng-show="modelData">
@@ -165,34 +165,34 @@
 <!--						</select>-->
 <!--						<div class="order">-->
 <!--							<label class="sr-only">Order Id</label>-->
-<!--							<input type="number" name="id" class="form-control" placeholder="Order Id" required="" autofocus="" ng-model="order.id">-->
+<!--							<input type="number" name="id" class="form-control" placeholder="Order Id" autofocus="" ng-model="order.id">-->
 <!--							<label class="sr-only">Product Model</label>-->
-<!--							<input type="text" name="productmodel" class="form-control" placeholder="Product Model" required="" ng-model="order.productmodel">-->
+<!--							<input type="text" name="productmodel" class="form-control" placeholder="Product Model" ng-model="order.productmodel">-->
 <!--							<label class="sr-only">Supply Center</label>-->
-<!--							<input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" required="" ng-model="order.supplycenter">-->
+<!--							<input type="text" name="supplycenter" class="form-control" placeholder="Supply Center" ng-model="order.supplycenter">-->
 <!--							<label class="sr-only">Supply Staff</label>-->
-<!--							<input type="text" name="supplystaff" class="form-control" placeholder="Supply Staff" required="" ng-model="order.supplystaff">-->
+<!--							<input type="text" name="supplystaff" class="form-control" placeholder="Supply Staff" ng-model="order.supplystaff">-->
 <!--							<label class="sr-only">Date</label>-->
-<!--							<input type="text" name="date" class="form-control" placeholder="Date" required="" ng-model="order.date">-->
+<!--							<input type="text" name="date" class="form-control" placeholder="Date" ng-model="order.date">-->
 <!--							<label class="sr-only">Purchase Price</label>-->
-<!--							<input type="text" name="purchaseprice" class="form-control" placeholder="Purchase Price" required="" ng-model="order.purchaseprice">-->
+<!--							<input type="text" name="purchaseprice" class="form-control" placeholder="Purchase Price" ng-model="order.purchaseprice">-->
 <!--							<label class="sr-only">Quantity</label>-->
-<!--							<input type="text" name="quantity" class="form-control" placeholder="Quantity" required="" ng-model="order.quantity">-->
+<!--							<input type="text" name="quantity" class="form-control" placeholder="Quantity" ng-model="order.quantity">-->
 <!--							<div ng-switch="order.type">-->
 <!--								<label class="sr-only">Order Id</label>-->
-<!--								<input type="number" name="updateid" class="form-control" placeholder="Original Order Id" required="" autofocus="" ng-model="order.updateid" ng-switch-when="Update">-->
+<!--								<input type="number" name="updateid" class="form-control" placeholder="Original Order Id" autofocus="" ng-model="order.updateid" ng-switch-when="Update">-->
 <!--								<label class="sr-only">Product Model</label>-->
-<!--								<input type="text" name="updateproductmodel" class="form-control" placeholder="Original Product Model" required="" ng-model="order.updateproductmodel" ng-switch-when="Update">-->
+<!--								<input type="text" name="updateproductmodel" class="form-control" placeholder="Original Product Model" ng-model="order.updateproductmodel" ng-switch-when="Update">-->
 <!--								<label class="sr-only">Supply Center</label>-->
-<!--								<input type="text" name="updatesupplycenter" class="form-control" placeholder="Original Supply Center" required="" ng-model="order.updatesupplycenter" ng-switch-when="Update">-->
+<!--								<input type="text" name="updatesupplycenter" class="form-control" placeholder="Original Supply Center" ng-model="order.updatesupplycenter" ng-switch-when="Update">-->
 <!--								<label class="sr-only">Supply Staff</label>-->
-<!--								<input type="text" name="updatesupplystaff" class="form-control" placeholder="Original Supply Staff" required="" ng-model="order.updatesupplystaff" ng-switch-when="Update">-->
+<!--								<input type="text" name="updatesupplystaff" class="form-control" placeholder="Original Supply Staff" ng-model="order.updatesupplystaff" ng-switch-when="Update">-->
 <!--								<label class="sr-only">Date</label>-->
-<!--								<input type="text" name="updatedate" class="form-control" placeholder="Original Date" required="" ng-model="order.updatedate" ng-switch-when="Update">-->
+<!--								<input type="text" name="updatedate" class="form-control" placeholder="Original Date" ng-model="order.updatedate" ng-switch-when="Update">-->
 <!--								<label class="sr-only">Purchase Price</label>-->
-<!--								<input type="text" name="updatepurchaseprice" class="form-control" placeholder="Original Purchase Price" required="" ng-model="order.updatepurchaseprice" ng-switch-when="Update">-->
+<!--								<input type="text" name="updatepurchaseprice" class="form-control" placeholder="Original Purchase Price" ng-model="order.updatepurchaseprice" ng-switch-when="Update">-->
 <!--								<label class="sr-only">Quantity</label>-->
-<!--								<input type="text" name="updatequantity" class="form-control" placeholder="Original Quantity" required="" ng-model="order.updatequantity" ng-switch-when="Update">-->
+<!--								<input type="text" name="updatequantity" class="form-control" placeholder="Original Quantity" ng-model="order.updatequantity" ng-switch-when="Update">-->
 <!--							</div>-->
 <!--						</div>-->
 <!--						<div class="alert alert-success alert-dismissible" ng-show="orderData">-->
@@ -210,40 +210,40 @@
 						</select>
 						<div class="staff">
 							<label class="sr-only">Staff Id</label>
-							<input type="number" name="id" class="form-control" placeholder="Staff Id" required="" autofocus="" ng-model="staff.id">
+							<input type="number" name="id" class="form-control" placeholder="Staff Id" autofocus="" ng-model="staff.id">
 							<label class="sr-only">Name</label>
-							<input type="text" name="name" class="form-control" placeholder="Name" required="" ng-model="staff.name">
+							<input type="text" name="name" class="form-control" placeholder="Name" ng-model="staff.name">
 							<label class="sr-only">Number</label>
-							<input type="text" name="number" class="form-control" placeholder="Number" required="" ng-model="staff.number">
+							<input type="text" name="number" class="form-control" placeholder="Number" ng-model="staff.number">
 							<label class="sr-only">Gender</label>
-							<input type="text" name="gender" class="form-control" placeholder="gender" required="" ng-model="staff.gender">
+							<input type="text" name="gender" class="form-control" placeholder="gender" ng-model="staff.gender">
 							<label class="sr-only">Age</label>
-							<input type="number" name="age" class="form-control" placeholder="Age" required="" ng-model="staff.age">
+							<input type="number" name="age" class="form-control" placeholder="Age" ng-model="staff.age">
 							<label class="sr-only">Mobile Number</label>
-							<input type="text" name="mobilenumber" class="form-control" placeholder="Mobile Number" required="" ng-model="staff.mobilenumber">
+							<input type="text" name="mobilenumber" class="form-control" placeholder="Mobile Number" ng-model="staff.mobilenumber">
 							<label for="Director">Director</label>
-							<input type="radio" name="type" id="Director" placeholder="Director" required="" ng-value="0" ng-model="staff.staffType">
+							<input type="radio" name="type" id="Director" placeholder="Director" ng-value="0" ng-model="staff.staffType">
 							<label for="supply">Supply Staff</label>
-							<input type="radio" name="type" id="supply" placeholder="Supply Staff" required="" ng-value="1" ng-model="staff.staffType">
+							<input type="radio" name="type" id="supply" placeholder="Supply Staff" ng-value="1" ng-model="staff.staffType">
 							<label for="contracts">Contracts Manager</label>
-							<input type="radio" name="type" id="contracts" placeholder="Contracts Manager" required="" ng-value="2" ng-model="staff.staffType">
+							<input type="radio" name="type" id="contracts" placeholder="Contracts Manager" ng-value="2" ng-model="staff.staffType">
 							<label for="salesman">Salesman</label>
-							<input type="radio" name="type" id="salesman" placeholder="Salesman" required="" ng-value="3" ng-model="staff.staffType">
+							<input type="radio" name="type" id="salesman" placeholder="Salesman" ng-value="3" ng-model="staff.staffType">
 							<div ng-switch="staff.type">
-								<input type="number" name="id" class="form-control" placeholder="Original Staff Id" required="" autofocus="" ng-model="staff.updateid" ng-switch-when="Update">
-								<input type="text" name="name" class="form-control" placeholder="Original Name" required="" ng-switch-when="Update" ng-model="staff.updatename">
-								<input type="text" name="number" class="form-control" placeholder="Original Number" required="" ng-switch-when="Update" ng-model="staff.updatenumber">
-								<input type="text" name="gender" class="form-control" placeholder="Original gender" required="" ng-switch-when="Update" ng-model="staff.updategender">
-								<input type="number" name="age" class="form-control" placeholder="Original Age" required="" ng-switch-when="Update" ng-model="staff.updateage">
-								<input type="text" name="mobilenumber" class="form-control" placeholder="Original Mobile Number" required="" ng-switch-when="Update" ng-model="staff.updatemobilenumber">
+								<input type="number" name="id" class="form-control" placeholder="Original Staff Id" autofocus="" ng-model="staff.updateid" ng-switch-when="Update">
+								<input type="text" name="name" class="form-control" placeholder="Original Name" ng-switch-when="Update" ng-model="staff.updatename">
+								<input type="text" name="number" class="form-control" placeholder="Original Number" ng-switch-when="Update" ng-model="staff.updatenumber">
+								<input type="text" name="gender" class="form-control" placeholder="Original gender" ng-switch-when="Update" ng-model="staff.updategender">
+								<input type="number" name="age" class="form-control" placeholder="Original Age" ng-switch-when="Update" ng-model="staff.updateage">
+								<input type="text" name="mobilenumber" class="form-control" placeholder="Original Mobile Number" ng-switch-when="Update" ng-model="staff.updatemobilenumber">
 								<label for="updateDirector" ng-switch-when="Update">Original Director</label>
-								<input type="radio" name="type" id="updateDirector" placeholder="Original Director" required="" ng-switch-when="Update" ng-value="0" ng-model="staff.updatestaffType">
+								<input type="radio" name="type" id="updateDirector" placeholder="Original Director" ng-switch-when="Update" ng-value="0" ng-model="staff.updatestaffType">
 								<label for="updatesupply" ng-switch-when="Update">Original Supply Staff</label>
-								<input type="radio" name="type" id="updatesupply" placeholder="Original Supply Staff" required="" ng-switch-when="Update" ng-value="1" ng-model="staff.updatestaffType">
+								<input type="radio" name="type" id="updatesupply" placeholder="Original Supply Staff" ng-switch-when="Update" ng-value="1" ng-model="staff.updatestaffType">
 								<label for="updatecontracts" ng-switch-when="Update">Original Contracts Manager</label>
-								<input type="radio" name="type" id="updatecontracts" placeholder="Original Contracts Manager" ng-switch-when="Update" required="" ng-value="2" ng-model="staff.updatestaffType">
+								<input type="radio" name="type" id="updatecontracts" placeholder="Original Contracts Manager" ng-switch-when="Update" ng-value="2" ng-model="staff.updatestaffType">
 								<label for="updatesalesman" ng-switch-when="Update">Original Salesman</label>
-								<input type="radio" name="type" id="updatesalesman" placeholder="Original Salesman" required="" ng-switch-when="Update" ng-value="3" ng-model="staff.updatestaffType">
+								<input type="radio" name="type" id="updatesalesman" placeholder="Original Salesman" ng-switch-when="Update" ng-value="3" ng-model="staff.updatestaffType">
 							</div>
 						</div>
 						<div class="alert alert-success alert-dismissible" ng-show="staffData">
