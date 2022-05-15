@@ -812,7 +812,8 @@ public class DatabaseController {
     @ResponseBody
     public Map<String, Object> getNeverSoldProductCount() {
         Map<String, Object> res = new HashMap<>();
-        String sql = "select count(*) -(select count(*) from sold) from warehousing;";
+        String sql = "select count(distinct model_name) from warehousing where quantity!=0 " +
+                "and model_name not in(select distinct product_model_name from contract_content);";
         res.put("result", jdbc.queryForObject(sql, Integer.class));
         return res;
     }

@@ -214,7 +214,6 @@ insert_into_staff()
 stock_in()
 place_prder()
 update_order()
-
 delete_order()
 
 

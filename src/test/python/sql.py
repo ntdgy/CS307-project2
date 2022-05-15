@@ -3,6 +3,7 @@ drop table if exists center cascade;
 drop table if exists enterprise cascade;
 drop table if exists staff cascade;
 drop table if exists model cascade;
+drop table if exists sold cascade;
 drop table if exists warehousing cascade;
 drop table if exists stockin cascade;
 drop table if exists contract cascade;
@@ -68,6 +69,13 @@ create table stockin
     date           date,
     purchase_price int,
     quantity       int
+);
+
+create table sold
+(
+    id             serial primary key,
+    model_name     varchar not null references model(model) on update cascade on delete cascade,
+    quantity       int not null
 );
 
 create table contract
