@@ -1,8 +1,7 @@
 package ntdgy.cs307project2.config;
 
 
-import ntdgy.cs307project2.security.Jumper;
-import ntdgy.cs307project2.security.LoginChecker;
+import ntdgy.cs307project2.security.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -12,15 +11,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.concurrent.ThreadPoolExecutor;
-
-import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
 
 @Configuration
 public class ProjectConfig implements WebMvcConfigurer {
@@ -68,6 +63,9 @@ public class ProjectConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginChecker()).addPathPatterns("/**").excludePathPatterns("/", "/register.html", "/index.html", "/css/**", "/js/**", "/api/**", "/img/**");
         registry.addInterceptor(new Jumper()).addPathPatterns("/", "/login.html");
+        registry.addInterceptor(new AdminChecker()).addPathPatterns("/management.html");
+        registry.addInterceptor(new SupplyManagerChecker()).addPathPatterns("/stockin.html");
+        registry.addInterceptor(new OrderChecker()).addPathPatterns("/order.html");
     }
 
     /**

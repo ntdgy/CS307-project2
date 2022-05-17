@@ -102,7 +102,7 @@ create table users
     id         serial primary key,
     user_name  varchar(30) unique,
     passwd_md5 varchar,
-    level      int -- 0: admin, 1: normal user  2: guest
+    level      int -- 0: admin, 1: supply manager  2: salesman
 );
 
 create table rechapter
@@ -117,4 +117,6 @@ create table rechapter
 insert into users(user_name, passwd_md5, level)
 values ('admin', '993a55c9801b146aa9d5c8cfd1ff24cb', 0);
 insert into users(user_name, passwd_md5, level)
-values ('user', '993a55c9801b146aa9d5c8cfd1ff24cb', 1);
+values ('supply', '993a55c9801b146aa9d5c8cfd1ff24cb', 1);
+insert into users(user_name, passwd_md5, level)
+values ('salesman', '993a55c9801b146aa9d5c8cfd1ff24cb', 2);
