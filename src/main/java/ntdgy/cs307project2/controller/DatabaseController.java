@@ -6,6 +6,7 @@ import ntdgy.cs307project2.exception.InvalidDataException;
 import ntdgy.cs307project2.exception.InvalidOperationException;
 import ntdgy.cs307project2.exception.WrongDataException;
 
+import ntdgy.cs307project2.service.LoginService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
@@ -875,6 +876,8 @@ public class DatabaseController {
         temp[0] = encodeStr;
         temp[1] = name;
         List<Map<String, Object>> re = jdbc.queryForList(sql, temp);
+        int level = (int)re.get(0).get("level");
+        LoginService.login(name, level);
         return !re.isEmpty();
     }
 
