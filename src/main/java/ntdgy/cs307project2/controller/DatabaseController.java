@@ -553,7 +553,7 @@ public class DatabaseController {
             Date date = java.sql.Date.valueOf(map.get("date").toString().replace('/', '-'));
             obj[4] = date;
         }
-        obj[5] = Integer.parseInt(map.get("purchase_price").toString());
+        obj[5] = Integer.parseInt(map.get("purchaseprice").toString());
         obj[6] = Integer.parseInt(map.get("quantity").toString());
         jdbc.update(sql, obj);
         res.put("result", "Success");
