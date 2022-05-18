@@ -73,6 +73,7 @@ def stock_in():
         'quantity': ''
     }
     with open('data/task1_in_stoke_test_data_publish.csv', 'r') as f:
+    #with open('data/task1.csv', 'r') as f:
         head = f.readline()
         while True:
             line = f.readline()
@@ -119,6 +120,7 @@ def place_prder():
         'contracttype': 'Finished'
     }
     with open('data/task2_test_data_publish.csv', 'r') as f:
+    #with open('data/task2.csv', 'r') as f:
         head = f.readline()
         while True:
             line = f.readline()
@@ -149,14 +151,15 @@ def update_order():
     test = {
         # contract	product_model	salesman	quantity	estimate_delivery_date	lodgement_date
         # CSE0000208	ComputerTerminal43	11110405	1	2022-02-28	2022-02-13
-        'contract': 'CSE0000208',
+        'contractnum': 'CSE0000208',
         'productmodel': 'ComputerTerminal43',
-        'salesmannum': '11110405',
+        'salesman': '11110405',
         'quantity': 1,
         'estimateddeliverydate': '2022-02-28',
         'lodgementdate': '2022-02-13'
     }
     with open('data/task34_update_test_data_publish.tsv', 'r') as f:
+    #with open('data/update.csv', 'r') as f:
         head = f.readline()
         while True:
             line = f.readline()

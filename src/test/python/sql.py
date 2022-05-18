@@ -39,7 +39,7 @@ create table staff
     age           int,
     mobile_number varchar(11) unique not null,
     supply_center varchar not null references center(name) on update cascade on delete cascade,
-    stafftype          int          -- 0 is director, 1 is supply staff, 2 is contracts manager, 3 is salesman
+    stafftype          int          -- 0 is director, 1 is supply =staff, 2 is contracts manager, 3 is salesman
 );
 create index staff_name on staff(number);
 
@@ -97,6 +97,7 @@ create table contract_content
     quantity                int, -- not null,
     estimated_delivery_date date,
     lodgement_date          date,
+    -- price int not null,
     salesman   varchar not null references staff(number) on update cascade on delete cascade -- references salesman (id) not null
 );
 
@@ -105,7 +106,7 @@ create table users
     id         serial primary key,
     user_name  varchar(30) unique,
     passwd_md5 varchar,
-    level      int -- 0: admin, 1: normal user  2: guest
+    level      int -- 0: admin, 1: supply manager  2: salesman
 );
 
 create table rechapter
@@ -117,8 +118,14 @@ create table rechapter
     used_date date
 );
 
-insert into users(user_name, passwd_md5, level) values('admin', '993a55c9801b146aa9d5c8cfd1ff24cb', 0);
-insert into users(user_name, passwd_md5, level) values('user', '993a55c9801b146aa9d5c8cfd1ff24cb', 1);'''
+insert into users(user_name, passwd_md5, level)
+values ('admin', '993a55c9801b146aa9d5c8cfd1ff24cb', 0);
+insert into users(user_name, passwd_md5, level)
+values ('user', '993a55c9801b146aa9d5c8cfd1ff24cb', 0);
+insert into users(user_name, passwd_md5, level)
+values ('supply', '993a55c9801b146aa9d5c8cfd1ff24cb', 1);
+insert into users(user_name, passwd_md5, level)
+values ('salesman', '993a55c9801b146aa9d5c8cfd1ff24cb', 2);'''
 
 
 insert_into_enterprise = '''insert into enterprise(id,name,country,city,supply_center,industry) values(%s,%s,%s,%s,

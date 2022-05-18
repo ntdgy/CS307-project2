@@ -692,6 +692,8 @@ public class DatabaseController {
             log.error(check2.toString());
             throw new InvalidDataException("该合同不属于该销售员");
         }
+        String check3 = "select supply_center from contract join enterprise e on contract.enterprise = e.name where number = ?;";
+        String supplyCenter = jdbc.queryForObject(check3, String.class, map.get("contractnum"));
         int quantity = Integer.parseInt(map.get("quantity").toString()) - Integer.parseInt(check2.get(0).get("quantity").toString());
         Date estimated_delivery_date, lodgement_date;
         if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", map.get("estimateddeliverydate").toString())) {
@@ -707,21 +709,24 @@ public class DatabaseController {
             lodgement_date = java.sql.Date.valueOf(map.get("lodgementdate").toString().replace('/', '-'));
         }
         if (map.get("quantity").toString().equals("0")) {
-            sql = new String[2];
+            sql = new String[3];
             objects = new ArrayList<>();
             sql[0] = "delete from contract_content where contract_number = ? and product_model_name = ? and salesman = ?";
             objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), map.get("salesman")});
-            sql[1] = "update sold set quantity = quantity - ? where model_name = ?";
+            sql[1] = "update sold set quantity = quantity + ? where model_name = ?";
             objects.add(new Object[]{quantity, map.get("productmodel")});
+            sql[2] = "update warehousing set quantity = quantity - ? where model_name = ? and center_name = ?;";
+            objects.add(new Object[]{quantity, map.get("productmodel"), supplyCenter});
             jdbc.update(sql[0], objects.get(0));
             jdbc.update(sql[1], objects.get(1));
+            jdbc.update(sql[2], objects.get(2));
         } else {
             sql = new String[3];
             objects = new ArrayList<>();
             sql[0] = "update contract_content set quantity = ?, estimated_delivery_date = ?, lodgement_date = ? where contract_number = ? and product_model_name = ? and salesman = ?";
             objects.add(new Object[]{Integer.parseInt(map.get("quantity").toString()), estimated_delivery_date, lodgement_date, map.get("contractnum"), map.get("productmodel"), map.get("salesman")});
             sql[1] = "update warehousing set quantity = quantity - ? where model_name = ? and center_name = ?;";
-            objects.add(new Object[]{quantity, map.get("productmodel"), check2.get(0).get("center_name")});
+            objects.add(new Object[]{quantity, map.get("productmodel"), supplyCenter});
             sql[2] = "update sold set quantity = quantity + ? where model_name = ?";
             objects.add(new Object[]{quantity, map.get("productmodel")});
             jdbc.update(sql[0], objects.get(0));

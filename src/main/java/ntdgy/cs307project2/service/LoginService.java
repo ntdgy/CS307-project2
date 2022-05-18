@@ -43,6 +43,7 @@ public class LoginService {
         var cookies = request.getCookies();
         String username = "";
         String uuid = "";
+        if(cookies == null) return false;
         for(Cookie c: cookies){
             if(c.getName().equals("username")){
                 username = c.getValue();
