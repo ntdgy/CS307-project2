@@ -4,6 +4,7 @@ package ntdgy.cs307project2.config;
 import ntdgy.cs307project2.security.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -18,6 +19,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
+@EnableAsync
 public class ProjectConfig implements WebMvcConfigurer {
 
     @Bean

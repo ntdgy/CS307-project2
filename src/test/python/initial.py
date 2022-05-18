@@ -69,7 +69,7 @@ def stock_in():
         'productmodel': '',
         'supplystaff': '',
         'date': '',
-        'purchase_price': 1,
+        'purchaseprice': 1,
         'quantity': ''
     }
     with open('data/task1_in_stoke_test_data_publish.csv', 'r') as f:
@@ -86,7 +86,7 @@ def stock_in():
                 test['productmodel'] = line[3]
                 test['supplystaff'] = line[4]
                 test['date'] = line[5].replace('/', '-')
-                test['purchase_price'] = line[6]
+                test['purchaseprice'] = line[6]
                 test['quantity'] = line[7].replace('\n', '')
             else:
                 test['supplycenter'] = line[1]
