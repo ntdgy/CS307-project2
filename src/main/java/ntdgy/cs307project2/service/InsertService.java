@@ -57,5 +57,25 @@ public class InsertService {
         }
     }
 
+    @Async("dgy")
+    public CompletableFuture<Boolean> addModel(String[] data) {
+        try {
+            var conn = hikariDataSource.getConnection();
+            var stmt = conn.prepareStatement("insert into model(id,number,model,name,unit_price) values(?,?,?,?,?)");
+            stmt.setInt(1, Integer.parseInt(data[0]));
+            stmt.setString(2, data[1]);
+            stmt.setString(3, data[2]);
+            stmt.setString(4, data[3]);
+            stmt.setInt(5, Integer.parseInt(data[4]));
+            stmt.executeUpdate();
+            stmt.close();
+            conn.close();
+            return CompletableFuture.completedFuture(true);
+        } catch (SQLException e) {
+            log.error("error", e);
+            return CompletableFuture.completedFuture(false);
+        }
+    }
+
 
 }

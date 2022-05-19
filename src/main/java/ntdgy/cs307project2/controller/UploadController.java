@@ -129,5 +129,38 @@ public class UploadController {
         return CompletableFuture.completedFuture(list);
     }
 
+    public CompletableFuture<List<String>> addModelController(String path) {
+        int countSuccess = 0, countFail = 0;
+        List<CompletableFuture<Boolean>> result = new LinkedList<>();
+        try (FileInputStream fis = new FileInputStream(path);
+             InputStreamReader isr = new InputStreamReader(fis,
+                     StandardCharsets.UTF_8);
+             CSVReader reader = new CSVReader(isr)) {
+            String[] nextLine;
+            reader.readNext();
+            while ((nextLine = reader.readNext()) != null) {
+                result.add(insertService.addModel(nextLine));
+            }
+            for (var test : result) {
+                CompletableFuture.allOf(test).join();
+            }
+            for (var test : result) {
+                if (test.getNow(false)) {
+                    countSuccess++;
+                } else {
+                    countFail++;
+                }
+            }
+        } catch (CsvValidationException | IOException e) {
+            e.printStackTrace();
+        }
+        List<String> list = new LinkedList<>();
+        list.add("Success: " + countSuccess);
+        list.add("Fail: " + countFail);
+        list.add("Total: " + (countSuccess + countFail));
+        list.add("请访问控制台查看日志");
+        return CompletableFuture.completedFuture(list);
+    }
+
 
 }
