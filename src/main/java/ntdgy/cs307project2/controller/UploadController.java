@@ -8,9 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import ntdgy.cs307project2.exception.InvalidDataException;
 import ntdgy.cs307project2.service.InsertService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
@@ -43,8 +41,8 @@ public class UploadController {
 
     @RequestMapping("/test")
     public CompletableFuture<List<String>> test(
-            @RequestPart MultipartFile file
-            // @RequestBody String type
+            @RequestPart MultipartFile file,
+            @RequestParam String type
     ) {
         if (file.isEmpty()) {
             return CompletableFuture.completedFuture(null);

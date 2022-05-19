@@ -7,8 +7,21 @@
 <body>
 <h1>文件上传页面</h1>
 <form method="post" action="/api/upload/test" enctype="multipart/form-data">
-    选择要上传的文件：<input type="file" name="file" accept=".csv"><br>
+    选择要上传的文件：<input type="file" name="file" accept=".csv">    <br>
     <hr>
+    <label for="type">
+    <select id="type" name="type" >
+        <option>--请选择--</option>
+        <option value="1">Center</option>
+        <option value="2">Enterprise</option>
+        <option value="3">Model</option>
+        <option value="4">Staff</option>
+        <option value="5">stockIn</option>
+        <option value="6">placeOrder</option>
+        <option value="7">updateOrder</option>
+        <option value="8">deleteOrder</option>
+    </select>
+    </label>
     <input type="submit" value="提交">
 </form>
 </body>
