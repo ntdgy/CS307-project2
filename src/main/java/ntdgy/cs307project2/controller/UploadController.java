@@ -216,7 +216,7 @@ public class UploadController {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
-                result.add(insertService.deleteOrder(nextLine));
+                result.add(insertService.stockIn(nextLine));
             }
             for (var test : result) {
                 CompletableFuture.allOf(test).join();
@@ -316,7 +316,7 @@ public class UploadController {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
-                result.add(insertService.updateOrder(nextLine));
+                result.add(insertService.deleteOrder(nextLine));
             }
             for (var test : result) {
                 CompletableFuture.allOf(test).join();

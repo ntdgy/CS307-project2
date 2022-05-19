@@ -573,7 +573,7 @@ public class InsertService {
         List<Object[]> objects;
         String check1 = "select * from contract_content where contract_number = ? " +
                 "and salesman = ? and product_model_name = ?";
-        List<Map<String, Object>> check2 = jdbcTemplate.queryForList(check1, data[0], data[1], data[2]);
+        List<Map<String, Object>> check2 = jdbcTemplate.queryForList(check1, data[0], data[2], data[1]);
         if (check2.size() == 0) {
             log.error("该合同不属于该销售员");
             return CompletableFuture.completedFuture(false);
