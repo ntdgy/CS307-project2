@@ -94,8 +94,7 @@ public class InsertService {
                     data[1],
                     data[2],
                     data[3],
-                    data[4],
-                    Integer.parseInt(data[5])
+                    Integer.parseInt(data[4])
             };
             jdbcTemplate.update(sql, params);
 //            var conn = hikariDataSource.getConnection();
