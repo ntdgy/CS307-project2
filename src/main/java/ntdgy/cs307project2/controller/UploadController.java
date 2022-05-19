@@ -7,7 +7,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import ntdgy.cs307project2.service.InsertService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,16 +63,6 @@ public class UploadController {
         return CompletableFuture.completedFuture(null);
     }
 
-    @Async("hello")
-    public void addCenter() {
-        log.error("addCenter");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     public CompletableFuture<List<String>> addCenterController(String path) {
         int countSuccess = 0, countFail = 0;
         List<CompletableFuture<Boolean>> result = new LinkedList<>();
@@ -84,7 +73,7 @@ public class UploadController {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
-                result.add(insertService.addCenter(nextLine[1]));
+                result.add(insertService.addCenter(Integer.parseInt(nextLine[0]), nextLine[1]));
             }
             for (var test : result) {
                 CompletableFuture.allOf(test).join();
@@ -105,7 +94,39 @@ public class UploadController {
         list.add("Total: " + (countSuccess + countFail));
         list.add("请访问控制台查看日志");
         return CompletableFuture.completedFuture(list);
+    }
 
+    public CompletableFuture<List<String>> addEnterpriseController(String path) {
+        int countSuccess = 0, countFail = 0;
+        List<CompletableFuture<Boolean>> result = new LinkedList<>();
+        try (FileInputStream fis = new FileInputStream(path);
+             InputStreamReader isr = new InputStreamReader(fis,
+                     StandardCharsets.UTF_8);
+             CSVReader reader = new CSVReader(isr)) {
+            String[] nextLine;
+            reader.readNext();
+            while ((nextLine = reader.readNext()) != null) {
+                result.add(insertService.addEnterprise(nextLine));
+            }
+            for (var test : result) {
+                CompletableFuture.allOf(test).join();
+            }
+            for (var test : result) {
+                if (test.getNow(false)) {
+                    countSuccess++;
+                } else {
+                    countFail++;
+                }
+            }
+        } catch (CsvValidationException | IOException e) {
+            e.printStackTrace();
+        }
+        List<String> list = new LinkedList<>();
+        list.add("Success: " + countSuccess);
+        list.add("Fail: " + countFail);
+        list.add("Total: " + (countSuccess + countFail));
+        list.add("请访问控制台查看日志");
+        return CompletableFuture.completedFuture(list);
     }
 
 
