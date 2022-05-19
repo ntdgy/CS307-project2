@@ -5,22 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import ntdgy.cs307project2.exception.InvalidDataException;
 import ntdgy.cs307project2.exception.InvalidOperationException;
 import ntdgy.cs307project2.exception.WrongDataException;
-
 import ntdgy.cs307project2.service.LoginService;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.util.DigestUtils;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-
-import org.joda.time.format.ISODateTimeFormat;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -129,8 +124,8 @@ public class DatabaseController {
             obj[i++] = entry.getValue();
         }
         var result = jdbc.queryForList(sql.toString(), obj);
-        for(var list: result){
-            switch ((Integer) list.get("stafftype")){
+        for (var list : result) {
+            switch ((Integer) list.get("stafftype")) {
                 case 0:
                     list.replace("stafftype", "Director");
                     break;
@@ -327,9 +322,9 @@ public class DatabaseController {
     ) throws WrongDataException {
         Map<String, Object> response = new HashMap<>();
         String[] para = new String[]{"id", "name", "number", "gender", "age", "supply_center",
-                "mobile_number","stafftype"};
+                "mobile_number", "stafftype"};
         String[] update = new String[]{"updateid", "updatename", "updategender", "updateage",
-                "updatemobilenumber", "updatesupply_center", "updatemobile_number","updatestafftype"};
+                "updatemobilenumber", "updatesupply_center", "updatemobile_number", "updatestafftype"};
         Object[] obj;
         removeEmpty(map);
         Map<String, Object> res = wash(map, para);
@@ -650,7 +645,7 @@ public class DatabaseController {
             objects.add(new Object[]{map.get("contractnum"), map.get("productmodel"), Integer.parseInt(map.get("quantity").toString()), estimated_delivery_date, lodgement_date, map.get("salesmannum")});
             sql[2] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
             objects.add(new Object[]{Integer.parseInt(map.get("quantity").toString()), check4.get(0).get("center_name"), map.get("productmodel")});
-            if (check8 == 0) {
+            if (check8 != null && check8 == 0) {
                 sql[3] = "insert into sold (model_name, quantity) values (?, ?)";
                 objects.add(new Object[]{map.get("productmodel"), Integer.parseInt(map.get("quantity").toString())});
             } else {
@@ -881,7 +876,7 @@ public class DatabaseController {
         temp[0] = encodeStr;
         temp[1] = name;
         List<Map<String, Object>> re = jdbc.queryForList(sql, temp);
-        int level = (int)re.get(0).get("level");
+        int level = (int) re.get(0).get("level");
         LoginService.login(name, level);
         return !re.isEmpty();
     }
