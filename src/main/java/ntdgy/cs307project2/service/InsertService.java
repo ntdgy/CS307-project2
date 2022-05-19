@@ -584,18 +584,18 @@ public class InsertService {
         int quantity = Integer.parseInt(data[3]) - Integer.parseInt(check2.get(0).get("quantity").toString());
         Date estimated_delivery_date1, lodgement_date1;
         if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$",
-                data[6])) {
+                data[4])) {
             DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
-            estimated_delivery_date1 = jsFormat.parseDateTime(data[6]).toDate();
+            estimated_delivery_date1 = jsFormat.parseDateTime(data[4]).toDate();
         } else {
-            estimated_delivery_date1 = java.sql.Date.valueOf(data[6].replace('/', '-'));
+            estimated_delivery_date1 = java.sql.Date.valueOf(data[4].replace('/', '-'));
         }
         if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$",
-                data[7])) {
+                data[5])) {
             DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
-            lodgement_date1 = jsFormat.parseDateTime(data[7]).toDate();
+            lodgement_date1 = jsFormat.parseDateTime(data[5]).toDate();
         } else {
-            lodgement_date1 = java.sql.Date.valueOf(data[7].replace('/', '-'));
+            lodgement_date1 = java.sql.Date.valueOf(data[5].replace('/', '-'));
         }
         java.sql.Date estimated_delivery_date = new java.sql.Date(estimated_delivery_date1.getTime());
         java.sql.Date lodgement_date = new java.sql.Date(lodgement_date1.getTime());
