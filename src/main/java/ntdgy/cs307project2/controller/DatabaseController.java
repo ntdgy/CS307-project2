@@ -243,7 +243,6 @@ public class DatabaseController {
         String type = (String) map.get("type");
         StringBuilder sql;
         if (type.equals("Insert")) {
-
             sql = new StringBuilder("insert into enterprise(");
             obj = new Object[res.size()];
             int i = 0;

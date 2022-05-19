@@ -6,6 +6,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import ntdgy.cs307project2.exception.InvalidDataException;
+import ntdgy.cs307project2.exception.WrongDataException;
 import ntdgy.cs307project2.service.InsertService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +44,7 @@ public class UploadController {
     public CompletableFuture<List<String>> test(
             @RequestPart MultipartFile file,
             @RequestParam String type
-    ) throws InvalidDataException{
+    ) throws InvalidDataException,WrongDataException{
         if (file.isEmpty()) {
             return CompletableFuture.completedFuture(null);
         }
@@ -73,7 +74,7 @@ public class UploadController {
         return CompletableFuture.completedFuture(null);
     }
 
-    public CompletableFuture<List<String>> addCenterController(String path) {
+    public CompletableFuture<List<String>> addCenterController(String path) throws WrongDataException {
         int countSuccess = 0, countFail = 0;
         List<CompletableFuture<Boolean>> result = new LinkedList<>();
         try (FileInputStream fis = new FileInputStream(path);
