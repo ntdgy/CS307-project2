@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -16,24 +17,22 @@ public class InsertService {
         this.hikariDataSource = hikariDataSource;
     }
 
-    @Async
-    public CompletableFuture<String> addCenter(String s) {
-        log.error("addCenter" + s);
+    @Async("dgy")
+    public CompletableFuture<Boolean> addCenter(String s) {
+        log.error("addCenter");
         try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            var conn = hikariDataSource.getConnection();
+            var stmt = conn.prepareStatement("insert into center(name) values(?)");
+            stmt.setString(1, s);
+            stmt.executeUpdate();
+            stmt.close();
+            conn.close();
+            return CompletableFuture.completedFuture(true);
+        } catch (SQLException e) {
+            log.error("error", e);
+            return CompletableFuture.completedFuture(false);
         }
-        return CompletableFuture.completedFuture("Success");
     }
 
-    @Async("hello")
-    public void test() {
-        log.error(Thread.currentThread().getName());
-        try {
-            Thread.sleep(10000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
 }

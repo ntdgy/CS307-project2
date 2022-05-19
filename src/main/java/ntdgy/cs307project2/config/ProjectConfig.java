@@ -73,7 +73,7 @@ public class ProjectConfig implements WebMvcConfigurer {
      *
      * @return Executor
      */
-    @Bean("hello")
+    @Bean("dgy")
     public ThreadPoolTaskExecutor defaultThreadPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         //核心线程数目
