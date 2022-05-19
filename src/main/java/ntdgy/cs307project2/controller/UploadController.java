@@ -43,7 +43,7 @@ public class UploadController {
     public CompletableFuture<List<String>> test(
             @RequestPart MultipartFile file,
             @RequestParam String type
-    ) {
+    ) throws InvalidDataException{
         if (file.isEmpty()) {
             return CompletableFuture.completedFuture(null);
         }
@@ -55,7 +55,18 @@ public class UploadController {
                 Files.createDirectories(dir);
             }
             Files.write(path, bytes);
-            return addCenterController(path.toString());
+            switch (type){
+                case "1": return addCenterController(path.toString());
+                case "2": return addEnterpriseController(path.toString());
+                case "3": return addModelController(path.toString());
+                case "4": return addStaffController(path.toString());
+                case "5": return stockInController(path.toString());
+                case "6": return placeOrderController(path.toString());
+                case "7": return updateOrderController(path.toString());
+                case "8": return deleteOrderController(path.toString());
+                default: throw new InvalidDataException("不支持的选项");
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
