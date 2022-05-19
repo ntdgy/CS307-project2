@@ -995,6 +995,22 @@ public class DatabaseController {
     }
 
 
+    @PostMapping("clear")
+    @ResponseBody
+    public String clearDarabse() {
+        String sql = "truncate center cascade;\n" +
+                "truncate contract cascade ;\n" +
+                "truncate contract_content cascade ;\n" +
+                "truncate enterprise cascade ;\n" +
+                "truncate model cascade ;\n" +
+                "truncate sold cascade ;\n" +
+                "truncate staff cascade ;\n" +
+                "truncate stockin cascade ;\n" +
+                "truncate warehousing cascade ;";
+        jdbc.update(sql);
+        return "Success";
+    }
+
     public boolean login(String name, String pwd) {
         String salt = "djj is super smart and beautiful mei shao nv";
         pwd = pwd + salt;
