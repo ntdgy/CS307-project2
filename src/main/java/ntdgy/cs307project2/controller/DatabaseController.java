@@ -752,7 +752,8 @@ public class DatabaseController {
         Map<String, Object> res = new HashMap<>();
         String[] sql;
         List<Object[]> objects;
-        String check1 = "select * from contract_content where contract_number = ? and salesman = ? order by estimated_delivery_date, product_model_name;";
+        String check1 = "select * from contract_content where contract_number = ? and salesman = ? " +
+                "order by estimated_delivery_date, product_model_name;";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contract"), map.get("salesman"));
         if (check2.size() < Integer.parseInt(map.get("seq").toString())) {
             log.error(check2.toString());

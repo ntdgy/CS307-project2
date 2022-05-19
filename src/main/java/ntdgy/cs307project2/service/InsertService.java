@@ -447,4 +447,63 @@ public class InsertService {
             return CompletableFuture.completedFuture(false);
         }
     }
+
+
+    //contract	salesman	seq
+    @Async("dgy")
+    public CompletableFuture<Boolean> deleteOrder(String[] data) throws InvalidDataException {
+        try {
+            var conn = hikariDataSource.getConnection();
+            String check1 = "select * from contract_content where contract_number = ? and salesman = ? " +
+                    "order by estimated_delivery_date, product_model_name;";
+            var stmt = conn.prepareStatement(check1);
+            stmt.setString(1, data[0]);
+            stmt.setString(2, data[1]);
+            var rs = stmt.executeQuery();
+            rs.last();
+            int count = rs.getRow();
+            if (count < Integer.parseInt(data[2])) {
+                throw new InvalidDataException("该合同不属于该销售员");
+            }
+            rs.first();
+            for (int i = 0; i < Integer.parseInt(data[2]); i++) {
+                rs.next();
+            }
+            String check2 = "select count(*) cnt from sold where model_name = ?";
+            stmt = conn.prepareStatement(check2);
+            stmt.setString(1, data[3]);
+            var rs1 = stmt.executeQuery();
+            int cnt = rs1.getInt("cnt");
+            String check3 = "select supply_center from contract join enterprise e on contract.enterprise = e.name\n" +
+                    "    where number = ?;";
+            stmt = conn.prepareStatement(check3);
+            stmt.setString(1, data[0]);
+            var rs2 = stmt.executeQuery();
+            String supplyCenter = rs2.getString("supply_center");
+            String[] sql = new String[3];
+            sql[0] = "delete from contract_content where contract_number = ? and product_model_name = ? and salesman = ?";
+            stmt = conn.prepareStatement(sql[0]);
+            stmt.setString(1, data[0]);
+            stmt.setString(2, rs.getString("product_model_name"));
+            stmt.setString(3, data[1]);
+            stmt.executeUpdate();
+            sql[1] = "update warehousing set quantity = quantity + ? where model_name = ? and center_name = ?";
+            stmt = conn.prepareStatement(sql[1]);
+            stmt.setInt(1, rs.getInt("quantity"));
+            stmt.setString(2, rs.getString("product_model_name"));
+            stmt.setString(3, supplyCenter);
+            stmt.executeUpdate();
+            sql[2] = "update sold set quantity = quantity - ? where model_name = ?";
+            stmt = conn.prepareStatement(sql[2]);
+            stmt.setInt(1, rs.getInt("quantity"));
+            stmt.setString(2, rs.getString("product_model_name"));
+            stmt.executeUpdate();
+            stmt.close();
+            conn.close();
+            return CompletableFuture.completedFuture(true);
+        } catch (SQLException e) {
+            log.error("error", e);
+            return CompletableFuture.completedFuture(false);
+        }
+    }
 }
