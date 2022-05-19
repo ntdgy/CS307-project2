@@ -857,9 +857,16 @@ public class DatabaseController {
     public Map<String, Object> getContractInfo(@RequestBody Map<String, Object> map) {
         String contract_number = (String) map.get("contractnumber");
         Map<String, Object> res = new HashMap<>();
-        String sql = "select c.number,c.enterprise,e.supply_center,s.name from contract c join staff s on c.contract_manager = s.number join enterprise e on c.enterprise = e.name where c.number = ?;";
+        String sql = "select c.number,c.enterprise,e.supply_center,s.name from contract c " +
+                "join staff s on c.contract_manager = s.number " +
+                "join enterprise e on c.enterprise = e.name " +
+                "where c.number = ?;";
         List<Map<String, Object>> check = jdbc.queryForList(sql, contract_number);
-        String sql2 = "select c.product_model_name,c.quantity,c.estimated_delivery_date,c.lodgement_date,s.name from contract_content c join staff s on c.salesman = s.number where contract_number = ?;";
+        String sql2 = "select c.product_model_name,c.quantity,c.estimated_delivery_date,c.lodgement_date,s.name,m.unit_price " +
+                "from contract_content c " +
+                "join staff s on c.salesman = s.number " +
+                "join model m on c.product_model_name = m.model " +
+                "where contract_number = ?;";
         List<Map<String, Object>> check2 = jdbc.queryForList(sql2, contract_number);
         res.put("result", check);
         res.put("result2", check2);
