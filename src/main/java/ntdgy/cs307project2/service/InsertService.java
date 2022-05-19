@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -197,27 +198,32 @@ public class InsertService {
         List<Map<String, Object>> check2 = jdbcTemplate.queryForList(check1, data[3]);
         if (check2.size() == 0) {
             log.error("没有该员工");
-            throw new InvalidDataException("⼈员不存在");
+            return CompletableFuture.completedFuture(false);
+            //throw new InvalidDataException("⼈员不存在");
         }
         if (!check2.get(0).get("stafftype").equals(1)) {
             log.error(check2.get(0).get("stafftype").toString());
-            throw new InvalidDataException("⼈员的类型不是supply_staff");
+            return CompletableFuture.completedFuture(false);
+           // throw new InvalidDataException("⼈员的类型不是supply_staff");
         }
         if (!check2.get(0).get("supply_center").equals(data[1])) {
             log.error(check2.get(0).get("supply_center").toString());
-            throw new InvalidDataException("供应商不属于该供应中心");
+            return CompletableFuture.completedFuture(false);
+            //throw new InvalidDataException("供应商不属于该供应中心");
         }
         String check3 = "select * from center where center.name = ?";
         List<Map<String, Object>> check4 = jdbcTemplate.queryForList(check3, data[1]);
         if (check4.size() == 0) {
             log.error("没有该供应中心");
-            throw new InvalidDataException("供应中心不存在");
+            return CompletableFuture.completedFuture(false);
+            //throw new InvalidDataException("供应中心不存在");
         }
         String check5 = "select * from model where model.model = ?";
         List<Map<String, Object>> check6 = jdbcTemplate.queryForList(check5, data[2]);
         if (check6.size() == 0) {
             log.error("没有该型号");
-            throw new InvalidDataException("产品型号不存在");
+            return CompletableFuture.completedFuture(false);
+            //throw new InvalidDataException("产品型号不存在");
         }
         String check9 = "select * from warehousing where center_name = ? and model_name = ?;";
         List<Map<String, Object>> check10 = jdbcTemplate.queryForList(check9, data[1], data[2]);
@@ -334,146 +340,230 @@ public class InsertService {
     // estimated_delivery_date, lodgement_date,salesman_num,contract_type
     @Async("dgy")
     public CompletableFuture<Boolean> placeOrder(String[] data) throws InvalidDataException {
-        try {
-            var conn = hikariDataSource.getConnection();
-            String check1 = "select * from staff where staff.number = ?";
-            var stmt1 = conn.prepareStatement(check1);
-            stmt1.setString(1, data[8]);
-            var rs1 = stmt1.executeQuery();
-            if (!rs1.next()) {
-                log.error(data[8] + " is not a valid staff number");
-                throw new InvalidDataException("员工编号不存在");
-            }
-            if (rs1.getInt("stafftype") != 3) {
-                throw new InvalidDataException("该员工不是salesman");
-            }
-            String check2 = "select *\n" +
-                    "from warehousing w\n" +
-                    "         join (select e.supply_center\n" +
-                    "               from  enterprise e\n" +
-                    "               where e.name = ?) as cesc\n" +
-                    "              on w.center_name = cesc.supply_center " +
-                    "                   and w.model_name = ? " +
-                    "                   and w.quantity >= ?;";
-            var stmt2 = conn.prepareStatement(check2);
-            stmt2.setString(1, data[1]);
-            stmt2.setString(2, data[2]);
-            stmt2.setInt(3, Integer.parseInt(data[3]));
-            var rs2 = stmt2.executeQuery();
-            if (!rs2.next()) {
-                throw new InvalidDataException("库存不足");
-            }
-            String check3 = "select * from contract where number = ?";
-            var stmt3 = conn.prepareStatement(check3);
-            stmt3.setString(1, data[0]);
-            var rs3 = stmt3.executeQuery();
-            String check4 = "select count(*) from sold where model_name = ?";
-            var stmt4 = conn.prepareStatement(check4);
-            stmt4.setString(1, data[2]);
-            var rs4 = stmt4.executeQuery();
-            Date estimated_delivery_date1, lodgement_date1, contractdate1;
-            if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$",
-                    data[6])) {
-                DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
-                estimated_delivery_date1 = jsFormat.parseDateTime(data[6]).toDate();
-            } else {
-                estimated_delivery_date1 = java.sql.Date.valueOf(data[6].replace('/', '-'));
-            }
-            if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$",
-                    data[7])) {
-                DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
-                lodgement_date1 = jsFormat.parseDateTime(data[7]).toDate();
-            } else {
-                lodgement_date1 = java.sql.Date.valueOf(data[7].replace('/', '-'));
-            }
-            if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$",
-                    data[5])) {
-                DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
-                contractdate1 = jsFormat.parseDateTime(data[5]).toDate();
-            } else {
-                contractdate1 = java.sql.Date.valueOf(data[5].replace('/', '-'));
-            }
-            java.sql.Date estimated_delivery_date = new java.sql.Date(estimated_delivery_date1.getTime());
-            java.sql.Date lodgement_date = new java.sql.Date(lodgement_date1.getTime());
-            java.sql.Date contractdate = new java.sql.Date(contractdate1.getTime());
-            if (rs3.next()) {
-                String sql = "insert into contract_content (contract_number, product_model_name, quantity, " +
-                        "estimated_delivery_date, lodgement_date, salesman) " +
-                        "values (?, ?, ?, ?, ?, ?)";
-                var stmt = conn.prepareStatement(sql);
-                stmt.setString(1, data[0]);
-                stmt.setString(2, data[2]);
-                stmt.setInt(3, Integer.parseInt(data[3]));
-                stmt.setDate(4, estimated_delivery_date);
-                stmt.setDate(5, lodgement_date);
-                stmt.setString(6, data[8]);
-                stmt.executeUpdate();
-                String sql1 = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
-                stmt = conn.prepareStatement(sql1);
-                stmt.setInt(1, Integer.parseInt(data[3]));
-                stmt.setString(2, rs2.getString("center_name"));
-                stmt.setString(3, data[2]);
-                stmt.executeUpdate();
-                if (!rs4.next()) {
-                    String sql2 = "insert into sold (model_name, quantity) values (?, ?)";
-                    stmt = conn.prepareStatement(sql2);
-                    stmt.setString(1, data[2]);
-                    stmt.setInt(2, Integer.parseInt(data[3]));
-                    stmt.executeUpdate();
-                } else {
-                    String sql2 = "update sold set quantity = quantity + ? where model_name = ?";
-                    stmt = conn.prepareStatement(sql2);
-                    stmt.setInt(1, Integer.parseInt(data[3]));
-                    stmt.setString(2, data[2]);
-                    stmt.executeUpdate();
-                }
-            } else {
-                String sql = "insert into contract (number, enterprise, contract_date, contract_manager, contract_type) " +
-                        "values (?, ?, ?, ?, ?)";
-                var stmt = conn.prepareStatement(sql);
-                stmt.setString(1, data[0]);
-                stmt.setString(2, data[1]);
-                stmt.setDate(3, contractdate);
-                stmt.setString(4, data[6]);
-                stmt.setString(5, data[7]);
-                stmt.executeUpdate();
-                String sql1 = "insert into contract_content (contract_number, product_model_name, quantity, " +
-                        "estimated_delivery_date, lodgement_date, salesman) values (?, ?, ?, ?, ?, ?)";
-                stmt = conn.prepareStatement(sql1);
-                stmt.setString(1, data[0]);
-                stmt.setString(2, data[2]);
-                stmt.setInt(3, Integer.parseInt(data[3]));
-                stmt.setDate(4, estimated_delivery_date);
-                stmt.setDate(5, lodgement_date);
-                stmt.setString(6, data[8]);
-                stmt.executeUpdate();
-                String sql2 = "update warehousing set quantity = quantity - ? " +
-                        "where center_name = ? and model_name = ?";
-                stmt = conn.prepareStatement(sql2);
-                stmt.setInt(1, Integer.parseInt(data[3]));
-                stmt.setString(2, rs2.getString("center_name"));
-                stmt.setString(3, data[2]);
-                stmt.executeUpdate();
-                if (!rs4.next()) {
-                    String sql3 = "insert into sold (model_name, quantity) values (?, ?)";
-                    stmt = conn.prepareStatement(sql3);
-                    stmt.setString(1, data[2]);
-                    stmt.setInt(2, Integer.parseInt(data[3]));
-                    stmt.executeUpdate();
-                } else {
-                    String sql3 = "update sold set quantity = quantity + ? where model_name = ?";
-                    stmt = conn.prepareStatement(sql3);
-                    stmt.setInt(1, Integer.parseInt(data[3]));
-                    stmt.setString(2, data[2]);
-                    stmt.executeUpdate();
-                }
-            }
-            conn.close();
-            return CompletableFuture.completedFuture(true);
-        } catch (SQLException e) {
-            log.error("error", e);
+        String[] sql;
+        List<Object[]> objects;
+        String check1 = "select * from staff where staff.number = ?";
+        List<Map<String, Object>> check2 = jdbcTemplate.queryForList(check1, data[8]);
+        if (check2.isEmpty()) {
+            log.error("员工不存在");
             return CompletableFuture.completedFuture(false);
         }
+        if (!(check2.get(0).get("stafftype").toString().equals("3"))) {
+            log.error("员工不是销售员");
+            return CompletableFuture.completedFuture(false);
+            //throw new InvalidDataException("该员工不是salesman");
+        }
+        String check3 = "select *\n" +
+                "from warehousing w\n" +
+                "         join (select e.supply_center\n" +
+                "               from  enterprise e\n" +
+                "               where e.name = ?) as cesc\n" +
+                "              on w.center_name = cesc.supply_center and w.model_name = ? and w.quantity >= ?;";
+        List<Map<String, Object>> check4 = jdbcTemplate.queryForList(check3, data[1], data[2], Integer.parseInt(data[3]));
+        if (check4.size() == 0) {
+            log.error("库存不足");
+            return CompletableFuture.completedFuture(false);
+            //throw new InvalidDataException("库存不足");
+        }
+        String check5 = "select * from contract where number = ?";
+        List<Map<String, Object>> check6 = jdbcTemplate.queryForList(check5, data[0]);
+        String check7 = "select count(*) from sold where model_name = ?";
+        Integer check8 = jdbcTemplate.queryForObject(check7, Integer.class, data[2]);
+        Date estimated_delivery_date, lodgement_date, contractdate;
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[6])) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            estimated_delivery_date = jsFormat.parseDateTime(data[6]).toDate();
+        } else {
+            estimated_delivery_date = java.sql.Date.valueOf(data[6].replace('/', '-'));
+        }
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[7])) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            lodgement_date = jsFormat.parseDateTime(data[7]).toDate();
+        } else {
+            lodgement_date = java.sql.Date.valueOf(data[7].replace('/', '-'));
+        }
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[5])) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            contractdate = jsFormat.parseDateTime(data[5]).toDate();
+        } else {
+            contractdate = java.sql.Date.valueOf(data[5].replace('/', '-'));
+        }
+        if (check6.size() != 0) {
+            sql = new String[3];
+            objects = new ArrayList<>();
+            sql[0] = "insert into contract_content (contract_number, product_model_name, quantity, estimated_delivery_date, lodgement_date, salesman)\n" +
+                    "values (?, ?, ?, ?, ?, ?)";
+            objects.add(new Object[]{data[0], data[2], Integer.parseInt(data[3]), estimated_delivery_date, lodgement_date, data[8]});
+            sql[1] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
+            objects.add(new Object[]{Integer.parseInt(data[3]), check4.get(0).get("center_name"), data[2]});
+            if (check8 != null && check8 == 0) {
+                sql[2] = "insert into sold (model_name, quantity) values (?, ?)";
+                objects.add(new Object[]{data[2], Integer.parseInt(data[3])});
+            } else {
+                sql[2] = "update sold set quantity = quantity + ? where model_name = ?";
+                objects.add(new Object[]{Integer.parseInt(data[3]), data[2]});
+            }
+            jdbcTemplate.update(sql[0], objects.get(0));
+            jdbcTemplate.update(sql[1], objects.get(1));
+            jdbcTemplate.update(sql[2], objects.get(2));
+        } else {
+            sql = new String[4];
+            objects = new ArrayList<>();
+            sql[0] = "insert into contract (number, enterprise, contract_date, contract_manager, contract_type) " +
+                    "values (?, ?, ?, ?, ?)";
+            objects.add(new Object[]{data[0], data[1], contractdate, data[4], data[9]});
+            sql[1] = "insert into contract_content (contract_number, product_model_name, quantity, " +
+                    "estimated_delivery_date, lodgement_date, salesman) values (?, ?, ?, ?, ?, ?)";
+            objects.add(new Object[]{data[0], data[2], Integer.parseInt(data[3]), estimated_delivery_date, lodgement_date, data[8]});
+            sql[2] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
+            objects.add(new Object[]{Integer.parseInt(data[3]), check4.get(0).get("center_name"), data[2]});
+            if (check8 != null && check8 == 0) {
+                sql[3] = "insert into sold (model_name, quantity) values (?, ?)";
+                objects.add(new Object[]{data[2], Integer.parseInt(data[3])});
+            } else {
+                sql[3] = "update sold set quantity = quantity + ? where model_name = ?";
+                objects.add(new Object[]{Integer.parseInt(data[3]), data[2]});
+            }
+            jdbcTemplate.update(sql[0], objects.get(0));
+            jdbcTemplate.update(sql[1], objects.get(1));
+            jdbcTemplate.update(sql[2], objects.get(2));
+            jdbcTemplate.update(sql[3], objects.get(3));
+//            var conn = hikariDataSource.getConnection();
+//            String check1 = "select * from staff where staff.number = ?";
+//            var stmt1 = conn.prepareStatement(check1);
+//            stmt1.setString(1, data[8]);
+//            var rs1 = stmt1.executeQuery();
+//            if (!rs1.next()) {
+//                log.error(data[8] + " is not a valid staff number");
+//                throw new InvalidDataException("员工编号不存在");
+//            }
+//            if (rs1.getInt("stafftype") != 3) {
+//                throw new InvalidDataException("该员工不是salesman");
+//            }
+//            String check2 = "select *\n" +
+//                    "from warehousing w\n" +
+//                    "         join (select e.supply_center\n" +
+//                    "               from  enterprise e\n" +
+//                    "               where e.name = ?) as cesc\n" +
+//                    "              on w.center_name = cesc.supply_center " +
+//                    "                   and w.model_name = ? " +
+//                    "                   and w.quantity >= ?;";
+//            var stmt2 = conn.prepareStatement(check2);
+//            stmt2.setString(1, data[1]);
+//            stmt2.setString(2, data[2]);
+//            stmt2.setInt(3, Integer.parseInt(data[3]));
+//            var rs2 = stmt2.executeQuery();
+//            if (!rs2.next()) {
+//                throw new InvalidDataException("库存不足");
+//            }
+//            String check3 = "select * from contract where number = ?";
+//            var stmt3 = conn.prepareStatement(check3);
+//            stmt3.setString(1, data[0]);
+//            var rs3 = stmt3.executeQuery();
+//            String check4 = "select count(*) from sold where model_name = ?";
+//            var stmt4 = conn.prepareStatement(check4);
+//            stmt4.setString(1, data[2]);
+//            var rs4 = stmt4.executeQuery();
+//            Date estimated_delivery_date1, lodgement_date1, contractdate1;
+//            if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$",
+//                    data[6])) {
+//                DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+//                estimated_delivery_date1 = jsFormat.parseDateTime(data[6]).toDate();
+//            } else {
+//                estimated_delivery_date1 = java.sql.Date.valueOf(data[6].replace('/', '-'));
+//            }
+//            if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$",
+//                    data[7])) {
+//                DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+//                lodgement_date1 = jsFormat.parseDateTime(data[7]).toDate();
+//            } else {
+//                lodgement_date1 = java.sql.Date.valueOf(data[7].replace('/', '-'));
+//            }
+//            if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$",
+//                    data[5])) {
+//                DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+//                contractdate1 = jsFormat.parseDateTime(data[5]).toDate();
+//            } else {
+//                contractdate1 = java.sql.Date.valueOf(data[5].replace('/', '-'));
+//            }
+//            java.sql.Date estimated_delivery_date = new java.sql.Date(estimated_delivery_date1.getTime());
+//            java.sql.Date lodgement_date = new java.sql.Date(lodgement_date1.getTime());
+//            java.sql.Date contractdate = new java.sql.Date(contractdate1.getTime());
+//            if (rs3.next()) {
+//                String sql = "insert into contract_content (contract_number, product_model_name, quantity, " +
+//                        "estimated_delivery_date, lodgement_date, salesman) " +
+//                        "values (?, ?, ?, ?, ?, ?)";
+//                var stmt = conn.prepareStatement(sql);
+//                stmt.setString(1, data[0]);
+//                stmt.setString(2, data[2]);
+//                stmt.setInt(3, Integer.parseInt(data[3]));
+//                stmt.setDate(4, estimated_delivery_date);
+//                stmt.setDate(5, lodgement_date);
+//                stmt.setString(6, data[8]);
+//                stmt.executeUpdate();
+//                String sql1 = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
+//                stmt = conn.prepareStatement(sql1);
+//                stmt.setInt(1, Integer.parseInt(data[3]));
+//                stmt.setString(2, rs2.getString("center_name"));
+//                stmt.setString(3, data[2]);
+//                stmt.executeUpdate();
+//                if (!rs4.next()) {
+//                    String sql2 = "insert into sold (model_name, quantity) values (?, ?)";
+//                    stmt = conn.prepareStatement(sql2);
+//                    stmt.setString(1, data[2]);
+//                    stmt.setInt(2, Integer.parseInt(data[3]));
+//                    stmt.executeUpdate();
+//                } else {
+//                    String sql2 = "update sold set quantity = quantity + ? where model_name = ?";
+//                    stmt = conn.prepareStatement(sql2);
+//                    stmt.setInt(1, Integer.parseInt(data[3]));
+//                    stmt.setString(2, data[2]);
+//                    stmt.executeUpdate();
+//                }
+//            } else {
+//                String sql = "insert into contract (number, enterprise, contract_date, contract_manager, contract_type) " +
+//                        "values (?, ?, ?, ?, ?)";
+//                var stmt = conn.prepareStatement(sql);
+//                stmt.setString(1, data[0]);
+//                stmt.setString(2, data[1]);
+//                stmt.setDate(3, contractdate);
+//                stmt.setString(4, data[6]);
+//                stmt.setString(5, data[7]);
+//                stmt.executeUpdate();
+//                String sql1 = "insert into contract_content (contract_number, product_model_name, quantity, " +
+//                        "estimated_delivery_date, lodgement_date, salesman) values (?, ?, ?, ?, ?, ?)";
+//                stmt = conn.prepareStatement(sql1);
+//                stmt.setString(1, data[0]);
+//                stmt.setString(2, data[2]);
+//                stmt.setInt(3, Integer.parseInt(data[3]));
+//                stmt.setDate(4, estimated_delivery_date);
+//                stmt.setDate(5, lodgement_date);
+//                stmt.setString(6, data[8]);
+//                stmt.executeUpdate();
+//                String sql2 = "update warehousing set quantity = quantity - ? " +
+//                        "where center_name = ? and model_name = ?";
+//                stmt = conn.prepareStatement(sql2);
+//                stmt.setInt(1, Integer.parseInt(data[3]));
+//                stmt.setString(2, rs2.getString("center_name"));
+//                stmt.setString(3, data[2]);
+//                stmt.executeUpdate();
+//                if (!rs4.next()) {
+//                    String sql3 = "insert into sold (model_name, quantity) values (?, ?)";
+//                    stmt = conn.prepareStatement(sql3);
+//                    stmt.setString(1, data[2]);
+//                    stmt.setInt(2, Integer.parseInt(data[3]));
+//                    stmt.executeUpdate();
+//                } else {
+//                    String sql3 = "update sold set quantity = quantity + ? where model_name = ?";
+//                    stmt = conn.prepareStatement(sql3);
+//                    stmt.setInt(1, Integer.parseInt(data[3]));
+//                    stmt.setString(2, data[2]);
+//                    stmt.executeUpdate();
+//                }
+//            }
+//            conn.close();
+        }
+        return CompletableFuture.completedFuture(true);
     }
 
 
