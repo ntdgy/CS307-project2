@@ -981,7 +981,8 @@ public class DatabaseController {
                 "create table contract_content\n" +
                 "(\n" +
                 "    id                      serial primary key,\n" +
-                "    contract_number            varchar(10) not null references contract(number) on update cascade on delete cascade, -- references contract (id) not null ,\n" +
+                "    contract_number            varchar(10) not null,\n" +
+                 //references contract(number) on update cascade on delete cascade, -- references contract (id) not null ,\n" +
                 "    product_model_name       varchar not null references model(model) on update cascade on delete cascade, -- references product_model (id) not null,\n" +
                 "    quantity                int, -- not null,\n" +
                 "    estimated_delivery_date date,\n" +

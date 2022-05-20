@@ -6,13 +6,11 @@ import ntdgy.cs307project2.exception.InvalidDataException;
 import ntdgy.cs307project2.exception.WrongDataException;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -203,7 +201,7 @@ public class InsertService {
         if (!check2.get(0).get("stafftype").equals(1)) {
             log.error(check2.get(0).get("stafftype").toString());
             return CompletableFuture.completedFuture(false);
-           // throw new InvalidDataException("⼈员的类型不是supply_staff");
+            // throw new InvalidDataException("⼈员的类型不是supply_staff");
         }
         if (!check2.get(0).get("supply_center").equals(data[1])) {
             log.error(check2.get(0).get("supply_center").toString());
@@ -341,6 +339,25 @@ public class InsertService {
     public CompletableFuture<Boolean> placeOrder(String[] data) throws InvalidDataException {
         String[] sql;
         List<Object[]> objects;
+        Date estimated_delivery_date, lodgement_date, contractdate;
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[6])) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            estimated_delivery_date = jsFormat.parseDateTime(data[6]).toDate();
+        } else {
+            estimated_delivery_date = java.sql.Date.valueOf(data[6].replace('/', '-'));
+        }
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[7])) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            lodgement_date = jsFormat.parseDateTime(data[7]).toDate();
+        } else {
+            lodgement_date = java.sql.Date.valueOf(data[7].replace('/', '-'));
+        }
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[5])) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            contractdate = jsFormat.parseDateTime(data[5]).toDate();
+        } else {
+            contractdate = java.sql.Date.valueOf(data[5].replace('/', '-'));
+        }
         String check1 = "select * from staff where staff.number = ?";
         List<Map<String, Object>> check2 = jdbcTemplate.queryForList(check1, data[8]);
         if (check2.isEmpty()) {
@@ -364,69 +381,75 @@ public class InsertService {
             return CompletableFuture.completedFuture(false);
             //throw new InvalidDataException("库存不足");
         }
-        String check5 = "select * from contract where number = ?";
-        List<Map<String, Object>> check6 = jdbcTemplate.queryForList(check5, data[0]);
+        sql = new String[3];
+        objects = new ArrayList<>();
+        sql[0] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?;";
+        objects.add(new Object[]{Integer.parseInt(data[3]), check4.get(0).get("center_name"), data[2]});
+        jdbcTemplate.update(sql[0], objects.get(0));
         String check7 = "select count(*) from sold where model_name = ?";
         Integer check8 = jdbcTemplate.queryForObject(check7, Integer.class, data[2]);
-        Date estimated_delivery_date, lodgement_date, contractdate;
-        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[6])) {
-            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
-            estimated_delivery_date = jsFormat.parseDateTime(data[6]).toDate();
-        } else {
-            estimated_delivery_date = java.sql.Date.valueOf(data[6].replace('/', '-'));
-        }
-        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[7])) {
-            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
-            lodgement_date = jsFormat.parseDateTime(data[7]).toDate();
-        } else {
-            lodgement_date = java.sql.Date.valueOf(data[7].replace('/', '-'));
-        }
-        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[5])) {
-            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
-            contractdate = jsFormat.parseDateTime(data[5]).toDate();
-        } else {
-            contractdate = java.sql.Date.valueOf(data[5].replace('/', '-'));
-        }
-        if (check6.size() != 0) {
-            sql = new String[3];
-            objects = new ArrayList<>();
-            sql[0] = "insert into contract_content (contract_number, product_model_name, quantity, estimated_delivery_date, lodgement_date, salesman)\n" +
-                    "values (?, ?, ?, ?, ?, ?)";
-            objects.add(new Object[]{data[0], data[2], Integer.parseInt(data[3]), estimated_delivery_date, lodgement_date, data[8]});
-            sql[1] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
-            objects.add(new Object[]{Integer.parseInt(data[3]), check4.get(0).get("center_name"), data[2]});
-            if (check8 != null && check8 == 0) {
-                sql[2] = "insert into sold (model_name, quantity) values (?, ?)";
-                objects.add(new Object[]{data[2], Integer.parseInt(data[3])});
-            } else {
-                sql[2] = "update sold set quantity = quantity + ? where model_name = ?";
-                objects.add(new Object[]{Integer.parseInt(data[3]), data[2]});
-            }
-            jdbcTemplate.update(sql[0], objects.get(0));
+        if (check8 != null && check8 == 0) {
+            sql[1] = "insert into sold (model_name, quantity) values (?, ?)";
+            objects.add(new Object[]{data[2], Integer.parseInt(data[3])});
             jdbcTemplate.update(sql[1], objects.get(1));
-            jdbcTemplate.update(sql[2], objects.get(2));
         } else {
-            sql = new String[4];
-            objects = new ArrayList<>();
-            sql[0] = "insert into contract (number, enterprise, contract_date, contract_manager, contract_type) " +
-                    "values (?, ?, ?, ?, ?)";
-            objects.add(new Object[]{data[0], data[1], contractdate, data[4], data[9]});
-            sql[1] = "insert into contract_content (contract_number, product_model_name, quantity, " +
-                    "estimated_delivery_date, lodgement_date, salesman) values (?, ?, ?, ?, ?, ?)";
-            objects.add(new Object[]{data[0], data[2], Integer.parseInt(data[3]), estimated_delivery_date, lodgement_date, data[8]});
-            sql[2] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
-            objects.add(new Object[]{Integer.parseInt(data[3]), check4.get(0).get("center_name"), data[2]});
-            if (check8 != null && check8 == 0) {
-                sql[3] = "insert into sold (model_name, quantity) values (?, ?)";
-                objects.add(new Object[]{data[2], Integer.parseInt(data[3])});
-            } else {
-                sql[3] = "update sold set quantity = quantity + ? where model_name = ?";
-                objects.add(new Object[]{Integer.parseInt(data[3]), data[2]});
-            }
-            jdbcTemplate.update(sql[0], objects.get(0));
+            sql[1] = "update sold set quantity = quantity + ? where model_name = ?";
+            objects.add(new Object[]{Integer.parseInt(data[3]), data[2]});
             jdbcTemplate.update(sql[1], objects.get(1));
-            jdbcTemplate.update(sql[2], objects.get(2));
-            jdbcTemplate.update(sql[3], objects.get(3));
+        }
+        sql[2] = "insert into contract_content (contract_number, product_model_name, quantity, estimated_delivery_date, lodgement_date, salesman)\n" +
+                "values (?, ?, ?, ?, ?, ?)";
+        objects.add(new Object[]{data[0], data[2], Integer.parseInt(data[3]), estimated_delivery_date, lodgement_date, data[8]});
+        jdbcTemplate.update(sql[2], objects.get(2));
+//        String check5 = "select * from contract where number = ?";
+//        List<Map<String, Object>> check6 = jdbcTemplate.queryForList(check5, data[0]);
+//        if (true) {
+//            sql = new String[3];
+//            objects = new ArrayList<>();
+//            String check7 = "select count(*) from sold where model_name = ?";
+//            Integer check8 = jdbcTemplate.queryForObject(check7, Integer.class, data[2]);
+//            if (check8 != null && check8 == 0) {
+//                sql[0] = "insert into sold (model_name, quantity) values (?, ?)";
+//                objects.add(new Object[]{data[2], Integer.parseInt(data[3])});
+//                jdbcTemplate.update(sql[0], objects.get(0));
+//            } else {
+//                sql[0] = "update sold set quantity = quantity + ? where model_name = ?";
+//                objects.add(new Object[]{Integer.parseInt(data[3]), data[2]});
+//                jdbcTemplate.update(sql[0], objects.get(0));
+//            }
+//            sql[1] = "insert into contract_content (contract_number, product_model_name, quantity, estimated_delivery_date, lodgement_date, salesman)\n" +
+//                    "values (?, ?, ?, ?, ?, ?)";
+//            objects.add(new Object[]{data[0], data[2], Integer.parseInt(data[3]), estimated_delivery_date, lodgement_date, data[8]});
+//            sql[2] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
+//            objects.add(new Object[]{Integer.parseInt(data[3]), check4.get(0).get("center_name"), data[2]});
+//            jdbcTemplate.update(sql[1], objects.get(1));
+//            jdbcTemplate.update(sql[2], objects.get(2));
+//        } else {
+//            sql = new String[4];
+//            objects = new ArrayList<>();
+//            String check7 = "select count(*) from sold where model_name = ?";
+//            Integer check8 = jdbcTemplate.queryForObject(check7, Integer.class, data[2]);
+//            if (check8 != null && check8 == 0) {
+//                sql[0] = "insert into sold (model_name, quantity) values (?, ?)";
+//                objects.add(new Object[]{data[2], Integer.parseInt(data[3])});
+//                jdbcTemplate.update(sql[0], objects.get(0));
+//            } else {
+//                sql[0] = "update sold set quantity = quantity + ? where model_name = ?";
+//                objects.add(new Object[]{Integer.parseInt(data[3]), data[2]});
+//                jdbcTemplate.update(sql[0], objects.get(0));
+//            }
+////            sql[1] = "insert into contract (number, enterprise, contract_date, contract_manager, contract_type) " +
+////                    "values (?, ?, ?, ?, ?)";
+//            objects.add(new Object[]{data[0], data[1], contractdate, data[4], data[9]});
+//            sql[2] = "insert into contract_content (contract_number, product_model_name, quantity, " +
+//                    "estimated_delivery_date, lodgement_date, salesman) values (?, ?, ?, ?, ?, ?)";
+//            objects.add(new Object[]{data[0], data[2], Integer.parseInt(data[3]), estimated_delivery_date, lodgement_date, data[8]});
+//            sql[3] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
+//            objects.add(new Object[]{Integer.parseInt(data[3]), check4.get(0).get("center_name"), data[2]});
+//            //jdbcTemplate.update(sql[1], objects.get(1));
+//            jdbcTemplate.update(sql[2], objects.get(2));
+//            jdbcTemplate.update(sql[3], objects.get(3));
+// }
 //            var conn = hikariDataSource.getConnection();
 //            String check1 = "select * from staff where staff.number = ?";
 //            var stmt1 = conn.prepareStatement(check1);
@@ -561,8 +584,28 @@ public class InsertService {
 //                }
 //            }
 //            conn.close();
-        }
+
         return CompletableFuture.completedFuture(true);
+    }
+
+    @Async("dgy")
+    public void insertContract(String[] data) {
+        //            sql[1] = "insert into contract (number, enterprise, contract_date, contract_manager, contract_type) " +
+//                    "values (?, ?, ?, ?, ?)";
+        //objects.add(new Object[]{data[0], data[1], contractdate, data[4], data[9]});
+        String sql = "insert into contract (number, enterprise, contract_date, contract_manager, contract_type) " +
+                "values (?, ?, ?, ?, ?)";
+        Date contractdate;
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[5])) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            contractdate = jsFormat.parseDateTime(data[5]).toDate();
+        } else {
+            contractdate = java.sql.Date.valueOf(data[5].replace('/', '-'));
+        }
+        try {
+            jdbcTemplate.update(sql, data[0], data[1], contractdate, data[4], data[9]);
+        } catch (Exception ignored) {
+        }
     }
 
 
