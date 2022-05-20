@@ -7,7 +7,7 @@ import requests
 import sql
 
 pgsql = psycopg2.connect(
-    host="42.194.178.20",
+    host="127.0.0.1",
     port="5432",
     database="final",
     user="final",
@@ -214,10 +214,10 @@ insert_into_center()
 insert_into_enterprise()
 insert_into_model()
 insert_into_staff()
-stock_in()
-place_prder()
-update_order()
-delete_order()
+# stock_in()
+# place_prder()
+# update_order()
+# delete_order()
 
 # url = "http://localhost:8080/api/database/deleteOrder"
 # headers = {

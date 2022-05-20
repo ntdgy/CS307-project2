@@ -381,6 +381,7 @@ public class InsertService {
             return CompletableFuture.completedFuture(false);
             //throw new InvalidDataException("库存不足");
         }
+        log.error("Success");
         sql = new String[3];
         objects = new ArrayList<>();
         sql[0] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?;";

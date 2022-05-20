@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import ntdgy.cs307project2.exception.InvalidDataException;
 import ntdgy.cs307project2.exception.WrongDataException;
 import ntdgy.cs307project2.service.InsertService;
+import ntdgy.cs307project2.service.LRUCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,9 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -243,6 +242,7 @@ public class UploadController {
     public CompletableFuture<List<String>> placeOrderController(String path) throws InvalidDataException {
         int countSuccess = 0, countFail = 0;
         HashSet<String> set = new HashSet<>();
+        LRUCache<String, Integer> model = new LRUCache<>(15);
         List<CompletableFuture<Boolean>> result = new LinkedList<>();
         try (FileInputStream fis = new FileInputStream(path);
              InputStreamReader isr = new InputStreamReader(fis,
@@ -251,14 +251,19 @@ public class UploadController {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
-                Thread.sleep(3);
-                if(set.contains(nextLine[0])){
-                    result.add(insertService.placeOrder(nextLine));
-                }else{
+                //Thread.sleep(3);
+                if (!set.contains(nextLine[0])) {
                     set.add(nextLine[0]);
                     insertService.insertContract(nextLine);
+                }
+                if (model.containsKey(nextLine[2])){
+                    Thread.sleep(2);
+                    result.add(insertService.placeOrder(nextLine));
+                }else{
+                    model.put(nextLine[2], 1);
                     result.add(insertService.placeOrder(nextLine));
                 }
+
             }
             for (var test : result) {
                 CompletableFuture.allOf(test).join();
