@@ -65,6 +65,7 @@ public class UploadController {
                 case "6": return placeOrderController(path.toString());
                 case "7": return updateOrderController(path.toString());
                 case "8": return deleteOrderController(path.toString());
+                case "9": return placeOrderControllerSingleThread(path.toString());
                 default: throw new InvalidDataException("不支持的选项");
             }
 
@@ -287,6 +288,35 @@ public class UploadController {
                 }
             }
         } catch (CsvValidationException | IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        List<String> list = new LinkedList<>();
+        list.add("Success: " + countSuccess);
+        list.add("Fail: " + countFail);
+        list.add("Total: " + (countSuccess + countFail));
+        list.add("总共耗时:" + (System.currentTimeMillis() - startTime) + "ms");
+        list.add("请访问控制台查看日志");
+        return CompletableFuture.completedFuture(list);
+    }
+
+    public CompletableFuture<List<String>> placeOrderControllerSingleThread(String path) throws InvalidDataException {
+        int countSuccess = 0, countFail = 0;
+        HashSet<String> set = new HashSet<>();
+        double startTime = System.currentTimeMillis();
+        try (FileInputStream fis = new FileInputStream(path);
+             InputStreamReader isr = new InputStreamReader(fis,
+                     StandardCharsets.UTF_8);
+             CSVReader reader = new CSVReader(isr)) {
+            String[] nextLine;
+            reader.readNext();
+            while ((nextLine = reader.readNext()) != null) {
+                if(insertService.placeOrderSingleThread(nextLine)){
+                    countSuccess++;
+                }else {
+                    countFail++;
+                }
+            }
+        } catch (CsvValidationException | IOException e) {
             e.printStackTrace();
         }
         List<String> list = new LinkedList<>();

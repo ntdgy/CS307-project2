@@ -608,6 +608,96 @@ public class InsertService {
         }
     }
 
+    public Boolean placeOrderSingleThread(String[] data) throws InvalidDataException {
+        log.error("1");
+        String[] sql;
+        List<Object[]> objects;
+        String check1 = "select * from staff where staff.number = ?";
+        List<Map<String, Object>> check2 = jdbcTemplate.queryForList(check1, data[8]);
+        if (check2.isEmpty()) {
+            return false;
+        }
+        if (!(check2.get(0).get("stafftype").toString().equals("3"))) {
+            return false;
+        }
+        String check3 = "select *\n" +
+                "from warehousing w\n" +
+                "         join (select e.supply_center\n" +
+                "               from  enterprise e\n" +
+                "               where e.name = ?) as cesc\n" +
+                "              on w.center_name = cesc.supply_center and w.model_name = ? and w.quantity >= ?;";
+        List<Map<String, Object>> check4 = jdbcTemplate.queryForList(check3, data[1],
+                data[2], Integer.parseInt(data[3]));
+        if (check4.size() == 0) {
+            return false;
+        }
+        String check5 = "select * from contract where number = ?";
+        List<Map<String, Object>> check6 = jdbcTemplate.queryForList(check5, data[0]);
+        String check7 = "select count(*) from sold where model_name = ?";
+        Integer check8 = jdbcTemplate.queryForObject(check7, Integer.class, data[2]);
+        Date estimated_delivery_date, lodgement_date, contractdate;
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[6])) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            estimated_delivery_date = jsFormat.parseDateTime(data[6]).toDate();
+        } else {
+            estimated_delivery_date = java.sql.Date.valueOf(data[6].replace('/', '-'));
+        }
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[7])) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            lodgement_date = jsFormat.parseDateTime(data[7]).toDate();
+        } else {
+            lodgement_date = java.sql.Date.valueOf(data[7].replace('/', '-'));
+        }
+        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[5])) {
+            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
+            contractdate = jsFormat.parseDateTime(data[5]).toDate();
+        } else {
+            contractdate = java.sql.Date.valueOf(data[5].replace('/', '-'));
+        }
+        if (check6.size() != 0) {
+            sql = new String[3];
+            objects = new ArrayList<>();
+            sql[0] = "insert into contract_content (contract_number, product_model_name, quantity, estimated_delivery_date, lodgement_date, salesman)\n" +
+                    "values (?, ?, ?, ?, ?, ?)";
+            objects.add(new Object[]{data[0], data[2], Integer.parseInt(data[3]), estimated_delivery_date, lodgement_date, data[8]});
+            sql[1] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
+            objects.add(new Object[]{Integer.parseInt(data[3]), check4.get(0).get("center_name"), data[2]});
+            if (check8 != null && check8 == 0) {
+                sql[2] = "insert into sold (model_name, quantity) values (?, ?)";
+                objects.add(new Object[]{data[2], Integer.parseInt(data[3])});
+            } else {
+                sql[2] = "update sold set quantity = quantity + ? where model_name = ?";
+                objects.add(new Object[]{Integer.parseInt(data[3]), data[2]});
+            }
+            jdbcTemplate.update(sql[0], objects.get(0));
+            jdbcTemplate.update(sql[1], objects.get(1));
+            jdbcTemplate.update(sql[2], objects.get(2));
+        } else {
+            sql = new String[4];
+            objects = new ArrayList<>();
+            sql[0] = "insert into contract (number, enterprise, contract_date, contract_manager, contract_type) " +
+                    "values (?, ?, ?, ?, ?)";
+            objects.add(new Object[]{data[0], data[1], contractdate, data[4], data[9]});
+            sql[1] = "insert into contract_content (contract_number, product_model_name, quantity, " +
+                    "estimated_delivery_date, lodgement_date, salesman) values (?, ?, ?, ?, ?, ?)";
+            objects.add(new Object[]{data[0], data[2], Integer.parseInt(data[3]), estimated_delivery_date, lodgement_date, data[8]});
+            sql[2] = "update warehousing set quantity = quantity - ? where center_name = ? and model_name = ?";
+            objects.add(new Object[]{Integer.parseInt(data[3]), check4.get(0).get("center_name"), data[2]});
+            if (check8 != null && check8 == 0) {
+                sql[3] = "insert into sold (model_name, quantity) values (?, ?)";
+                objects.add(new Object[]{data[2], Integer.parseInt(data[3])});
+            } else {
+                sql[3] = "update sold set quantity = quantity + ? where model_name = ?";
+                objects.add(new Object[]{Integer.parseInt(data[3]), data[2]});
+            }
+            jdbcTemplate.update(sql[0], objects.get(0));
+            jdbcTemplate.update(sql[1], objects.get(1));
+            jdbcTemplate.update(sql[2], objects.get(2));
+            jdbcTemplate.update(sql[3], objects.get(3));
+        }
+        return true;
+    }
+
 
     //data[]:contract	product_model	salesman	quantity	estimate_delivery_date	lodgement_date
     @Async("dgy")
