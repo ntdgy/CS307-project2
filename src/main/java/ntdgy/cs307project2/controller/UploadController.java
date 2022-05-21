@@ -77,6 +77,7 @@ public class UploadController {
     public CompletableFuture<List<String>> addCenterController(String path) throws WrongDataException {
         int countSuccess = 0, countFail = 0;
         List<CompletableFuture<Boolean>> result = new LinkedList<>();
+        double startTime = System.currentTimeMillis();
         try (FileInputStream fis = new FileInputStream(path);
              InputStreamReader isr = new InputStreamReader(fis,
                      StandardCharsets.UTF_8);
@@ -103,6 +104,7 @@ public class UploadController {
         list.add("Success: " + countSuccess);
         list.add("Fail: " + countFail);
         list.add("Total: " + (countSuccess + countFail));
+        list.add("总共耗时: " + (System.currentTimeMillis() - startTime) + "ms");
         list.add("请访问控制台查看日志");
         return CompletableFuture.completedFuture(list);
     }
@@ -110,6 +112,7 @@ public class UploadController {
     public CompletableFuture<List<String>> addEnterpriseController(String path) {
         int countSuccess = 0, countFail = 0;
         List<CompletableFuture<Boolean>> result = new LinkedList<>();
+        double startTime = System.currentTimeMillis();
         try (FileInputStream fis = new FileInputStream(path);
              InputStreamReader isr = new InputStreamReader(fis,
                      StandardCharsets.UTF_8);
@@ -136,12 +139,14 @@ public class UploadController {
         list.add("Success: " + countSuccess);
         list.add("Fail: " + countFail);
         list.add("Total: " + (countSuccess + countFail));
+        list.add("总共耗时: " + (System.currentTimeMillis() - startTime) + "ms");
         list.add("请访问控制台查看日志");
         return CompletableFuture.completedFuture(list);
     }
 
     public CompletableFuture<List<String>> addModelController(String path) {
         int countSuccess = 0, countFail = 0;
+        double startTime = System.currentTimeMillis();
         List<CompletableFuture<Boolean>> result = new LinkedList<>();
         try (FileInputStream fis = new FileInputStream(path);
              InputStreamReader isr = new InputStreamReader(fis,
@@ -169,6 +174,7 @@ public class UploadController {
         list.add("Success: " + countSuccess);
         list.add("Fail: " + countFail);
         list.add("Total: " + (countSuccess + countFail));
+        list.add("总共耗时: " + (System.currentTimeMillis() - startTime) + "ms");
         list.add("请访问控制台查看日志");
         return CompletableFuture.completedFuture(list);
     }
@@ -176,6 +182,7 @@ public class UploadController {
     public CompletableFuture<List<String>> addStaffController(String path) throws InvalidDataException {
         int countSuccess = 0, countFail = 0;
         List<CompletableFuture<Boolean>> result = new LinkedList<>();
+        double startTime = System.currentTimeMillis();
         try (FileInputStream fis = new FileInputStream(path);
              InputStreamReader isr = new InputStreamReader(fis,
                      StandardCharsets.UTF_8);
@@ -202,6 +209,7 @@ public class UploadController {
         list.add("Success: " + countSuccess);
         list.add("Fail: " + countFail);
         list.add("Total: " + (countSuccess + countFail));
+        list.add("总共耗时: " + (System.currentTimeMillis() - startTime) + "ms");
         list.add("请访问控制台查看日志");
         return CompletableFuture.completedFuture(list);
     }
@@ -209,6 +217,7 @@ public class UploadController {
     public CompletableFuture<List<String>> stockInController(String path) throws InvalidDataException {
         int countSuccess = 0, countFail = 0;
         List<CompletableFuture<Boolean>> result = new LinkedList<>();
+        double startTime = System.currentTimeMillis();
         try (FileInputStream fis = new FileInputStream(path);
              InputStreamReader isr = new InputStreamReader(fis,
                      StandardCharsets.UTF_8);
@@ -235,6 +244,7 @@ public class UploadController {
         list.add("Success: " + countSuccess);
         list.add("Fail: " + countFail);
         list.add("Total: " + (countSuccess + countFail));
+        list.add("总共耗时: " + (System.currentTimeMillis() - startTime) + "ms");
         list.add("请访问控制台查看日志");
         return CompletableFuture.completedFuture(list);
     }
@@ -244,6 +254,7 @@ public class UploadController {
         HashSet<String> set = new HashSet<>();
         LRUCache<String, Integer> model = new LRUCache<>(15);
         List<CompletableFuture<Boolean>> result = new LinkedList<>();
+        double startTime = System.currentTimeMillis();
         try (FileInputStream fis = new FileInputStream(path);
              InputStreamReader isr = new InputStreamReader(fis,
                      StandardCharsets.UTF_8);
@@ -275,15 +286,14 @@ public class UploadController {
                     countFail++;
                 }
             }
-        } catch (CsvValidationException | IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (CsvValidationException | IOException | InterruptedException e) {
             e.printStackTrace();
         }
         List<String> list = new LinkedList<>();
         list.add("Success: " + countSuccess);
         list.add("Fail: " + countFail);
         list.add("Total: " + (countSuccess + countFail));
+        list.add("总共耗时:" + (System.currentTimeMillis() - startTime) + "ms");
         list.add("请访问控制台查看日志");
         return CompletableFuture.completedFuture(list);
     }
@@ -292,6 +302,7 @@ public class UploadController {
     public CompletableFuture<List<String>> updateOrderController(String path) throws InvalidDataException {
         int countSuccess = 0, countFail = 0;
         List<CompletableFuture<Boolean>> result = new LinkedList<>();
+        double startTime = System.currentTimeMillis();
         try (FileInputStream fis = new FileInputStream(path);
              InputStreamReader isr = new InputStreamReader(fis,
                      StandardCharsets.UTF_8);
@@ -318,6 +329,7 @@ public class UploadController {
         list.add("Success: " + countSuccess);
         list.add("Fail: " + countFail);
         list.add("Total: " + (countSuccess + countFail));
+        list.add("总共耗时: " + (System.currentTimeMillis() - startTime) + "ms");
         list.add("请访问控制台查看日志");
         return CompletableFuture.completedFuture(list);
     }
@@ -325,6 +337,7 @@ public class UploadController {
     public CompletableFuture<List<String>> deleteOrderController(String path) throws InvalidDataException {
         int countSuccess = 0, countFail = 0;
         List<CompletableFuture<Boolean>> result = new LinkedList<>();
+        double startTime = System.currentTimeMillis();
         try (FileInputStream fis = new FileInputStream(path);
              InputStreamReader isr = new InputStreamReader(fis,
                      StandardCharsets.UTF_8);
@@ -351,6 +364,7 @@ public class UploadController {
         list.add("Success: " + countSuccess);
         list.add("Fail: " + countFail);
         list.add("Total: " + (countSuccess + countFail));
+        list.add("总共耗时: " + (System.currentTimeMillis() - startTime) + "ms");
         list.add("请访问控制台查看日志");
         return CompletableFuture.completedFuture(list);
     }
