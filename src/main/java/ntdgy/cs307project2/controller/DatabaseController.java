@@ -30,6 +30,10 @@ public class DatabaseController {
 
     final JdbcTemplate jdbc;
 
+    Map<String, Object> staffCache;
+
+    boolean staffHit = false;
+
     public DatabaseController(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
@@ -320,6 +324,7 @@ public class DatabaseController {
 //            Model model
             @RequestBody Map<String, Object> map
     ) throws WrongDataException {
+        //staffHit = false;
         Map<String, Object> response = new HashMap<>();
         String[] para = new String[]{"id", "name", "number", "gender", "age", "supply_center",
                 "mobile_number", "stafftype"};
@@ -788,6 +793,7 @@ public class DatabaseController {
     @PostMapping("/getAllStaffCount")
     @ResponseBody
     public Map<String, Object> getAllStaffCount() {
+//        if (staffHit) return staffCache;
         Map<String, Object> res = new HashMap<>();
         String sql = "select count(*) from staff where stafftype = 0;";
         res.put("director", jdbc.queryForObject(sql, Integer.class));
@@ -797,6 +803,8 @@ public class DatabaseController {
         res.put("contracts", jdbc.queryForObject(sql, Integer.class));
         sql = "select count(*) from staff where stafftype = 3;";
         res.put("salesman", jdbc.queryForObject(sql, Integer.class));
+//        staffCache = res;
+//        staffHit = true;
         return res;
     }
 
