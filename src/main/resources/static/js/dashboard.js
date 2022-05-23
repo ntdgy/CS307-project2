@@ -70,6 +70,14 @@ app.controller('tt', function ($scope, $http) {
             function (data, status, header, config) {
                 $scope.favoriteData = data.data.result;
                 console.log(data);
+                if($scope.favoriteData.length === 0){
+                    console.log("????")
+                    $scope.favoriteData = {
+                        a: {
+                            quantity: 'NaN'
+                        }
+                    }
+                }
             }
         ).catch(function (data, status, header, config) {
             console.log(data, status);
@@ -83,16 +91,18 @@ app.controller('tt', function ($scope, $http) {
             function (data, status, header, config) {
                 $scope.avgData = data.data.result;
                 console.log(data);
-                console.log(typeof ($scope.avgData));
+                if($scope.avgData.length === 0){
+                    console.log("????")
+                    $scope.avgData = {
+                        a: {
+                            round: 'NaN'
+                        }
+                    }
+                }
             }
         ).catch(function (data, status, header, config) {
             console.log(data, status);
         });
-        if($scope.avgData == null || typeof($scope.avgData) == "undefined"){
-            $scope.avgData = {
-                a: 1
-            }
-        }
     };
     //initialize
     staff();

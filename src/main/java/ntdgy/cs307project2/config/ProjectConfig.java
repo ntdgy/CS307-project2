@@ -79,7 +79,7 @@ public class ProjectConfig implements WebMvcConfigurer {
         //核心线程数目
         executor.setCorePoolSize(32);
         //指定最大线程数
-        executor.setMaxPoolSize(3000);
+        executor.setMaxPoolSize(200);
         //队列中最大的数目
         executor.setQueueCapacity(500);
         //线程名称前缀

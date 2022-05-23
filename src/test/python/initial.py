@@ -7,7 +7,8 @@ import requests
 import sql
 
 pgsql = psycopg2.connect(
-    host="42.194.178.20",
+    host="127.0.0.1",
+    #host="42.194.178.20",
     port="5432",
     database="final",
     user="final",
@@ -74,7 +75,7 @@ def stock_in():
         'purchaseprice': 1,
         'quantity': ''
     }
-    with open('data/task1_in_stoke_test_data_publish.csv', 'r') as f:
+    with open('data/in_stoke_test.csv', 'r') as f:
     #with open('data/task1.csv', 'r') as f:
         head = f.readline()
         while True:
@@ -121,7 +122,7 @@ def place_prder():
         'salesmannum': '11610016',
         'contracttype': 'Finished'
     }
-    with open('data/task2_test_data_publish.csv', 'r') as f:
+    with open('data/task2.csv', 'r') as f:
     #with open('data/task2.csv', 'r') as f:
         head = f.readline()
         while True:
@@ -160,14 +161,14 @@ def update_order():
         'estimateddeliverydate': '2022-02-28',
         'lodgementdate': '2022-02-13'
     }
-    with open('data/task34_update_test_data_publish.tsv', 'r') as f:
+    with open('data/update_final_test.csv', 'r') as f:
     #with open('data/update.csv', 'r') as f:
         head = f.readline()
         while True:
             line = f.readline()
             if not line:
                 break
-            line = line.split()
+            line = line.replace('\n','').split(',')
             test['contractnum'] = line[0]
             test['productmodel'] = line[1]
             test['salesman'] = line[2]
@@ -193,13 +194,13 @@ def delete_order():
         'salesman': '11611117',
         'seq': 1
     }
-    with open('data/task34_delete_test_data_publish.tsv', 'r') as f:
+    with open('data/delete_final.csv', 'r') as f:
         head = f.readline()
         while True:
             line = f.readline()
             if not line:
                 break
-            line = line.split()
+            line = line.replace('\n', '').split(',')
             test['contract'] = line[0]
             test['salesman'] = line[1]
             test['seq'] = line[2]
@@ -214,10 +215,10 @@ insert_into_center()
 insert_into_enterprise()
 insert_into_model()
 insert_into_staff()
-stock_in()
-place_prder()
-update_order()
-delete_order()
+# stock_in()
+# place_prder()
+# update_order()
+# delete_order()
 
 # url = "http://localhost:8080/api/database/deleteOrder"
 # headers = {

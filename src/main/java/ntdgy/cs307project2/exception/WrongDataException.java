@@ -10,6 +10,10 @@ public class WrongDataException extends Exception {
         super(message);
     }
 
+    public WrongDataException(Throwable cause) {
+        super(cause);
+    }
+
     public WrongDataException(String message, Throwable cause) {
         super(message, cause);
     }
