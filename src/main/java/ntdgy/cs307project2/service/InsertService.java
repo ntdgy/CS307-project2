@@ -199,12 +199,12 @@ public class InsertService {
             //throw new InvalidDataException("⼈员不存在");
         }
         if (!check2.get(0).get("stafftype").equals(1)) {
-            log.error(check2.get(0).get("stafftype").toString());
+            log.error("⼈员的类型不是supply_staff");
             return CompletableFuture.completedFuture(false);
             // throw new InvalidDataException("⼈员的类型不是supply_staff");
         }
         if (!check2.get(0).get("supply_center").equals(data[1])) {
-            log.error(check2.get(0).get("supply_center").toString());
+            log.error("供应商不属于该供应中心");
             return CompletableFuture.completedFuture(false);
             //throw new InvalidDataException("供应商不属于该供应中心");
         }
@@ -339,7 +339,14 @@ public class InsertService {
     public CompletableFuture<Boolean> placeOrder(String[] data) throws InvalidDataException {
         String[] sql;
         List<Object[]> objects;
-        Date estimated_delivery_date, lodgement_date, contractdate;
+        String check3 = "select *\n" +
+                "from warehousing w\n" +
+                "         join (select e.supply_center\n" +
+                "               from  enterprise e\n" +
+                "               where e.name = ?) as cesc\n" +
+                "              on w.center_name = cesc.supply_center and w.model_name = ? and w.quantity >= ? for update;";
+        List<Map<String, Object>> check4 = jdbcTemplate.queryForList(check3, data[1], data[2], Integer.parseInt(data[3]));
+        Date estimated_delivery_date, lodgement_date;
         if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[6])) {
             DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
             estimated_delivery_date = jsFormat.parseDateTime(data[6]).toDate();
@@ -352,12 +359,6 @@ public class InsertService {
         } else {
             lodgement_date = java.sql.Date.valueOf(data[7].replace('/', '-'));
         }
-        if (Pattern.matches("^\\d+-\\d+-\\d+T\\d+:\\d+:\\d+.\\d+Z$", data[5])) {
-            DateTimeFormatter jsFormat = ISODateTimeFormat.dateTime();
-            contractdate = jsFormat.parseDateTime(data[5]).toDate();
-        } else {
-            contractdate = java.sql.Date.valueOf(data[5].replace('/', '-'));
-        }
         String check1 = "select * from staff where staff.number = ?";
         List<Map<String, Object>> check2 = jdbcTemplate.queryForList(check1, data[8]);
         if (check2.isEmpty()) {
@@ -369,13 +370,6 @@ public class InsertService {
             return CompletableFuture.completedFuture(false);
             //throw new InvalidDataException("该员工不是salesman");
         }
-        String check3 = "select *\n" +
-                "from warehousing w\n" +
-                "         join (select e.supply_center\n" +
-                "               from  enterprise e\n" +
-                "               where e.name = ?) as cesc\n" +
-                "              on w.center_name = cesc.supply_center and w.model_name = ? and w.quantity >= ?;";
-        List<Map<String, Object>> check4 = jdbcTemplate.queryForList(check3, data[1], data[2], Integer.parseInt(data[3]));
         if (check4.size() == 0) {
             log.error("库存不足");
             return CompletableFuture.completedFuture(false);
@@ -609,7 +603,6 @@ public class InsertService {
     }
 
     public Boolean placeOrderSingleThread(String[] data) throws InvalidDataException {
-        log.error("1");
         String[] sql;
         List<Object[]> objects;
         String check1 = "select * from staff where staff.number = ?";

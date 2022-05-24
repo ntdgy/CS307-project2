@@ -92,7 +92,7 @@ create index contract_number on contract(number);
 create table contract_content
 (
     id                      serial primary key,
-    contract_number            varchar(10) not null references contract(number) on update cascade on delete cascade, -- references contract (id) not null ,
+    contract_number            varchar(10) not null, --references contract(number) on update cascade on delete cascade, -- references contract (id) not null ,
     product_model_name       varchar not null references model(model) on update cascade on delete cascade, -- references product_model (id) not null,
     quantity                int, -- not null,
     estimated_delivery_date date,

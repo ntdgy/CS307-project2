@@ -1,6 +1,6 @@
 package ntdgy.cs307project2.controller;
 
-import ntdgy.cs307project2.data.Center;
+import ntdgy.cs307project2.dto.Center;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

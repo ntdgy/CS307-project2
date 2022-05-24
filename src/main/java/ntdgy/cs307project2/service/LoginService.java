@@ -1,6 +1,6 @@
 package ntdgy.cs307project2.service;
 
-import ntdgy.cs307project2.data.User;
+import ntdgy.cs307project2.dto.User;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
