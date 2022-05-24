@@ -12,10 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -58,6 +55,34 @@ public class DatabaseController {
             }
             obj[i++] = entry.getValue();
         }
+        return jdbc.queryForList(sql.toString(), obj);
+    }
+
+    @PostMapping("/select/contract")
+    @ResponseBody
+    public List<Map<String, Object>> selectContract(
+            @RequestBody Map<String, Object> map
+    ) throws InvalidDataException {
+        log.info(map.toString());
+        String[] para = new String[]{"id", "number", "enterprise", "contract_date", "contract_manager", "contract_type"};
+        StringBuilder sql = new StringBuilder("select * from contract where");
+        removeEmpty(map);
+        map = wash(map, para);
+        log.info(map.toString());
+        if (map.isEmpty()) {
+            throw new InvalidDataException("查询条件为空");
+        }
+        Object[] obj = new Object[map.size()];
+        int i = 0;
+        for (var entry : map.entrySet()) {
+            if (i == 0) {
+                sql.append(" ").append(entry.getKey()).append(" = ?");
+            } else {
+                sql.append(" and ").append(entry.getKey()).append(" = ?");
+            }
+            obj[i++] = entry.getValue();
+        }
+        log.info(jdbc.queryForList(sql.toString(), obj).toString());
         return jdbc.queryForList(sql.toString(), obj);
     }
 
@@ -789,7 +814,8 @@ public class DatabaseController {
         return res;
     }
 
-    @RequestMapping("/getAllStaffCount")
+    @PostMapping("/getAllStaffCount")
+    @GetMapping("/getAllStaffCount")
     @ResponseBody
     public Map<String, Object> getAllStaffCount() {
         if (staffHit) {
@@ -993,7 +1019,7 @@ public class DatabaseController {
                 "(\n" +
                 "    id                      serial primary key,\n" +
                 "    contract_number            varchar(10) not null,\n" +
-                 //references contract(number) on update cascade on delete cascade, -- references contract (id) not null ,\n" +
+                //references contract(number) on update cascade on delete cascade, -- references contract (id) not null ,\n" +
                 "    product_model_name       varchar not null references model(model) on update cascade on delete cascade, -- references product_model (id) not null,\n" +
                 "    quantity                int, -- not null,\n" +
                 "    estimated_delivery_date date,\n" +
