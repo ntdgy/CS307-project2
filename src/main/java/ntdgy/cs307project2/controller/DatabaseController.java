@@ -948,6 +948,7 @@ public class DatabaseController {
     @PostMapping("drop")
     @ResponseBody
     public String dropDarabse() {
+        staffHit = false;
         String sql = "drop table if exists center cascade;\n" +
                 "drop table if exists enterprise cascade;\n" +
                 "drop table if exists staff cascade;\n" +
