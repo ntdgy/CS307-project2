@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
@@ -32,6 +33,8 @@ public class UploadController {
     private InsertService insertService;
 
     private final String UPLOADED_FOLDER = "src/main/resources/static/upload/";
+
+    private final String DATA_SOURCE_FOLDER = "src/main/resources/static/data/";
 
     final HikariDataSource hikariDataSource;
 
@@ -73,6 +76,33 @@ public class UploadController {
             e.printStackTrace();
         }
         return CompletableFuture.completedFuture(null);
+    }
+
+    @RequestMapping("/import")
+    public CompletableFuture<List<List<String>>> oneKeyImport() throws InvalidDataException, WrongDataException, ExecutionException, InterruptedException {
+        var center = addCenterController(DATA_SOURCE_FOLDER + "center.csv");
+        var enterprise = addEnterpriseController(DATA_SOURCE_FOLDER + "enterprise.csv");
+        var model = addModelController(DATA_SOURCE_FOLDER + "model.csv");
+        var staff = addStaffController(DATA_SOURCE_FOLDER + "staff.csv");
+        CompletableFuture.allOf(center,enterprise,model,staff).join();
+        var stockIn = stockInController(DATA_SOURCE_FOLDER + "stocking.csv");
+        CompletableFuture.allOf(stockIn).join();
+        var placeOrder = placeOrderControllerSingleThread(DATA_SOURCE_FOLDER + "task2.csv");
+        CompletableFuture.allOf(placeOrder).join();
+        var updateOrder = updateOrderController(DATA_SOURCE_FOLDER + "update.csv");
+        CompletableFuture.allOf(updateOrder).join();
+        var deleteOrder = deleteOrderController(DATA_SOURCE_FOLDER + "delete.csv");
+        CompletableFuture.allOf(deleteOrder).join();
+        List<List<String>> result = new ArrayList<>();
+        result.add(center.get());
+        result.add(enterprise.get());
+        result.add(model.get());
+        result.add(staff.get());
+        result.add(stockIn.get());
+        result.add(placeOrder.get());
+        result.add(updateOrder.get());
+        result.add(deleteOrder.get());
+        return CompletableFuture.completedFuture(result);
     }
 
     public CompletableFuture<List<String>> addCenterController(String path) throws WrongDataException {
