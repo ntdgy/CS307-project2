@@ -13,9 +13,9 @@ public class Staff {
     private String name;
     private int age;
     private String gender;
-    private int number;
+    private String number;
     private String supply_center;
-    private int mobile_number;
-    private String type;
+    private String mobile_number;
+    private int staffType;
 
 }

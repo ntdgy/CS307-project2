@@ -13,8 +13,9 @@ public class Contract {
 
     private int id;
     private String number;
-    private int enterpriseID;
-    private Date date;
-    private String contactManager;
+    private String enterprise;
+    private Date contract_date;
+    private String contract_manager;
+    private String contract_type;
 
 }

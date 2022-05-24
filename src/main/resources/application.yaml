@@ -5,8 +5,8 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
-    # url: jdbc:postgresql://42.194.178.20:5432/final
-    url: jdbc:postgresql://localhost:5432/final
+    url: jdbc:postgresql://42.194.178.20:5432/final
+#    url: jdbc:postgresql://localhost:5432/final
     username: final
     password: CS307final
     hikari:

@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 public class Model {
 
     private int id;
+    private String name;
     private String number;
     private String model;
-    private String name;
-    private double unit_price;
+    private int unit_price;
 
 }

@@ -2,6 +2,7 @@ package ntdgy.cs307project2.controller;
 
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import ntdgy.cs307project2.dto.*;
 import ntdgy.cs307project2.exception.InvalidDataException;
 import ntdgy.cs307project2.exception.InvalidOperationException;
 import ntdgy.cs307project2.exception.WrongDataException;
@@ -38,9 +39,13 @@ public class DatabaseController {
     @PostMapping("/select/center")
     @ResponseBody
     public List<Map<String, Object>> selectCenter(
-            @RequestBody Map<String, Object> map
+//            @RequestBody Map<String, Object> map
+            @RequestBody Center center
     ) throws InvalidDataException {
         StringBuilder sql = new StringBuilder("select * from center where");
+        Map<String, Object> map =  new HashMap<>();
+        map.put("id", center.getId());
+        map.put("name", center.getName());
         removeEmpty(map);
         if (map.isEmpty()) {
             throw new InvalidDataException("查询条件为空");
@@ -61,12 +66,20 @@ public class DatabaseController {
     @PostMapping("/select/contract")
     @ResponseBody
     public List<Map<String, Object>> selectContract(
-            @RequestBody Map<String, Object> map
-    ) throws InvalidDataException {
+//            @RequestBody Map<String, Object> map
+            @RequestBody Contract contract
+            ) throws InvalidDataException {
         String[] para = new String[]{"id", "number", "enterprise", "contract_date", "contract_manager", "contract_type"};
         StringBuilder sql = new StringBuilder("select * from contract where");
+        Map<String, Object> map =  new HashMap<>();
+        map.put("id", contract.getId());
+        map.put("number", contract.getNumber());
+        map.put("enterprise", contract.getEnterprise());
+        map.put("contract_date", contract.getContract_date());
+        map.put("contract_manager", contract.getContract_manager());
+        map.put("contract_type", contract.getContract_type());
         removeEmpty(map);
-        map = wash(map, para);
+//        map = wash(map, para);
         if (map.isEmpty()) {
             throw new InvalidDataException("查询条件为空");
         }
@@ -86,9 +99,17 @@ public class DatabaseController {
     @PostMapping("/select/enterprise")
     @ResponseBody
     public List<Map<String, Object>> selectEnterprise(
-            @RequestBody Map<String, Object> map
-    ) throws InvalidDataException {
+//            @RequestBody Map<String, Object> map
+            @RequestBody Enterprise enterprise
+            ) throws InvalidDataException {
         StringBuilder sql = new StringBuilder("select * from enterprise where");
+        Map<String, Object> map =  new HashMap<>();
+        map.put("id", enterprise.getId());
+        map.put("name", enterprise.getName());
+        map.put("supply_center", enterprise.getSupply_center());
+        map.put("country", enterprise.getCountry());
+        map.put("city", enterprise.getCity());
+        map.put("industry", enterprise.getIndustry());
         removeEmpty(map);
         if (map.isEmpty()) {
             throw new InvalidDataException("查询条件为空");
@@ -109,9 +130,16 @@ public class DatabaseController {
     @PostMapping("/select/model")
     @ResponseBody
     public List<Map<String, Object>> selectModel(
-            @RequestBody Map<String, Object> map
+//            @RequestBody Map<String, Object> map
+            @RequestBody Model model
     ) throws InvalidDataException {
         StringBuilder sql = new StringBuilder("select * from model where");
+        Map<String, Object> map =  new HashMap<>();
+        map.put("id", model.getId());
+        map.put("name", model.getName());
+        map.put("number", model.getNumber());
+        map.put("model", model.getModel());
+        map.put("unit_price", model.getUnit_price());
         removeEmpty(map);
         if (map.isEmpty()) {
             throw new InvalidDataException("查询条件为空");
@@ -132,9 +160,19 @@ public class DatabaseController {
     @PostMapping("/select/staff")
     @ResponseBody
     public List<Map<String, Object>> selectStaff(
-            @RequestBody Map<String, Object> map
+//            @RequestBody Map<String, Object> map
+            @RequestBody Staff staff
     ) throws InvalidDataException {
         StringBuilder sql = new StringBuilder("select * from staff where");
+        Map<String, Object> map =  new HashMap<>();
+        map.put("id", staff.getId());
+        map.put("name", staff.getName());
+        map.put("number", staff.getNumber());
+        map.put("gender", staff.getGender());
+        map.put("age", staff.getAge());
+        map.put("supply_center", staff.getSupply_center());
+        map.put("mobile_number", staff.getMobile_number());
+        map.put("staffType", staff.getStaffType());
         removeEmpty(map);
         if (map.isEmpty()) {
             throw new InvalidDataException("查询条件为空");
@@ -1082,7 +1120,7 @@ public class DatabaseController {
     private void removeEmpty(Map<String, Object> map) {
         List<String> s = new LinkedList<>();
         for (var entry : map.entrySet()) {
-            if (entry.getValue() == null || entry.getValue().equals("")) {
+            if (entry.getValue() == null || entry.getValue().equals("") || entry.getValue().equals(0)) {
                 s.add(entry.getKey());
             }
         }
