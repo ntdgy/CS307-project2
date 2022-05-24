@@ -63,12 +63,10 @@ public class DatabaseController {
     public List<Map<String, Object>> selectContract(
             @RequestBody Map<String, Object> map
     ) throws InvalidDataException {
-        log.info(map.toString());
         String[] para = new String[]{"id", "number", "enterprise", "contract_date", "contract_manager", "contract_type"};
         StringBuilder sql = new StringBuilder("select * from contract where");
         removeEmpty(map);
         map = wash(map, para);
-        log.info(map.toString());
         if (map.isEmpty()) {
             throw new InvalidDataException("查询条件为空");
         }
@@ -82,7 +80,6 @@ public class DatabaseController {
             }
             obj[i++] = entry.getValue();
         }
-        log.info(jdbc.queryForList(sql.toString(), obj).toString());
         return jdbc.queryForList(sql.toString(), obj);
     }
 
@@ -326,7 +323,6 @@ public class DatabaseController {
         try {
             jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
-            log.error(map.toString());
             throw new WrongDataException("数据错误", e);
         }
         response.put("result", "success");
@@ -414,7 +410,6 @@ public class DatabaseController {
         try {
             jdbc.update(sql.toString(), obj);
         } catch (Exception e) {
-            log.error(map.toString());
             throw new WrongDataException("数据错误", e);
         }
         response.put("result", "success");
@@ -523,27 +518,22 @@ public class DatabaseController {
         String check1 = "select * from staff where staff.number = ?";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("supplystaff").toString());
         if (check2.size() == 0) {
-            log.error(map.toString());
             throw new InvalidDataException("⼈员不存在");
         }
         if (!check2.get(0).get("stafftype").equals(1)) {
-            log.error(check2.get(0).get("stafftype").toString());
             throw new InvalidDataException("⼈员的类型不是supply_staff");
         }
         if (!check2.get(0).get("supply_center").equals(map.get("supplycenter"))) {
-            log.error(map.toString());
             throw new InvalidDataException("供应商不属于该供应中心");
         }
         String check3 = "select * from center where center.name = ?";
         List<Map<String, Object>> check4 = jdbc.queryForList(check3, map.get("supplycenter"));
         if (check4.size() == 0) {
-            log.error(map.toString());
             throw new InvalidDataException("供应中心不存在");
         }
         String check5 = "select * from model where model.model = ?";
         List<Map<String, Object>> check6 = jdbc.queryForList(check5, map.get("productmodel"));
         if (check6.size() == 0) {
-            log.error(map.toString());
             throw new InvalidDataException("产品型号不存在");
         }
         String check9 = "select * from warehousing where center_name = ? and model_name = ?;";
@@ -607,7 +597,6 @@ public class DatabaseController {
         String check1 = "select * from staff where staff.number = ?";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("salesmannum"));
         if (check2.isEmpty()) {
-            log.error(map.toString());
             throw new InvalidDataException("员工不存在");
         }
         if (!(check2.get(0).get("stafftype").toString().equals("3"))) {
@@ -785,7 +774,6 @@ public class DatabaseController {
                 "order by estimated_delivery_date, product_model_name;";
         List<Map<String, Object>> check2 = jdbc.queryForList(check1, map.get("contract"), map.get("salesman"));
         if (check2.size() < Integer.parseInt(map.get("seq").toString())) {
-            log.error(check2.toString());
             throw new InvalidDataException("该合同不属于该销售员");
         }
         var content = check2.get(Integer.parseInt(map.get("seq").toString()) - 1);
