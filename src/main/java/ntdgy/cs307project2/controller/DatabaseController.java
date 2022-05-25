@@ -1062,6 +1062,7 @@ public class DatabaseController {
     @PostMapping("clear")
     @ResponseBody
     public String clearDarabse() {
+        staffHit = false;
         String sql = "truncate center cascade;\n" +
                 "truncate contract cascade ;\n" +
                 "truncate contract_content cascade ;\n" +

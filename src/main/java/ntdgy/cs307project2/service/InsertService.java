@@ -693,7 +693,7 @@ public class InsertService {
 
 
     //data[]:contract	product_model	salesman	quantity	estimate_delivery_date	lodgement_date
-    @Async("dgy")
+    //@Async("dgy")
     public CompletableFuture<Boolean> updateOrder(String[] data) throws InvalidDataException {
         String[] sql;
         List<Object[]> objects;
@@ -843,7 +843,7 @@ public class InsertService {
 
 
     //contract	salesman	seq
-    @Async("dgy")
+    //@Async("dgy")
     public CompletableFuture<Boolean> deleteOrder(String[] data) throws InvalidDataException {
         String[] sql;
         List<Object[]> objects;
