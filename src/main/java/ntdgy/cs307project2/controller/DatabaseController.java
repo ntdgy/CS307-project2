@@ -30,6 +30,10 @@ public class DatabaseController {
 
     Map<String, Object> staffCache;
 
+    public void setStaffHit(boolean staffHit) {
+        this.staffHit = staffHit;
+    }
+
     boolean staffHit = false;
 
     public DatabaseController(JdbcTemplate jdbc) {
@@ -865,7 +869,7 @@ public class DatabaseController {
     @ResponseBody
     public Map<String, Object> getContractCount() {
         Map<String, Object> res = new HashMap<>();
-        String sql = "select count(*) from contract;";
+        String sql = "select * from select_contract_count;";
         res.put("contract", jdbc.queryForObject(sql, Integer.class));
         return res;
     }
@@ -874,7 +878,7 @@ public class DatabaseController {
     @ResponseBody
     public Map<String, Object> getOrderCount() {
         Map<String, Object> res = new HashMap<>();
-        String sql = "select count(*) from contract_content;";
+        String sql = "select * from select_order_count;";
         res.put("order", jdbc.queryForObject(sql, Integer.class));
         return res;
     }
@@ -883,8 +887,9 @@ public class DatabaseController {
     @ResponseBody
     public Map<String, Object> getNeverSoldProductCount() {
         Map<String, Object> res = new HashMap<>();
-        String sql = "select count(distinct model_name) from warehousing where quantity!=0 " +
-                "and model_name not in(select distinct product_model_name from contract_content);";
+//        String sql = "select count(distinct model_name) from warehousing where quantity!=0 " +
+//                "and model_name not in(select distinct product_model_name from contract_content);";
+        String sql = "select * from select_never_sold;";
         res.put("result", jdbc.queryForObject(sql, Integer.class));
         return res;
     }
@@ -893,7 +898,8 @@ public class DatabaseController {
     @ResponseBody
     public Map<String, Object> getFavoriteProductModel() {
         Map<String, Object> res = new HashMap<>();
-        String sql = "select model_name,quantity from sold s where (select quantity q from sold order by quantity desc limit 1) = s.quantity;";
+//        String sql = "select model_name,quantity from sold s where (select quantity q from sold order by quantity desc limit 1) = s.quantity;";
+        String sql = "select * from select_favourite;";
         List<Map<String, Object>> check = jdbc.queryForList(sql);
         res.put("result", check);
         return res;
@@ -904,7 +910,8 @@ public class DatabaseController {
     @ResponseBody
     public Map<String, Object> getAvgStockByCenter() {
         Map<String, Object> res = new HashMap<>();
-        String sql = "select center_name,round(avg(quantity),1) from warehousing group by center_name order by center_name;";
+//        String sql = "select center_name,round(avg(quantity),1) from warehousing group by center_name order by center_name;";
+        String sql = "select * from select_avg;";
         List<Map<String, Object>> check = jdbc.queryForList(sql);
         res.put("result", check);
         return res;
@@ -1053,7 +1060,20 @@ public class DatabaseController {
                 "    lodgement_date          date,\n" +
                 "    -- price int not null,\n" +
                 "    salesman   varchar not null references staff(number) on update cascade on delete cascade -- references salesman (id) not null\n" +
-                ");";
+                ");" +
+                "create or replace view select_contract_count as\n" +
+                "    select count(*) from contract;\n" +
+                "create or replace view select_order_count as\n" +
+                "select count(*) from contract_content;\n" +
+                "create or replace view select_never_sold as\n" +
+                "    select count(distinct model_name) from warehousing where quantity!=0\n" +
+                "    and model_name not in(select distinct product_model_name from contract_content);\n" +
+                "\n" +
+                "create or replace view select_favourite as\n" +
+                "    select model_name,quantity from sold s where (select quantity q from sold order by quantity desc limit 1) = s.quantity;\n" +
+                "\n" +
+                "create or replace view select_avg as\n" +
+                "    select center_name,round(avg(quantity),1) from warehousing group by center_name order by center_name;";
         jdbc.update(sql);
         return "Success";
     }
@@ -1072,6 +1092,7 @@ public class DatabaseController {
                 "truncate stockin cascade ;\n" +
                 "truncate warehousing cascade ;";
         jdbc.update(sql);
+        this.staffHit = false;
         return "Success";
     }
 
