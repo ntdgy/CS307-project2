@@ -36,11 +36,13 @@ public class UploadController {
 
     private final String DATA_SOURCE_FOLDER = "src/main/resources/static/data/";
 
-    final HikariDataSource hikariDataSource;
+    private final HikariDataSource hikariDataSource;
 
+    private final DatabaseController databaseController;
 
-    public UploadController(HikariDataSource hikariDataSource) {
+    public UploadController(HikariDataSource hikariDataSource, DatabaseController controller) {
         this.hikariDataSource = hikariDataSource;
+        this.databaseController = controller;
     }
 
     @RequestMapping("/test")
@@ -102,6 +104,7 @@ public class UploadController {
         result.add(placeOrder.get());
         result.add(updateOrder.get());
         result.add(deleteOrder.get());
+        databaseController.setStaffHit(false);
         return CompletableFuture.completedFuture(result);
     }
 
