@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://42.194.178.20:5432/final
+    url: jdbc:postgresql://localhost:5432/final
+    username: final
+    password: CS307final
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      auto-commit: true
+  thymeleaf:
+    cache: false
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10GB
+      max-request-size: 10GB
+
+#  mvc:
+#    static-path-pattern: /res/**
+#debug: true

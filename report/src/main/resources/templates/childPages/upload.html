@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Management</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Custom styles for this templates -->
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet">
+</head>
+
+<body ng-app="manage" ng-controller="manager">
+<div th:replace="~{childPages/common::topbar}"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="~{childPages/common::sidebar(active='upload')}"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <h1>文件上传页面</h1>
+            <form method="post" action="/api/upload/test" enctype="multipart/form-data">
+                选择要上传的文件：<input type="file" name="file" accept=".csv">    <br>
+                <hr>
+                <label for="type">
+                    <select id="type" name="type" >
+                        <option>--请选择--</option>
+                        <option value="1">Center</option>
+                        <option value="2">Enterprise</option>
+                        <option value="3">Model</option>
+                        <option value="4">Staff</option>
+                        <option value="5">stockIn</option>
+                        <option value="6">placeOrder</option>
+                        <option value="7">updateOrder</option>
+                        <option value="8">deleteOrder</option>
+                        <option value="9">test</option>
+                    </select>
+                </label>
+                <input type="submit" value="提交">
+            </form>
+            <br>
+            <br>
+            <form method="post" action="/api/database/drop">
+                <input type="submit" value="删库跑路，我再也不学数据库了！">
+            </form>
+            <br>
+            <br>
+            <form method="post" action="/api/database/create">
+                <input type="submit" value="我又回来了，学分要紧（">
+            </form>
+            <br>
+            <br>
+            <form method="post" action="/api/database/clear">
+                <input type="submit" value="我是好人，仅仅清空数据">
+            </form>
+            <br>
+            <br>
+            <form method="post" action="/api/upload/import">
+                <input type="submit" value="导入数据">
+            </form>
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" th:src="@{/js/jquery-3.2.1.slim.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+
+<!-- Icons -->
+
+</body>
+
+</html>

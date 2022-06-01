@@ -1,0 +1,13 @@
+package ntdgy.cs307project2;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class Cs307Project2ApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
